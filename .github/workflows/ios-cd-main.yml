@@ -64,6 +64,14 @@ jobs:
           echo "Available code signing identities:"
           security find-identity -v -p codesigning "$KEYCHAIN_PATH"
 
+          if ! security find-identity -v -p codesigning "$KEYCHAIN_PATH" | grep -qE 'Apple Distribution|iPhone Distribution'; then
+            echo "::error::No Distribution certificate found. Export Apple Distribution .p12 with private key."
+            exit 1
+          fi
+
+          echo "Installed provisioning profile:"
+          security cms -D -i "$PP_PATH" | plutil -extract Name raw -
+
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           PP_UUID=$(/usr/libexec/PlistBuddy -c 'Print UUID' /dev/stdin <<< "$(security cms -D -i "$PP_PATH")")
           cp "$PP_PATH" ~/Library/MobileDevice/Provisioning\ Profiles/"$PP_UUID".mobileprovision
@@ -105,17 +113,15 @@ jobs:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
           set -o pipefail
-          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $RUNNER_TEMP/app-signing.keychain-db
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
           xcodebuild archive \
             -project Jeda.xcodeproj \
             -scheme Jeda \
             -configuration Release \
             -archivePath $RUNNER_TEMP/Jeda.xcarchive \
             -destination 'generic/platform=iOS' \
-            CODE_SIGN_STYLE=Manual \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM=6U2QP37AEF \
-            PROVISIONING_PROFILE_SPECIFIER="${{ secrets.PROVISIONING_PROFILE_NAME }}"
+            DEVELOPMENT_TEAM=6U2QP37AEF
 
       - name: Export IPA
         env:
