@@ -32,16 +32,27 @@ jobs:
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
           printf '%s' "$BUILD_CERTIFICATE_BASE64" | base64 -D > "$CERTIFICATE_PATH"
+          P12_SIZE=$(wc -c < "$CERTIFICATE_PATH" | tr -d ' ')
+          echo "Decoded .p12 size: ${P12_SIZE} bytes"
 
-          if ! openssl pkcs12 -in "$CERTIFICATE_PATH" -noout -passin "pass:$P12_PASSWORD" 2>/dev/null; then
+          if [ "$P12_SIZE" -lt 2500 ]; then
+            echo "::error::Decoded .p12 terlalu kecil (${P12_SIZE} bytes). Secret BUILD_CERTIFICATE_BASE64 masih file lama."
+            echo "::error::Encode ulang certificate-jeda.p12: base64 -i certificate-jeda.p12 | pbcopy"
+            exit 1
+          fi
+
+          if ! openssl pkcs12 -in "$CERTIFICATE_PATH" -noout -passin "pass:$P12_PASSWORD" -legacy 2>/dev/null; then
             echo "::error::Invalid .p12 file or wrong P12_PASSWORD secret."
             exit 1
           fi
 
-          CERT_BYTES=$(openssl pkcs12 -in "$CERTIFICATE_PATH" -passin "pass:$P12_PASSWORD" -legacy -clcerts -nokeys 2>/dev/null | wc -c | tr -d ' ')
+          openssl pkcs12 -in "$CERTIFICATE_PATH" -passin "pass:$P12_PASSWORD" -legacy -clcerts -nokeys -out "$RUNNER_TEMP/cert.pem" 2>/dev/null
+          CERT_BYTES=$(wc -c < "$RUNNER_TEMP/cert.pem" | tr -d ' ')
+          echo "Extracted certificate size: ${CERT_BYTES} bytes"
+
           if [ "$CERT_BYTES" -lt 100 ]; then
-            echo "::error::.p12 hanya berisi private key tanpa certificate."
-            echo "::error::Export ulang dari Keychain Access: pilih certificate 'Apple Distribution' (yang ada panah private key-nya), lalu export sebagai .p12 dengan 'Include private key' dicentang."
+            echo "::error::Tidak bisa mengekstrak certificate dari .p12."
+            echo "::error::Pastikan BUILD_CERTIFICATE_BASE64 dari certificate-jeda.p12 (~3340 bytes) dan P12_PASSWORD=jeda."
             exit 1
           fi
 
