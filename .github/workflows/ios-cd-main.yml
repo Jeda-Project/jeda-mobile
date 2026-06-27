@@ -38,6 +38,13 @@ jobs:
             exit 1
           fi
 
+          CERT_BYTES=$(openssl pkcs12 -in "$CERTIFICATE_PATH" -passin "pass:$P12_PASSWORD" -legacy -clcerts -nokeys 2>/dev/null | wc -c | tr -d ' ')
+          if [ "$CERT_BYTES" -lt 100 ]; then
+            echo "::error::.p12 hanya berisi private key tanpa certificate."
+            echo "::error::Export ulang dari Keychain Access: pilih certificate 'Apple Distribution' (yang ada panah private key-nya), lalu export sebagai .p12 dengan 'Include private key' dicentang."
+            exit 1
+          fi
+
           curl -sL -o /tmp/AppleWWDRCAG6.cer https://www.apple.com/certificateauthority/AppleWWDRCAG6.cer
           curl -sL -o /tmp/AppleWWDRCAG3.cer https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
 
