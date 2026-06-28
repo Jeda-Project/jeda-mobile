@@ -20,7 +20,7 @@ struct ReflectionAIConsentSheet: View {
                     .font(.system(size: 36, weight: .semibold))
                     .foregroundStyle(JedaColor.sage)
             }
-            .padding(.top, 16)
+            .padding(.top, 32)
 
             VStack(spacing: 12) {
                 Text("Kirim ke AI cloud?")
@@ -40,13 +40,13 @@ struct ReflectionAIConsentSheet: View {
             Spacer(minLength: 16)
 
             VStack(spacing: JedaSpacing.md) {
-                JedaButton("Setuju, kirim", kind: .primary) {
+                JedaButton("Setuju, Kirim", kind: .primary) {
                     onGrant()
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityLabel("Setuju mengirim refleksi ke AI cloud")
 
-                JedaButton("Tidak sekarang", kind: .secondary) {
+                JedaButton("Tidak Sekarang", kind: .secondary) {
                     onDeny()
                 }
                 .frame(maxWidth: .infinity)
@@ -57,7 +57,7 @@ struct ReflectionAIConsentSheet: View {
         .padding(.top, 16)
         .padding(.bottom, 24)
         .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
+        .presentationDragIndicator(.hidden)
         .presentationCornerRadius(32)
         .presentationBackground(JedaColor.background)
     }
