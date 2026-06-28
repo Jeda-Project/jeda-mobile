@@ -137,7 +137,6 @@ struct JedaReflectionDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: JedaSpacing.lg) {
-                headerSection
                 summarySection
                 resultSection
                 reflectionSection
@@ -147,15 +146,12 @@ struct JedaReflectionDetailView: View {
             .padding(.bottom, JedaSpacing.xl)
         }
         .background { JedaScreenBackground() }
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationTitle("Hasil Analisis")
+        .navigationBarTitleDisplayMode(.large)
         .jedaHideTabBar()
     }
 
-    private var headerSection: some View {
-        Text("Hasil Analisis")
-            .font(.largeTitle.weight(.bold))
-            .foregroundStyle(Color.black)
-    }
+
 
     private var summarySection: some View {
         JedaGlassSurface(tint: JedaColor.sage.opacity(0.08)) {
@@ -278,6 +274,23 @@ struct JedaReflectionDetailView: View {
                         .foregroundStyle(JedaColor.textSecondary)
 
                     Text(entry.reflectionText)
+                        .font(JedaTypography.body)
+                        .foregroundStyle(JedaColor.textPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                if let aiReply = entry.aiReplyText, !aiReply.isEmpty {
+                    Divider()
+
+                    HStack(spacing: JedaSpacing.xs) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text("Balasan Jeda")
+                            .font(JedaTypography.caption)
+                    }
+                    .foregroundStyle(JedaColor.sage)
+
+                    Text(aiReply)
                         .font(JedaTypography.body)
                         .foregroundStyle(JedaColor.textPrimary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -459,7 +472,7 @@ struct JedaDeeperReflectionView: View {
             .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: JedaSpacing.xs) {
-                Text("Jeda · AI cloud")
+                Text("Jeda · AI Cloud")
                     .font(JedaTypography.caption)
                     .foregroundStyle(JedaColor.textSecondary)
 
