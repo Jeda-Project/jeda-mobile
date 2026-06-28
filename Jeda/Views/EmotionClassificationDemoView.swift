@@ -8,6 +8,7 @@ import SwiftUI
 struct EmotionClassificationDemoView: View {
     @Environment(\.emotionService) private var emotionService
     @Environment(\.reflectionStore) private var reflectionStore
+    @Environment(\.crisisDetector) private var crisisDetector
 
     @State private var journalText = ""
     @State private var moodStep: Int = 2
@@ -18,6 +19,7 @@ struct EmotionClassificationDemoView: View {
     @State private var showDeeperReflection = false
     @State private var isShowingResult = false
     @State private var isSaving = false
+    @State private var crisisDetected = false
 
     private var selectedMood: JedaMood {
         JedaMood.mood(forCheckInStep: moodStep)
@@ -30,6 +32,9 @@ struct EmotionClassificationDemoView: View {
                     headerSection
 
                     if isShowingResult {
+                        if crisisDetected {
+                            JedaCrisisSupportCard()
+                        }
                         if let result {
                             summarySection
                             resultSection(result)
@@ -308,6 +313,7 @@ struct EmotionClassificationDemoView: View {
         isAnalyzing = true
         errorMessage = nil
         reflectionQuestion = nil
+        crisisDetected = crisisDetector.detect(in: journalText).isCrisis
         defer { isAnalyzing = false }
 
         do {
@@ -349,6 +355,7 @@ struct EmotionClassificationDemoView: View {
             result = nil
             reflectionQuestion = nil
             errorMessage = nil
+            crisisDetected = false
             journalText = ""
             moodStep = 2
         }
