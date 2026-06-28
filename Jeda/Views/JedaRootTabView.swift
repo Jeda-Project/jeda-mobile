@@ -42,10 +42,7 @@ struct JedaRootTabView: View {
                 }
                 .tag(JedaTab.checkIn)
 
-            JedaPlaceholderTabView(
-                title: JedaTab.reflection.title,
-                kind: .loading
-            )
+            JedaReflectionView()
             .tabItem {
                 Label(JedaTab.reflection.title, systemImage: JedaTab.reflection.systemImageName)
             }

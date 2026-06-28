@@ -20,10 +20,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct JedaApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+    @StateObject private var reflectionStore = ReflectionStore()
+
     var body: some Scene {
         WindowGroup {
             JedaRootTabView()
+                .environment(\.reflectionStore, reflectionStore)
         }
     }
 }

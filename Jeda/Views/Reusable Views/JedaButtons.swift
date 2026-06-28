@@ -43,7 +43,7 @@ struct JedaButton: View {
         switch kind {
         case .primary:
             button
-                .jedaProminentButtonStyle(tint: JedaColor.clay)
+                .jedaProminentButtonStyle(tint: JedaColor.sage)
         case .secondary:
             button
                 .jedaGlassButtonStyle(tint: JedaColor.sage)
