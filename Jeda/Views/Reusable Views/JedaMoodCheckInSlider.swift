@@ -8,13 +8,7 @@ import SwiftUI
 struct JedaMoodCheckInSlider: View {
     @Binding var step: Int
 
-    private let steps: [(label: String, icon: String)] = [
-        ("Berat",  "cloud.rain"),
-        ("Lelah",  "flame"),
-        ("Netral", "heart.fill"),
-        ("Lega",   "sun.max.fill"),
-        ("Ringan", "sparkles")
-    ]
+    private let moods = JedaMood.allCases
     private let thumbSize: CGFloat = 44
     private let trackHeight: CGFloat = 44
 
@@ -32,11 +26,11 @@ struct JedaMoodCheckInSlider: View {
                 sliderTrack
 
                 HStack {
-                    ForEach(steps.indices, id: \.self) { i in
+                    ForEach(moods.indices, id: \.self) { i in
                         VStack(spacing: 2) {
-                            Image(systemName: steps[i].icon)
+                            Image(systemName: moods[i].symbol)
                                 .font(.system(size: 12))
-                            Text(steps[i].label)
+                            Text(moods[i].title)
                                 .font(JedaTypography.caption)
                         }
                         .foregroundStyle(i == step ? accent : JedaColor.textSecondary)
@@ -52,7 +46,7 @@ struct JedaMoodCheckInSlider: View {
         GeometryReader { proxy in
             let width = proxy.size.width
             let travel = max(width - thumbSize, 1)
-            let stepWidth = travel / CGFloat(steps.count - 1)
+            let stepWidth = travel / CGFloat(moods.count - 1)
             let x = CGFloat(step) * stepWidth
 
             ZStack(alignment: .leading) {
@@ -62,7 +56,7 @@ struct JedaMoodCheckInSlider: View {
                     .fill(.white)
                     .frame(width: thumbSize, height: thumbSize)
                     .overlay {
-                        Image(systemName: steps[step].icon)
+                        Image(systemName: moods[step].symbol)
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundStyle(accent)
                     }
@@ -80,7 +74,7 @@ struct JedaMoodCheckInSlider: View {
                     .onChanged { gesture in
                         let rawStep = (gesture.location.x - thumbSize / 2) / stepWidth
                         let snapped = Int(rawStep.rounded())
-                        let clamped = min(max(snapped, 0), steps.count - 1)
+                        let clamped = min(max(snapped, 0), moods.count - 1)
                         if clamped != step {
                             step = clamped
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -89,10 +83,10 @@ struct JedaMoodCheckInSlider: View {
             )
             .accessibilityElement()
             .accessibilityLabel("Slider mood")
-            .accessibilityValue(steps[step].label)
+            .accessibilityValue(moods[step].title)
             .accessibilityAdjustableAction { direction in
                 switch direction {
-                case .increment: step = min(step + 1, steps.count - 1)
+                case .increment: step = min(step + 1, moods.count - 1)
                 case .decrement: step = max(step - 1, 0)
                 default: break
                 }

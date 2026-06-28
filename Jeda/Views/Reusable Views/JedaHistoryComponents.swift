@@ -352,9 +352,10 @@ struct JedaMoodBreakdownView: View {
             VStack(alignment: .leading, spacing: JedaSpacing.sm) {
                 ForEach(items) { item in
                     HStack(spacing: JedaSpacing.sm) {
-                        Circle()
-                            .fill(item.mood.tint)
-                            .frame(width: 10, height: 10)
+                        Image(systemName: item.mood.symbol)
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(item.mood.tint)
+                            .frame(width: 20, height: 20)
 
                         Text(item.mood.historyLabel)
                             .font(JedaTypography.caption)

@@ -146,22 +146,14 @@ enum HistoryFormatting {
 }
 
 extension JedaMood {
-    var historyLabel: String {
-        switch self {
-        case .heavy: "Sangat Sedih"
-        case .low: "Sedih"
-        case .neutral: "Netral"
-        case .okay: "Baik"
-        case .light: "Sangat Baik"
-        }
-    }
+    var historyLabel: String { title }
 
     var optimisticLabel: String {
         switch self {
         case .heavy: "Berat"
-        case .low: "Turun"
+        case .low: "Lelah"
         case .neutral: "Tenang"
-        case .okay: "Optimis"
+        case .okay: "Lega"
         case .light: "Ringan"
         }
     }

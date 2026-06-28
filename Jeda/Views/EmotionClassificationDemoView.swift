@@ -18,8 +18,9 @@ struct EmotionClassificationDemoView: View {
     @State private var showDeeperReflection = false
     @State private var isShowingResult = false
 
-    private let moodLabels = ["Berat", "Lelah", "Netral", "Lega", "Ringan"]
-    private let moodIcons = ["cloud.rain", "flame", "heart.fill", "sun.max.fill", "sparkles"]
+    private var selectedMood: JedaMood {
+        JedaMood.mood(forCheckInStep: moodStep)
+    }
 
     var body: some View {
         NavigationStack {
@@ -88,7 +89,7 @@ struct EmotionClassificationDemoView: View {
                         Circle()
                             .fill(JedaColor.sage.opacity(0.15))
                             .frame(width: 40, height: 40)
-                        Image(systemName: moodIcons[moodStep])
+                        Image(systemName: selectedMood.symbol)
                             .font(.system(size: 18, weight: .medium))
                             .foregroundStyle(JedaColor.sage)
                     }
@@ -97,7 +98,7 @@ struct EmotionClassificationDemoView: View {
                         Text("Mood hari ini")
                             .font(JedaTypography.caption)
                             .foregroundStyle(JedaColor.textSecondary)
-                        Text(moodLabels[moodStep])
+                        Text(selectedMood.title)
                             .font(JedaTypography.headline)
                             .foregroundStyle(JedaColor.textPrimary)
                     }

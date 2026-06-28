@@ -44,7 +44,7 @@ enum HistorySampleData {
             startDate: start,
             endDate: end,
             overallMood: .okay,
-            moodLabel: "Optimis",
+            moodLabel: "Lega",
             checkInCount: 6,
             totalDays: 7,
             summaryPhrase: "Stabil dengan momen lega di akhir minggu",
@@ -113,7 +113,7 @@ enum HistorySampleData {
             quoteOfWeek: "\"Progress kecil terasa membantu saat target harian dibuat lebih sempit.\"",
             stats: .init(checkIns: 6, wordsWritten: 842, aiReflections: 4),
             wordCloud: ["takut", "deadline", "review", "deploy", "lega", "tidur", "fokus", "PR"],
-            frequentEmotions: ["cloud.rain", "exclamationmark.triangle", "sun.min", "sun.max"],
+            frequentEmotions: ["cloud.rain", "flame", "heart.fill", "sun.max.fill"],
             checkInRhythm: [true, true, true, true, true, true, false],
             entries: entries
         )

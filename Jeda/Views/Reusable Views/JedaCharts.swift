@@ -79,7 +79,7 @@ struct JedaMoodTrendChartCard: View {
                     }
                 }
                 .chartYAxis {
-                    AxisMarks(position: .leading, values: [1, 3, 5]) { value in
+                    AxisMarks(position: .leading, values: [1, 2, 3, 4, 5]) { value in
                         AxisGridLine()
                             .foregroundStyle(JedaColor.separator)
                         AxisValueLabel {
@@ -112,12 +112,7 @@ struct JedaMoodTrendChartCard: View {
     }
 
     private func label(for score: Int) -> String {
-        switch score {
-        case 1: "Berat"
-        case 3: "Netral"
-        case 5: "Ringan"
-        default: "\(score)"
-        }
+        JedaMood(rawValue: score)?.title ?? "\(score)"
     }
 }
 
