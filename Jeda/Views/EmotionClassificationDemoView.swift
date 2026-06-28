@@ -56,18 +56,23 @@ struct EmotionClassificationDemoView: View {
             .background { JedaScreenBackground() }
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(isPresented: $showDeeperReflection) {
-                JedaDeeperReflectionView(
-                    journalExcerpt: String(journalText.prefix(120)),
-                    reflectionQuestion: reflectionQuestion ?? "Apa yang paling kamu rasakan saat ini?",
-                    detectedEmotion: result?.label,
-                    onSave: { entry in
-                        reflectionStore.add(entry)
-                        reflectionStore.clearPending()
-                        resetForm()
-                    }
-                )
+                if let result {
+                    JedaDeeperReflectionView(
+                        journalExcerpt: String(journalText.prefix(120)),
+                        mood: selectedMood,
+                        emotion: result.label,
+                        confidence: result.confidence,
+                        reflectionQuestion: reflectionQuestion ?? "Apa yang paling kamu rasakan saat ini?",
+                        onSave: { entry in
+                            reflectionStore.add(entry)
+                            reflectionStore.clearPending()
+                            resetForm()
+                        }
+                    )
+                }
             }
         }
+        .jedaHideTabBar(isShowingResult)
         .onChange(of: reflectionStore.completedSaveCount) {
             resetForm()
         }
@@ -313,6 +318,9 @@ struct EmotionClassificationDemoView: View {
             reflectionStore.setPending(
                 PendingReflection(
                     journalExcerpt: String(journalText.prefix(120)),
+                    mood: selectedMood,
+                    emotion: classified.label,
+                    confidence: classified.confidence,
                     reflectionQuestion: question,
                     highlightedPhrase: JedaOnDeviceReflection.keyword(from: journalText)
                 )

@@ -71,7 +71,7 @@ struct JedaButton: View {
             .background(alignment: .center) {
                 if isLoading {
                     ProgressView()
-                        .tint(Color.white)
+                        .tint(kind == .secondary ? JedaColor.sage : Color.white)
                         .scaleEffect(0.7)
                 }
             }

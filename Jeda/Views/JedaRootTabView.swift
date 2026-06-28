@@ -31,28 +31,48 @@ enum JedaTab: String, CaseIterable, Identifiable {
     }
 }
 
+struct JedaTabBarHiddenPreferenceKey: PreferenceKey {
+    static var defaultValue: Bool = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = value || nextValue()
+    }
+}
+
+extension View {
+    func jedaHideTabBar(_ hidden: Bool = true) -> some View {
+        preference(key: JedaTabBarHiddenPreferenceKey.self, value: hidden)
+    }
+}
+
 struct JedaRootTabView: View {
     @State private var selectedTab: JedaTab = .checkIn
+    @State private var isTabBarHidden: Bool = false
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            EmotionClassificationDemoView()
-                .tabItem {
-                    Label(JedaTab.checkIn.title, systemImage: JedaTab.checkIn.systemImageName)
+        ZStack(alignment: .bottom) {
+            Group {
+                switch selectedTab {
+                case .checkIn:
+                    EmotionClassificationDemoView()
+                case .reflection:
+                    JedaReflectionView(onSaveCompleted: { selectedTab = .checkIn })
+                case .history:
+                    HistoryRootView(weeks: HistorySampleData.weeks)
                 }
-                .tag(JedaTab.checkIn)
-
-            JedaReflectionView(onSaveCompleted: { selectedTab = .checkIn })
-            .tabItem {
-                Label(JedaTab.reflection.title, systemImage: JedaTab.reflection.systemImageName)
             }
-            .tag(JedaTab.reflection)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            HistoryRootView(weeks: HistorySampleData.weeks)
-                .tabItem {
-                    Label(JedaTab.history.title, systemImage: JedaTab.history.systemImageName)
-                }
-                .tag(JedaTab.history)
+            if !isTabBarHidden {
+                JedaFloatingTabBar(selection: $selectedTab)
+                    .padding(.horizontal, JedaSpacing.lg)
+                    .padding(.bottom, JedaSpacing.sm)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .onPreferenceChange(JedaTabBarHiddenPreferenceKey.self) { hidden in
+            withAnimation(.easeInOut(duration: 0.3)) {
+                isTabBarHidden = hidden
+            }
         }
         .tint(JedaColor.sage)
     }

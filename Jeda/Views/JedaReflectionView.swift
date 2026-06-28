@@ -38,6 +38,9 @@ struct JedaReflectionView: View {
                 if let pending = store.pendingReflection {
                     JedaDeeperReflectionView(
                         journalExcerpt: pending.journalExcerpt,
+                        mood: pending.mood,
+                        emotion: pending.emotion,
+                        confidence: pending.confidence,
                         reflectionQuestion: pending.reflectionQuestion,
                         onSave: { entry in
                             store.add(entry)
@@ -134,82 +137,153 @@ struct JedaReflectionDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: JedaSpacing.lg) {
-                excerptSection
-                questionSection
-                responseSection
+                headerSection
+                summarySection
+                resultSection
+                reflectionSection
             }
             .padding(.horizontal, JedaSpacing.lg)
             .padding(.top, JedaSpacing.md)
             .padding(.bottom, JedaSpacing.xl)
         }
         .background { JedaScreenBackground() }
-        .navigationTitle(entry.date.formatted(date: .long, time: .omitted))
-        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .navigationBar)
+        .jedaHideTabBar()
     }
 
-    private var excerptSection: some View {
-        VStack(alignment: .leading, spacing: JedaSpacing.xs) {
-            Label("Dari jurnal", systemImage: "book.closed")
-                .font(JedaTypography.caption)
+    private var headerSection: some View {
+        Text("Hasil Analisis")
+            .font(.largeTitle.weight(.bold))
+            .foregroundStyle(Color.black)
+    }
+
+    private var summarySection: some View {
+        JedaGlassSurface(tint: JedaColor.sage.opacity(0.08)) {
+            VStack(alignment: .leading, spacing: JedaSpacing.md) {
+                HStack(spacing: JedaSpacing.xs) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("Catatan Harianmu")
+                        .font(JedaTypography.caption)
+                }
                 .foregroundStyle(JedaColor.textSecondary)
-                .accessibilityHidden(true)
 
-            Text(entry.journalExcerpt)
-                .font(.system(.body, design: .serif))
-                .foregroundStyle(JedaColor.textPrimary)
-                .italic()
-                .lineSpacing(4)
-        }
-        .padding(JedaSpacing.lg)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(JedaColor.elevatedBackground)
-        .clipShape(RoundedRectangle(cornerRadius: JedaRadius.card, style: .continuous))
-    }
+                Divider()
 
-    private var questionSection: some View {
-        HStack(alignment: .top, spacing: JedaSpacing.md) {
-            ZStack {
-                Circle()
-                    .fill(JedaColor.sage.opacity(0.15))
-                    .frame(width: 44, height: 44)
-                Image(systemName: "sparkles")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(JedaColor.sage)
-            }
-            .accessibilityHidden(true)
+                HStack(spacing: JedaSpacing.sm) {
+                    ZStack {
+                        Circle()
+                            .fill(JedaColor.sage.opacity(0.15))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: entry.mood.symbol)
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(JedaColor.sage)
+                    }
 
-            VStack(alignment: .leading, spacing: JedaSpacing.xs) {
-                Text("Jeda · on-device")
-                    .font(JedaTypography.caption)
-                    .foregroundStyle(JedaColor.textSecondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Mood hari itu")
+                            .font(JedaTypography.caption)
+                            .foregroundStyle(JedaColor.textSecondary)
+                        Text(entry.mood.title)
+                            .font(JedaTypography.headline)
+                            .foregroundStyle(JedaColor.textPrimary)
+                    }
+                }
 
-                Text(entry.reflectionQuestion)
-                    .font(.system(.title3, design: .rounded, weight: .semibold))
+                Divider()
+
+                Text(entry.journalExcerpt)
+                    .font(JedaTypography.body)
                     .foregroundStyle(JedaColor.textPrimary)
+                    .lineLimit(4)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .padding(JedaSpacing.lg)
-        .background(JedaColor.elevatedBackground)
-        .clipShape(RoundedRectangle(cornerRadius: JedaRadius.card, style: .continuous))
     }
 
-    private var responseSection: some View {
-        VStack(alignment: .leading, spacing: JedaSpacing.xs) {
-            Text("Refleksimu")
-                .font(JedaTypography.caption)
+    private var resultSection: some View {
+        JedaGlassSurface(tint: JedaColor.sage.opacity(0.10)) {
+            VStack(alignment: .leading, spacing: JedaSpacing.md) {
+                HStack(spacing: JedaSpacing.xs) {
+                    Image(systemName: "waveform.path.ecg")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("Hasil Analisis Emosi")
+                        .font(JedaTypography.caption)
+                }
                 .foregroundStyle(JedaColor.textSecondary)
 
-            Text(entry.reflectionText)
-                .font(JedaTypography.body)
-                .foregroundStyle(JedaColor.textPrimary)
-                .lineSpacing(4)
-                .fixedSize(horizontal: false, vertical: true)
+                Divider()
+
+                HStack(spacing: JedaSpacing.sm) {
+                    ZStack {
+                        Circle()
+                            .fill(JedaColor.sage.opacity(0.15))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: entry.emotion.systemImageName)
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(JedaColor.sage)
+                    }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(entry.emotion.displayName)
+                            .font(JedaTypography.headline)
+                            .foregroundStyle(JedaColor.textPrimary)
+                        Text(entry.confidence.formatted(.percent.precision(.fractionLength(0))) + " keyakinan")
+                            .font(JedaTypography.caption)
+                            .foregroundStyle(JedaColor.textSecondary)
+                    }
+
+                    Spacer()
+                }
+
+                Divider()
+
+                HStack {
+                    Spacer()
+                    HStack(spacing: JedaSpacing.xs) {
+                        Image(systemName: "info.circle.fill")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text("AI Bisa Salah")
+                            .font(JedaTypography.caption)
+                    }
+                    .foregroundStyle(JedaColor.textSecondary)
+                }
+            }
         }
-        .padding(JedaSpacing.lg)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(JedaColor.elevatedBackground)
-        .clipShape(RoundedRectangle(cornerRadius: JedaRadius.card, style: .continuous))
+    }
+
+    private var reflectionSection: some View {
+        JedaGlassSurface(tint: JedaColor.dustyBlue.opacity(0.12)) {
+            VStack(alignment: .leading, spacing: JedaSpacing.md) {
+                HStack(spacing: JedaSpacing.xs) {
+                    Image(systemName: "bubble.left.and.bubble.right")
+                        .font(.system(size: 10, weight: .semibold))
+                    Text("Refleksi")
+                        .font(JedaTypography.caption)
+                }
+                .foregroundStyle(JedaColor.textSecondary)
+
+                Divider()
+
+                Text(entry.reflectionQuestion)
+                    .font(JedaTypography.body)
+                    .foregroundStyle(JedaColor.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if !entry.reflectionText.isEmpty {
+                    Divider()
+
+                    Text("Refleksimu")
+                        .font(JedaTypography.caption)
+                        .foregroundStyle(JedaColor.textSecondary)
+
+                    Text(entry.reflectionText)
+                        .font(JedaTypography.body)
+                        .foregroundStyle(JedaColor.textPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+        }
     }
 }
 
@@ -222,19 +296,25 @@ private enum AIReplyState {
 
 struct JedaDeeperReflectionView: View {
     let journalExcerpt: String
+    let mood: JedaMood
+    let emotion: Emotion
+    let confidence: Double
     let reflectionQuestion: String
-    let detectedEmotion: Emotion?
     let onSave: (ReflectionEntry) -> Void
 
     init(
         journalExcerpt: String,
+        mood: JedaMood,
+        emotion: Emotion,
+        confidence: Double,
         reflectionQuestion: String,
-        detectedEmotion: Emotion? = nil,
         onSave: @escaping (ReflectionEntry) -> Void
     ) {
         self.journalExcerpt = journalExcerpt
+        self.mood = mood
+        self.emotion = emotion
+        self.confidence = confidence
         self.reflectionQuestion = reflectionQuestion
-        self.detectedEmotion = detectedEmotion
         self.onSave = onSave
     }
 
@@ -243,6 +323,7 @@ struct JedaDeeperReflectionView: View {
     @State private var aiReplyState: AIReplyState = .idle
     @State private var showConsentSheet = false
     @State private var isSaving = false
+    @State private var isRetrying = false
     @Environment(\.dismiss) private var dismiss
     @Environment(\.aiService) private var aiService
     @Environment(\.reflectionAIConsentStore) private var consentStore
@@ -262,6 +343,7 @@ struct JedaDeeperReflectionView: View {
         .background(JedaColor.background.ignoresSafeArea())
         .navigationTitle("Refleksi")
         .navigationBarTitleDisplayMode(.large)
+        .jedaHideTabBar()
         .sheet(isPresented: $showConsentSheet) {
             ReflectionAIConsentSheet(
                 onGrant: {
@@ -416,9 +498,10 @@ struct JedaDeeperReflectionView: View {
                     .font(JedaTypography.body)
                     .foregroundStyle(JedaColor.textSecondary)
 
-                JedaButton("Coba lagi", kind: .secondary) {
-                    sendReflection()
+                JedaButton("Coba lagi", kind: .secondary, isLoading: isRetrying) {
+                    retryReflection()
                 }
+                .disabled(isRetrying)
                 .accessibilityLabel("Coba kirim ulang refleksi ke AI")
             }
         }
@@ -433,6 +516,7 @@ struct JedaDeeperReflectionView: View {
     }
 
     private var isAIReplying: Bool {
+        if isRetrying { return true }
         if case .loading = aiReplyState { return true }
         return false
     }
@@ -513,12 +597,30 @@ struct JedaDeeperReflectionView: View {
             do {
                 let reply = try await aiService.generateReflection(
                     for: textToSend,
-                    detectedEmotion: detectedEmotion?.rawValue
+                    detectedEmotion: emotion.rawValue
                 )
                 aiReplyState = .loaded(reply)
             } catch {
                 aiReplyState = .failed("Gagal mendapat balasan. Coba lagi.")
             }
+        }
+    }
+
+    private func retryReflection() {
+        guard let aiService else { return }
+        isRetrying = true
+        let textToSend = reflectionText
+        Task {
+            do {
+                let reply = try await aiService.generateReflection(
+                    for: textToSend,
+                    detectedEmotion: emotion.rawValue
+                )
+                aiReplyState = .loaded(reply)
+            } catch {
+                aiReplyState = .failed("Gagal mendapat balasan. Coba lagi.")
+            }
+            isRetrying = false
         }
     }
 
@@ -539,6 +641,9 @@ struct JedaDeeperReflectionView: View {
 
         let entry = ReflectionEntry(
             journalExcerpt: journalExcerpt,
+            mood: mood,
+            emotion: emotion,
+            confidence: confidence,
             reflectionQuestion: reflectionQuestion,
             reflectionText: reflectionText,
             aiReplyText: aiReplyText
@@ -556,32 +661,13 @@ struct JedaDeeperReflectionView: View {
     JedaReflectionView()
 }
 
-#Preview("Tab – with entries") {
-    let store = ReflectionStore()
-    store.add(ReflectionEntry(
-        journalExcerpt: "Sempat kepikiran soal review code yang tadi...",
-        reflectionQuestion: "Apa yang paling challenging dari proses itu?",
-        reflectionText: "Bagian paling sulit adalah ketika harus memberi feedback yang jujur tapi tetap membangun."
-    ))
-    return JedaReflectionView()
-        .environment(\.reflectionStore, store)
-}
-
-#Preview("Tab – with pending reflection") {
-    let store = ReflectionStore()
-    store.setPending(PendingReflection(
-        journalExcerpt: "Sempat kepikiran soal review code yang tadi...",
-        reflectionQuestion: "Kamu menyebut \u{201C}review\u{201D} — apa yang paling challenging dari proses itu?",
-        highlightedPhrase: "review"
-    ))
-    return JedaReflectionView()
-        .environment(\.reflectionStore, store)
-}
-
 #Preview("Deeper reflection page") {
     NavigationStack {
         JedaDeeperReflectionView(
             journalExcerpt: "Sempat kepikiran soal review code yang tadi...",
+            mood: .neutral,
+            emotion: .fear,
+            confidence: 0.82,
             reflectionQuestion: "Apa yang paling challenging dari proses itu?",
             onSave: { _ in }
         )

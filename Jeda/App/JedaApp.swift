@@ -26,6 +26,7 @@ struct JedaApp: App {
     private static let alwaysShowOnboardingForReview = true
 
     private let onboardingProgressStore = UserDefaultsOnboardingProgressStore()
+    private let aiService: (any AICompleting)? = try? AIService.makeDefault()
 
     var body: some Scene {
         WindowGroup {
@@ -36,6 +37,7 @@ struct JedaApp: App {
             )
                 .environment(\.onboardingProgressStore, onboardingProgressStore)
                 .environment(\.reflectionStore, reflectionStore)
+                .environment(\.aiService, aiService)
         }
     }
 }
