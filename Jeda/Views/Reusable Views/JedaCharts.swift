@@ -207,8 +207,8 @@ private func chartHeader(
             .font(.system(size: 18, weight: .semibold, design: .rounded))
             .foregroundStyle(tint)
             .frame(width: 38, height: 38)
-            .glassEffect(
-                Glass.regular.tint(tint.opacity(0.16)),
+            .jedaGlassEffect(
+                tint: tint.opacity(0.16),
                 in: Circle()
             )
 

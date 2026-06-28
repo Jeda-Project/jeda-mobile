@@ -26,7 +26,7 @@ struct DesignSystemShowcaseView: View {
                     }
 
                     JedaSection("Buttons") {
-                        GlassEffectContainer(spacing: JedaSpacing.md) {
+                        JedaGlassEffectContainer(spacing: JedaSpacing.md) {
                             VStack(alignment: .leading, spacing: JedaSpacing.md) {
                                 JedaButton("Simpan check-in", systemImage: "checkmark", kind: .primary) {}
                                 JedaButton("Cerita lebih dalam", systemImage: "arrow.up.message", kind: .secondary) {}

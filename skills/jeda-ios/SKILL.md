@@ -2,9 +2,10 @@
 name: jeda-ios
 description: >-
   Guides iOS/SwiftUI development for the Jeda app following Apple HIG design
-  system, SF Symbols, Calm/Muted color branding, folder structure, networking,
-  and Core ML patterns. Use when building Jeda UI, icons, accessibility, views,
-  API endpoints, models, or on-device ML integration.
+  system, reusable views in Jeda/Views/Reusable Views, SF Symbols, Calm/Muted
+  color branding, glass compatibility, networking, and Core ML patterns. Use
+  when building Jeda screens, composing UI from JedaButton/JedaGlassSurface,
+  views, API endpoints, models, or on-device ML integration.
 ---
 
 # Jeda iOS Development
@@ -25,6 +26,7 @@ Jeda/
 ├── App/              # @main entry, AppDelegate (Firebase)
 ├── Models/           # Domain types, enums, result structs
 ├── Views/            # SwiftUI views (one primary view per file)
+│   └── Reusable Views/  # Design system components — reuse, jangan duplikasi
 ├── Services/         # Business logic, ML, helpers
 │   └── Networking/   # HTTP layer (shared)
 │       └── Endpoints/  # Per-domain APIEndpoint enums
@@ -37,6 +39,7 @@ Jeda/
 | Task | Location |
 |------|----------|
 | New screen | `Jeda/Views/` |
+| Reusable UI component | `Jeda/Views/Reusable Views/` |
 | Domain model | `Jeda/Models/` |
 | On-device / local logic | `Jeda/Services/` |
 | REST endpoint | `Jeda/Services/Networking/Endpoints/` |
@@ -199,6 +202,57 @@ Detail HIG + contoh SwiftUI: [reference.md — Design System](reference.md#desig
 
 Daftar lengkap & contoh kode: [reference.md — SF Symbols](reference.md#sf-symbols).
 
+## Reusable Views
+
+Komponen UI Jeda ada di **`Jeda/Views/Reusable Views/`**. **Reuse dulu, buat baru hanya jika belum ada.**
+
+### Aturan
+
+- Screen/feature view (`Jeda/Views/`) = **komposisi** reusable views + state/logic
+- Jangan duplikasi styling (warna, radius, glass, typography) di screen — pakai token `JedaColor`, `JedaSpacing`, `JedaTypography`, `JedaRadius`
+- Glass effect **wajib** lewat `JedaGlassSurface` / `.jedaGlassEffect()` — jangan panggil API iOS 26 langsung
+- Setiap reusable view wajib `#Preview`; screen baru ikut pola `DesignSystemShowcaseView`
+- Naming: prefix **`Jeda`** + peran (`JedaButton`, `JedaJournalInput`)
+
+### Katalog komponen
+
+| Komponen | Use case |
+|----------|----------|
+| `JedaScreenBackground` | Background layar dengan gradient brand |
+| `JedaSection` | Heading section + subtitle + content |
+| `JedaGlassSurface` | Card/container glass (Liquid Glass iOS 26+ / material fallback) |
+| `JedaButton` / `JedaIconButton` | CTA primary, secondary, warning |
+| `JedaJournalInput` | Input journal dengan title, prompt, counter |
+| `JedaMoodPicker` | Pilih mood 5 level (Berat → Ringan) |
+| `JedaMoodSliderCard` | Slider mood + CTA lanjut |
+| `JedaReflectionCard` | Kartu refleksi AI |
+| `JedaWeeklyPatternCard` | Pattern tracker mingguan |
+| `JedaMoodTrendChartCard` / `JedaTopicBarChartCard` | Grafik mood & topik |
+| `JedaStateCard` | Loading / empty / error state |
+| `JedaSafetyBanner` | Safety guardrail krisis |
+
+Token design: `JedaTheme.swift` (`JedaColor`, `JedaSpacing`, `JedaTypography`, `JedaRadius`).
+
+### Pola komposisi screen
+
+```swift
+NavigationStack {
+    ScrollView {
+        VStack(alignment: .leading, spacing: JedaSpacing.xl) {
+            JedaSection("Check-in", subtitle: "...") {
+                JedaMoodPicker(selectedMood: $mood)
+                JedaJournalInput(title: "...", prompt: "...", text: $text)
+                JedaButton("Simpan", systemImage: "checkmark", kind: .primary) { save() }
+            }
+        }
+        .padding(.horizontal, JedaSpacing.lg)
+    }
+    .background { JedaScreenBackground() }
+}
+```
+
+Referensi lengkap API & contoh: [reference.md — Reusable Views](reference.md#reusable-views). Living catalog: `DesignSystemShowcaseView.swift`.
+
 ## SwiftUI Views
 
 - Root navigation: `NavigationStack`
@@ -239,8 +293,10 @@ CI runs on PRs to `main` / `develop` via `.github/workflows/ios-ci.yml`.
 - [ ] UI mengikuti HIG (native components, 44pt touch target, Dynamic Type)
 - [ ] Ikon memakai SF Symbols; custom asset hanya jika tidak ada alternatif
 - [ ] Ikon/tombol interaktif punya accessibilityLabel
+- [ ] Screen pakai reusable views; styling lewat JedaTheme token
+- [ ] Glass lewat JedaGlassSurface / jedaGlassEffect (bukan API iOS 26 langsung)
 ```
 
 ## Additional Resources
 
-- HIG patterns, SF Symbols, color tokens & SwiftUI usage: [reference.md](reference.md)
+- Reusable views, HIG, SF Symbols, color tokens: [reference.md](reference.md)

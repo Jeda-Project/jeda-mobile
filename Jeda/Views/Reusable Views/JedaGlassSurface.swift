@@ -36,13 +36,12 @@ struct JedaGlassSurface<Content: View>: View {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(JedaColor.elevatedBackground.opacity(0.16))
             }
-            .glassEffect(effect, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+            .jedaGlassEffect(
+                tint: tint,
+                isInteractive: isInteractive,
+                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            )
             .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private var effect: Glass {
-        let base = Glass.regular.tint(tint)
-        return isInteractive ? base.interactive() : base
     }
 }
 

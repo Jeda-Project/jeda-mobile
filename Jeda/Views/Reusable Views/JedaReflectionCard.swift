@@ -20,8 +20,8 @@ struct JedaReflectionCard: View {
                         .font(.system(size: 24, weight: .semibold, design: .rounded))
                         .foregroundStyle(JedaColor.sage)
                         .frame(width: 44, height: 44)
-                        .glassEffect(
-                            Glass.regular.tint(JedaColor.sage.opacity(0.18)),
+                        .jedaGlassEffect(
+                            tint: JedaColor.sage.opacity(0.18),
                             in: Circle()
                         )
 

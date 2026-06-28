@@ -35,8 +35,8 @@ struct JedaWeeklyPatternCard: View {
                                 .foregroundStyle(JedaColor.textPrimary)
                                 .padding(.horizontal, JedaSpacing.md)
                                 .padding(.vertical, JedaSpacing.sm)
-                                .glassEffect(
-                                    Glass.regular.tint(JedaColor.dustyBlue.opacity(0.14)),
+                                .jedaGlassEffect(
+                                    tint: JedaColor.dustyBlue.opacity(0.14),
                                     in: Capsule()
                                 )
                         }

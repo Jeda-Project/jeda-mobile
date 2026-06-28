@@ -52,9 +52,8 @@ struct JedaMoodSliderCard: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 58)
                 }
-                .buttonStyle(.glassProminent)
+                .jedaProminentButtonStyle(tint: accent)
                 .buttonBorderShape(.capsule)
-                .tint(accent)
                 .accessibilityLabel("Lanjut dengan mood \(state.title)")
             }
             .padding(.horizontal, JedaSpacing.lg)
@@ -77,8 +76,8 @@ struct JedaMoodSliderCard: View {
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(JedaColor.elevatedBackground.opacity(0.38))
-                    .glassEffect(
-                        Glass.regular.tint(accent.opacity(0.10)),
+                    .jedaGlassEffect(
+                        tint: accent.opacity(0.10),
                         in: Capsule()
                     )
 
@@ -101,8 +100,9 @@ struct JedaMoodSliderCard: View {
                     .fill(.white.opacity(0.92))
                     .frame(width: thumbSize, height: thumbSize)
                     .shadow(color: accent.opacity(0.22), radius: 16, x: 0, y: 8)
-                    .glassEffect(
-                        Glass.regular.tint(.white.opacity(0.12)).interactive(),
+                    .jedaGlassEffect(
+                        tint: .white.opacity(0.12),
+                        isInteractive: true,
                         in: Circle()
                     )
                     .offset(x: x)

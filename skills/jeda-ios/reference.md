@@ -343,6 +343,195 @@ TabView(selection: $selectedTab) {
 .tint(JedaColor.primary)
 ```
 
+## Reusable Views
+
+Lokasi: `Jeda/Views/Reusable Views/` · Living catalog: `DesignSystemShowcaseView.swift`
+
+### Design tokens (`JedaTheme.swift`)
+
+| Token | Values | Usage |
+|-------|--------|-------|
+| `JedaColor.sage` | Sage green | Primary, highlight |
+| `JedaColor.dustyBlue` | Dusty blue | Secondary, chips |
+| `JedaColor.clay` | Warm clay | Accent / CTA |
+| `JedaColor.terracotta` | Soft terracotta | Warning / crisis |
+| `JedaColor.background` | Adaptive | Screen base |
+| `JedaColor.textPrimary` / `textSecondary` | Adaptive | Body & label |
+| `JedaSpacing` | xs=6, sm=10, md=16, lg=24, xl=32 | Layout spacing |
+| `JedaRadius` | chip=18, control=22, card=28 | Corner radius |
+| `JedaTypography` | display, title, headline, body, caption | System rounded fonts |
+
+### Layout & containers
+
+**`JedaScreenBackground`** — gradient background untuk semua screen:
+
+```swift
+ScrollView { ... }
+    .background { JedaScreenBackground() }
+```
+
+**`JedaSection(title, subtitle:, content:)`** — section dengan heading:
+
+```swift
+JedaSection("Weekly Pattern", subtitle: "Ringkasan 7 hari") {
+    JedaWeeklyPatternCard(...)
+}
+```
+
+**`JedaGlassSurface(cornerRadius:tint:isInteractive:padding:content:)`** — card glass:
+
+```swift
+JedaGlassSurface(tint: JedaColor.sage.opacity(0.12)) {
+    VStack { ... }
+}
+```
+
+Defaults: `cornerRadius = JedaRadius.card`, `padding = JedaSpacing.lg`.
+
+### Glass compatibility (`JedaGlassCompatibility.swift`)
+
+Jangan panggil langsung di view/screen:
+
+```swift
+.glassEffect(...)              // ❌
+Glass.regular                  // ❌
+GlassEffectContainer           // ❌
+.buttonStyle(.glassProminent)  // ❌
+```
+
+Gunakan wrapper:
+
+| Wrapper | iOS 26+ | iOS < 26 |
+|---------|---------|----------|
+| `.jedaGlassEffect(tint:isInteractive:in:)` | Liquid Glass | ultraThinMaterial + tint |
+| `JedaGlassEffectContainer(spacing:)` | Native container | VStack fallback |
+| `.jedaProminentButtonStyle(tint:)` | `.glassProminent` | `.borderedProminent` |
+| `.jedaGlassButtonStyle(tint:)` | `.glass` | `.bordered` |
+| `.jedaIconGlassButtonStyle(tint:)` | `.glass` | material circle |
+
+### Buttons
+
+```swift
+// Primary CTA
+JedaButton("Simpan check-in", systemImage: "checkmark", kind: .primary) { save() }
+
+// Secondary
+JedaButton("Cerita lebih dalam", systemImage: "arrow.up.message", kind: .secondary) { ... }
+
+// Warning / crisis
+JedaButton("Lihat bantuan", systemImage: "phone", kind: .warning) { ... }
+
+// Icon only (44×44 pt)
+JedaIconButton(systemImage: "gearshape", accessibilityLabel: "Buka pengaturan") { ... }
+```
+
+### Input & check-in
+
+**`JedaJournalInput(title:prompt:text:)`** — journal entry:
+
+```swift
+@State private var journalText = ""
+
+JedaJournalInput(
+    title: "Apa yang paling berat hari ini?",
+    prompt: "Jawab singkat juga cukup.",
+    text: $journalText
+)
+```
+
+**`JedaMoodPicker(selectedMood:)`** — 5-level mood picker:
+
+```swift
+@State private var mood: JedaMood = .neutral
+
+JedaMoodPicker(selectedMood: $mood)
+```
+
+**`JedaMoodSliderCard(value:action:)`** — slider 0...1 + CTA:
+
+```swift
+@State private var sliderValue = 0.5
+
+JedaMoodSliderCard(value: $sliderValue) { proceed() }
+```
+
+### Feature cards
+
+**`JedaReflectionCard(phrase:question:action:)`** — AI reflection prompt:
+
+```swift
+JedaReflectionCard(
+    phrase: "backlog",
+    question: "Bagian mana yang paling menguras kepala?"
+) { openDeepReflection() }
+```
+
+**`JedaWeeklyPatternCard(topics:moodTrend:reliefNote:)`** — weekly insights:
+
+```swift
+JedaWeeklyPatternCard(
+    topics: ["backlog", "energi sore"],
+    moodTrend: "Lebih berat di awal minggu.",
+    reliefNote: "Progress kecil terasa membantu."
+)
+```
+
+**`JedaSafetyBanner(action:)`** — crisis resource CTA:
+
+```swift
+JedaSafetyBanner { showHelpResources() }
+```
+
+### Charts
+
+```swift
+JedaMoodTrendChartCard(
+    title: "Mood 7 hari",
+    subtitle: "Baca arah minggu.",
+    points: [
+        .init(day: "Sen", score: 2.0),
+        .init(day: "Sel", score: 3.5)
+    ]
+)
+
+JedaTopicBarChartCard(
+    title: "Topik sering muncul",
+    subtitle: "Kata yang berulang.",
+    items: [
+        .init(topic: "backlog", count: 5),
+        .init(topic: "fokus", count: 4)
+    ]
+)
+```
+
+### States
+
+```swift
+JedaStateCard(kind: .loading)
+JedaStateCard(kind: .empty, actionTitle: "Mulai check-in") { startCheckIn() }
+JedaStateCard(kind: .error, actionTitle: "Coba lagi") { retry() }
+```
+
+Kinds: `.loading` (redacted placeholder), `.empty`, `.error`.
+
+### Menambah reusable view baru
+
+1. Buat file di `Jeda/Views/Reusable Views/Jeda<Name>.swift`
+2. Prefix `Jeda`, compose dari `JedaGlassSurface` + token theme
+3. Terima data via `let` / `@Binding` — **tanpa** service call di dalam view
+4. Glass lewat `.jedaGlassEffect()` / `JedaGlassSurface`
+5. Tambah `#Preview` + entry di `DesignSystemShowcaseView`
+6. Screen hanya compose — logic di ViewModel/service terpisah
+
+### Screen vs reusable — decision tree
+
+```
+Butuh UI yang sudah ada di katalog?  → Reuse komponen Jeda*
+Butuh variasi kecil?                  → Pass parameter, jangan fork styling
+Butuh pola UI baru yang dipakai ≥2x?  → Buat reusable view baru
+Sekali pakai, sangat spesifik?        → Boleh inline di screen (minimal)
+```
+
 ## Environment Injection Pattern
 
 ```swift

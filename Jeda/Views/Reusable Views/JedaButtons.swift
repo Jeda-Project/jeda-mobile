@@ -32,25 +32,25 @@ struct JedaButton: View {
     }
 
     var body: some View {
-        Group {
-            switch kind {
-            case .primary:
-                button
-                    .buttonStyle(.glassProminent)
-                    .tint(JedaColor.clay)
-            case .secondary:
-                button
-                    .buttonStyle(.glass)
-                    .tint(JedaColor.sage)
-            case .warning:
-                button
-                    .buttonStyle(.glassProminent)
-                    .tint(JedaColor.terracotta)
-            }
+        styledButton
+            .buttonBorderShape(.capsule)
+            .controlSize(.large)
+            .font(JedaTypography.headline)
+    }
+
+    @ViewBuilder
+    private var styledButton: some View {
+        switch kind {
+        case .primary:
+            button
+                .jedaProminentButtonStyle(tint: JedaColor.clay)
+        case .secondary:
+            button
+                .jedaGlassButtonStyle(tint: JedaColor.sage)
+        case .warning:
+            button
+                .jedaProminentButtonStyle(tint: JedaColor.terracotta)
         }
-        .buttonBorderShape(.capsule)
-        .controlSize(.large)
-        .font(JedaTypography.headline)
     }
 
     private var button: some View {
@@ -77,9 +77,8 @@ struct JedaIconButton: View {
                 .font(.system(size: 18, weight: .semibold, design: .rounded))
                 .frame(width: 44, height: 44)
         }
-        .buttonStyle(.glass)
+        .jedaIconGlassButtonStyle(tint: JedaColor.sage)
         .buttonBorderShape(.circle)
-        .tint(JedaColor.sage)
         .accessibilityLabel(accessibilityLabel)
     }
 }

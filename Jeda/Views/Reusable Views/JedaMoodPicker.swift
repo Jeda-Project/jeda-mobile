@@ -51,7 +51,7 @@ struct JedaMoodPicker: View {
     @Binding var selectedMood: JedaMood
 
     var body: some View {
-        GlassEffectContainer(spacing: JedaSpacing.sm) {
+        JedaGlassEffectContainer(spacing: JedaSpacing.sm) {
             HStack(spacing: JedaSpacing.sm) {
                 ForEach(JedaMood.allCases) { mood in
                     Button {
@@ -74,10 +74,9 @@ struct JedaMoodPicker: View {
                             RoundedRectangle(cornerRadius: JedaRadius.control, style: .continuous)
                                 .fill(selectedMood == mood ? mood.tint.opacity(0.18) : Color.clear)
                         }
-                        .glassEffect(
-                            Glass.regular
-                                .tint(selectedMood == mood ? mood.tint.opacity(0.22) : JedaColor.sage.opacity(0.06))
-                                .interactive(),
+                        .jedaGlassEffect(
+                            tint: selectedMood == mood ? mood.tint.opacity(0.22) : JedaColor.sage.opacity(0.06),
+                            isInteractive: true,
                             in: RoundedRectangle(cornerRadius: JedaRadius.control, style: .continuous)
                         )
                     }

@@ -67,8 +67,8 @@ struct JedaStateCard: View {
                     .font(.system(size: 24, weight: .semibold, design: .rounded))
                     .foregroundStyle(kind.tint)
                     .frame(width: 44, height: 44)
-                    .glassEffect(
-                        Glass.regular.tint(kind.tint.opacity(0.14)),
+                    .jedaGlassEffect(
+                        tint: kind.tint.opacity(0.14),
                         in: Circle()
                     )
 
