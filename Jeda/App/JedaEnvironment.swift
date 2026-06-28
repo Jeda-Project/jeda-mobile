@@ -15,6 +15,14 @@ private struct OnboardingProgressStoreKey: EnvironmentKey {
     static let defaultValue: any OnboardingProgressStoring = UserDefaultsOnboardingProgressStore()
 }
 
+private struct ReflectionStoreKey: EnvironmentKey {
+    @MainActor static let defaultValue = ReflectionStore()
+}
+
+private struct AICompletingKey: EnvironmentKey {
+    static let defaultValue: (any AICompleting)? = nil
+}
+
 extension EnvironmentValues {
     var emotionService: any EmotionAnalyzing {
         get { self[EmotionAnalyzingKey.self] }
@@ -24,5 +32,15 @@ extension EnvironmentValues {
     var onboardingProgressStore: any OnboardingProgressStoring {
         get { self[OnboardingProgressStoreKey.self] }
         set { self[OnboardingProgressStoreKey.self] = newValue }
+    }
+
+    var reflectionStore: ReflectionStore {
+        get { self[ReflectionStoreKey.self] }
+        set { self[ReflectionStoreKey.self] = newValue }
+    }
+
+    var aiService: (any AICompleting)? {
+        get { self[AICompletingKey.self] }
+        set { self[AICompletingKey.self] = newValue }
     }
 }

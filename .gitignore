@@ -60,5 +60,6 @@ Dependencies/
 # Environment & secrets
 .env
 .env.*
+Secrets.plist
 *.pem
 *.p12

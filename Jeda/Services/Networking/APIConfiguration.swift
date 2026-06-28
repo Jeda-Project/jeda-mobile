@@ -26,4 +26,16 @@ extension APIConfiguration {
     static let jeda = APIConfiguration(
         baseURL: URL(string: "https://api.jeda.example.com/v1")!
     )
+
+    /// OpenAI chat completions API.
+    static func openAI(apiKey: String, timeoutInterval: TimeInterval = 60) -> APIConfiguration {
+        APIConfiguration(
+            baseURL: JedaAIConstants.baseURL,
+            defaultHeaders: [
+                "Content-Type": "application/json",
+                "Authorization": "Bearer \(apiKey)",
+            ],
+            timeoutInterval: timeoutInterval
+        )
+    }
 }

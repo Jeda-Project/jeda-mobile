@@ -42,23 +42,17 @@ struct JedaRootTabView: View {
                 }
                 .tag(JedaTab.checkIn)
 
-            JedaPlaceholderTabView(
-                title: JedaTab.reflection.title,
-                kind: .loading
-            )
+            JedaReflectionView()
             .tabItem {
                 Label(JedaTab.reflection.title, systemImage: JedaTab.reflection.systemImageName)
             }
             .tag(JedaTab.reflection)
 
-            JedaPlaceholderTabView(
-                title: JedaTab.history.title,
-                kind: .empty
-            )
-            .tabItem {
-                Label(JedaTab.history.title, systemImage: JedaTab.history.systemImageName)
-            }
-            .tag(JedaTab.history)
+            HistoryRootView(weeks: HistorySampleData.weeks)
+                .tabItem {
+                    Label(JedaTab.history.title, systemImage: JedaTab.history.systemImageName)
+                }
+                .tag(JedaTab.history)
         }
         .tint(JedaColor.sage)
     }

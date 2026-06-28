@@ -164,7 +164,7 @@ struct DesignSystemShowcaseView: View {
     private func colorSwatch(_ title: String, color: Color) -> some View {
         JedaGlassSurface(cornerRadius: JedaRadius.control, tint: color.opacity(0.12), padding: JedaSpacing.md) {
             VStack(alignment: .leading, spacing: JedaSpacing.sm) {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: JedaRadius.control, style: .continuous)
                     .fill(color)
                     .frame(height: 54)
 
