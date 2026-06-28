@@ -9,33 +9,37 @@ struct HistoryOverviewView: View {
     let weeks: [WeekSummary]
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: JedaSpacing.xl) {
-                headerSection
+        VStack(alignment: .leading, spacing: 0) {
+            headerSection
+                .padding(.horizontal, JedaSpacing.lg)
+                .padding(.top, JedaSpacing.md)
 
-                if let currentWeek = resolvedWeeks.first {
-                    NavigationLink(value: HistoryDestination.weeklySummary(currentWeek.id)) {
-                        JedaThisWeekCard(week: currentWeek)
+            ScrollView {
+                VStack(alignment: .leading, spacing: JedaSpacing.xl) {
+                    if let currentWeek = resolvedWeeks.first {
+                        NavigationLink(value: HistoryDestination.weeklySummary(currentWeek.id)) {
+                            JedaThisWeekCard(week: currentWeek)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
-                }
 
-                if !previousWeeks.isEmpty {
-                    JedaSection("Minggu Sebelumnya") {
-                        VStack(spacing: JedaSpacing.md) {
-                            ForEach(previousWeeks) { week in
-                                NavigationLink(value: HistoryDestination.weeklySummary(week.id)) {
-                                    JedaWeekRowCard(week: week)
+                    if !previousWeeks.isEmpty {
+                        JedaSection("Minggu Sebelumnya") {
+                            VStack(spacing: JedaSpacing.md) {
+                                ForEach(previousWeeks) { week in
+                                    NavigationLink(value: HistoryDestination.weeklySummary(week.id)) {
+                                        JedaWeekRowCard(week: week)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                     }
                 }
+                .padding(.horizontal, JedaSpacing.lg)
+                .padding(.top, JedaSpacing.xl)
+                .padding(.bottom, JedaSpacing.xl + JedaSpacing.floatingTabBarClearance)
             }
-            .padding(.horizontal, JedaSpacing.lg)
-            .padding(.top, JedaSpacing.xl)
-            .padding(.bottom, JedaSpacing.xl + JedaSpacing.floatingTabBarClearance)
         }
         .background { JedaScreenBackground() }
         .toolbar(.hidden, for: .navigationBar)

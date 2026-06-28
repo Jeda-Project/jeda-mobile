@@ -14,7 +14,7 @@ struct JedaReflectionView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: JedaSpacing.lg) {
+            VStack(alignment: .leading, spacing: 0) {
                 headerSection
                     .padding(.horizontal, JedaSpacing.lg)
                     .padding(.top, JedaSpacing.md)
@@ -22,6 +22,7 @@ struct JedaReflectionView: View {
                 if let pending = store.pendingReflection {
                     pendingReflectionSection(pending)
                         .padding(.horizontal, JedaSpacing.lg)
+                        .padding(.top, JedaSpacing.lg)
                 }
 
                 if store.entries.isEmpty && store.pendingReflection == nil {
@@ -78,8 +79,10 @@ struct JedaReflectionView: View {
                 JedaStateCard(kind: .empty)
             }
             .padding(.horizontal, JedaSpacing.lg)
-            .padding(.bottom, JedaSpacing.xl)
+            .padding(.top, JedaSpacing.lg)
+            .padding(.bottom, JedaSpacing.xl + JedaSpacing.floatingTabBarClearance)
         }
+        .refreshable { await store.refreshFromBackend() }
     }
 
     private var entryList: some View {
@@ -90,11 +93,24 @@ struct JedaReflectionView: View {
                         ReflectionRowView(entry: entry)
                     }
                     .buttonStyle(.plain)
+                    .onAppear {
+                        if entry.id == store.entries.last?.id {
+                            Task { await store.loadNextPage() }
+                        }
+                    }
+                }
+
+                if store.isLoadingMore {
+                    ForEach(0..<3, id: \.self) { _ in
+                        ReflectionSkeletonRow()
+                    }
                 }
             }
             .padding(.horizontal, JedaSpacing.lg)
-            .padding(.bottom, JedaSpacing.xl)
+            .padding(.top, JedaSpacing.lg)
+            .padding(.bottom, JedaSpacing.xl + JedaSpacing.floatingTabBarClearance)
         }
+        .refreshable { await store.refreshFromBackend() }
         .navigationDestination(for: ReflectionEntry.self) { entry in
             JedaReflectionDetailView(entry: entry)
         }
@@ -128,6 +144,37 @@ private struct ReflectionRowView: View {
                     .lineLimit(2)
             }
         }
+    }
+}
+
+private struct ReflectionSkeletonRow: View {
+    @State private var phase: CGFloat = -1
+
+    var body: some View {
+        JedaGlassSurface(tint: JedaColor.sage.opacity(0.05)) {
+            VStack(alignment: .leading, spacing: JedaSpacing.xs) {
+                HStack {
+                    skeletonBar(width: 90, height: 12)
+                    Spacer()
+                    skeletonBar(width: 16, height: 16)
+                }
+                skeletonBar(width: .infinity, height: 16)
+                skeletonBar(width: 200, height: 16)
+                skeletonBar(width: 160, height: 14)
+            }
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                phase = 1
+            }
+        }
+    }
+
+    private func skeletonBar(width: CGFloat, height: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: 4, style: .continuous)
+            .fill(JedaColor.textSecondary.opacity(0.12 + 0.08 * phase))
+            .frame(maxWidth: width == .infinity ? .infinity : width)
+            .frame(height: height)
     }
 }
 

@@ -12,7 +12,7 @@ struct EntrySaveResult: Sendable {
 
 protocol EntryRepositing: Sendable {
     func saveReflection(_ entry: ReflectionEntry) async throws -> EntrySaveResult
-    func fetchReflections(limit: Int) async throws -> [ReflectionEntry]
+    func fetchReflections(limit: Int, before: Date?) async throws -> [ReflectionEntry]
     func deleteReflection(id: UUID) async throws
 }
 
@@ -45,9 +45,9 @@ struct EntryRepository: EntryRepositing {
         return EntrySaveResult(entry: saved, safety: envelope.safety)
     }
 
-    func fetchReflections(limit: Int) async throws -> [ReflectionEntry] {
+    func fetchReflections(limit: Int, before: Date? = nil) async throws -> [ReflectionEntry] {
         let envelope = try await api.request(
-            EntriesAPIEndpoint.list(from: nil, to: nil, limit: limit),
+            EntriesAPIEndpoint.list(from: nil, to: before, limit: limit),
             responseType: EntriesListEnvelope.self
         )
         return envelope.entries.map(reflectionEntry(from:))
@@ -81,7 +81,7 @@ struct EntryRepository: EntryRepositing {
             emotion: enrichment?.emotion ?? Self.fallbackEmotion(for: dto.sentimentScore),
             confidence: enrichment?.confidence ?? 0,
             reflectionQuestion: dto.openQuestion ?? "",
-            reflectionText: enrichment?.reflectionText ?? "",
+            reflectionText: enrichment?.reflectionText ?? dto.reflectedPhrase ?? "",
             aiReplyText: dto.reflectedPhrase
         )
     }

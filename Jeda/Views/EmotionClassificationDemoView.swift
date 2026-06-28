@@ -27,36 +27,40 @@ struct EmotionClassificationDemoView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: JedaSpacing.lg) {
-                    headerSection
+            VStack(alignment: .leading, spacing: 0) {
+                headerSection
+                    .padding(.horizontal, JedaSpacing.lg)
+                    .padding(.top, JedaSpacing.md)
 
-                    if isShowingResult {
-                        if crisisDetected {
-                            JedaCrisisSupportCard()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: JedaSpacing.lg) {
+                        if isShowingResult {
+                            if crisisDetected {
+                                JedaCrisisSupportCard()
+                            }
+                            if let result {
+                                summarySection
+                                resultSection(result)
+                            }
+                            if let question = reflectionQuestion {
+                                reflectionSection(question)
+                                deeperReflectionButton
+                            }
+                            if let errorMessage {
+                                errorSection(errorMessage)
+                            }
+                            resetButton
+                        } else {
+                            moodSliderSection
+                            journalSection
+                            analyzeButton
                         }
-                        if let result {
-                            summarySection
-                            resultSection(result)
-                        }
-                        if let question = reflectionQuestion {
-                            reflectionSection(question)
-                            deeperReflectionButton
-                        }
-                        if let errorMessage {
-                            errorSection(errorMessage)
-                        }
-                        resetButton
-                    } else {
-                        moodSliderSection
-                        journalSection
-                        analyzeButton
                     }
+                    .padding(.horizontal, JedaSpacing.lg)
+                    .padding(.top, JedaSpacing.xl)
+                    .padding(.bottom, JedaSpacing.xl + JedaSpacing.floatingTabBarClearance)
+                    .animation(.easeInOut(duration: 0.35), value: isShowingResult)
                 }
-                .padding(.horizontal, JedaSpacing.lg)
-                .padding(.top, JedaSpacing.md)
-                .padding(.bottom, JedaSpacing.xl)
-                .animation(.easeInOut(duration: 0.35), value: isShowingResult)
             }
             .background { JedaScreenBackground() }
             .toolbar(isShowingResult ? .visible : .hidden, for: .navigationBar)

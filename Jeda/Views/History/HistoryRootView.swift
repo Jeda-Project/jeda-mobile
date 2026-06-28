@@ -15,6 +15,7 @@ struct HistoryRootView: View {
     var body: some View {
         NavigationStack {
             HistoryOverviewView(weeks: weeks)
+                .refreshable { await reflectionStore.refreshFromBackend() }
                 .navigationDestination(for: HistoryDestination.self) { destination in
                     historyDetailView(for: destination)
                         .jedaHideTabBar()
