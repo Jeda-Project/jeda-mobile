@@ -61,18 +61,18 @@ struct JedaButton: View {
         Button(action: action) {
             Label {
                 Text(title)
-                    .opacity(isLoading ? 0 : 1)
             } icon: {
                 if let systemImage {
                     Image(systemName: systemImage)
-                        .opacity(isLoading ? 0 : 1)
                 }
             }
             .frame(maxWidth: .infinity)
-            .background {
+            .opacity(isLoading ? 0.001 : 1)
+            .background(alignment: .center) {
                 if isLoading {
                     ProgressView()
                         .tint(Color.white)
+                        .scaleEffect(0.7)
                 }
             }
         }
