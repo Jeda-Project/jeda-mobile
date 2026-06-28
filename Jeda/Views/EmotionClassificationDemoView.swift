@@ -63,6 +63,7 @@ struct EmotionClassificationDemoView: View {
                     onSave: { entry in
                         reflectionStore.add(entry)
                         reflectionStore.clearPending()
+                        resetForm()
                     }
                 )
             }
