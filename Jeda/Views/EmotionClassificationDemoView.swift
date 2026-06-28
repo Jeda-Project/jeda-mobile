@@ -59,7 +59,7 @@ struct EmotionClassificationDemoView: View {
                     }
                 }
             }
-            .navigationTitle("Emotion Demo")
+            .navigationTitle("Check-in")
         }
     }
 

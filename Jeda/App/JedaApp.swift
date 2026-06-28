@@ -23,7 +23,7 @@ struct JedaApp: App {
     
     var body: some Scene {
         WindowGroup {
-            EmotionClassificationDemoView()
+            JedaRootTabView()
         }
     }
 }
