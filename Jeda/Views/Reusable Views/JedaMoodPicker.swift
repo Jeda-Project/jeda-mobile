@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum JedaMood: Int, CaseIterable, Identifiable {
+enum JedaMood: Int, CaseIterable, Identifiable, Codable {
     case heavy = 1
     case low
     case neutral

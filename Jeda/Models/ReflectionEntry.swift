@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct ReflectionEntry: Identifiable, Hashable, Sendable {
+struct ReflectionEntry: Identifiable, Hashable, Sendable, Codable {
     let id: UUID
     let date: Date
     let journalExcerpt: String

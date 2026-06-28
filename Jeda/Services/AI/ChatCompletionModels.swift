@@ -18,17 +18,25 @@ struct ChatMessage: Codable, Sendable, Equatable {
     }
 }
 
+struct ChatCompletionResponseFormat: Encodable, Sendable {
+    let type: String
+
+    static let jsonObject = ChatCompletionResponseFormat(type: "json_object")
+}
+
 struct ChatCompletionRequest: Encodable, Sendable {
     let model: String
     let messages: [ChatMessage]
     var temperature: Double?
     var maxTokens: Int?
+    var responseFormat: ChatCompletionResponseFormat?
 
     enum CodingKeys: String, CodingKey {
         case model
         case messages
         case temperature
         case maxTokens = "max_tokens"
+        case responseFormat = "response_format"
     }
 }
 

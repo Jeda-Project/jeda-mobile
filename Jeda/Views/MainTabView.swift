@@ -43,7 +43,7 @@ struct MainTabView: View {
                 }
                 .tag(JedaMainTab.checkIn)
 
-            HistoryRootView(weeks: HistorySampleData.weeks)
+            HistoryRootView()
                 .tabItem {
                     Label(JedaMainTab.history.title, systemImage: JedaMainTab.history.systemImage)
                 }

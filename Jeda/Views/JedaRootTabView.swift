@@ -57,7 +57,7 @@ struct JedaRootTabView: View {
                 case .reflection:
                     JedaReflectionView(onSaveCompleted: { selectedTab = .checkIn })
                 case .history:
-                    HistoryRootView(weeks: HistorySampleData.weeks)
+                    HistoryRootView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -29,7 +29,6 @@ struct HistoryEntryDetailView: View {
         }
         .background { JedaScreenBackground() }
         .navigationBarTitleDisplayMode(.inline)
-        .jedaHideTabBar()
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {} label: {

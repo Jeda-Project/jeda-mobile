@@ -13,7 +13,7 @@ struct HistoryOverviewView: View {
             VStack(alignment: .leading, spacing: JedaSpacing.xl) {
                 headerSection
 
-                if let currentWeek = weeks.first {
+                if let currentWeek = resolvedWeeks.first {
                     NavigationLink(value: HistoryDestination.weeklySummary(currentWeek.id)) {
                         JedaThisWeekCard(week: currentWeek)
                     }
@@ -32,7 +32,8 @@ struct HistoryOverviewView: View {
                 }
             }
             .padding(.horizontal, JedaSpacing.lg)
-            .padding(.vertical, JedaSpacing.xl)
+            .padding(.top, JedaSpacing.xl)
+            .padding(.bottom, JedaSpacing.xl + JedaSpacing.floatingTabBarClearance)
         }
         .background { JedaScreenBackground() }
         .toolbar(.hidden, for: .navigationBar)
@@ -52,8 +53,14 @@ struct HistoryOverviewView: View {
         }
     }
 
+    private var resolvedWeeks: [WeekSummary] {
+        weeks.map { week in
+            EnrichedWeekRegistry.week(id: week.id) ?? week
+        }
+    }
+
     private var previousWeeks: [WeekSummary] {
-        Array(weeks.dropFirst())
+        Array(resolvedWeeks.dropFirst())
     }
 }
 

@@ -654,7 +654,9 @@ struct JedaDeeperReflectionView: View {
                 )
                 aiReplyState = .loaded(reply)
             } catch {
-                aiReplyState = .failed("Gagal mendapat balasan. Coba lagi.")
+                JedaAIReflectionLog.reflectionReplyFailed(error)
+                let detail = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                aiReplyState = .failed(detail)
             }
         }
     }
@@ -671,7 +673,9 @@ struct JedaDeeperReflectionView: View {
                 )
                 aiReplyState = .loaded(reply)
             } catch {
-                aiReplyState = .failed("Gagal mendapat balasan. Coba lagi.")
+                JedaAIReflectionLog.reflectionReplyFailed(error)
+                let detail = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                aiReplyState = .failed(detail)
             }
             isRetrying = false
         }

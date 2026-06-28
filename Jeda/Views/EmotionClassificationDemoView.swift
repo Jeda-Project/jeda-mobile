@@ -358,11 +358,25 @@ struct EmotionClassificationDemoView: View {
     }
 
     private func saveEntry() async {
+        guard let result else { return }
+
         isSaving = true
         defer { isSaving = false }
 
-        try? await Task.sleep(for: .milliseconds(600))
+        let question = reflectionQuestion
+            ?? JedaOnDeviceReflection.generate(from: journalText, emotion: result.label)
 
+        let entry = ReflectionEntry(
+            journalExcerpt: String(journalText.prefix(120)),
+            mood: selectedMood,
+            emotion: result.label,
+            confidence: result.confidence,
+            reflectionQuestion: question,
+            reflectionText: ""
+        )
+
+        reflectionStore.add(entry)
+        reflectionStore.clearPending()
         resetForm()
     }
 

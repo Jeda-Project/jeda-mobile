@@ -6,7 +6,15 @@
 import SwiftUI
 
 struct WeeklySummaryView: View {
-    let week: WeekSummary
+    @State private var viewModel: WeeklySummaryViewModel
+    @Environment(\.reflectionStore) private var reflectionStore
+    @Environment(\.aiService) private var aiService
+
+    init(week: WeekSummary) {
+        _viewModel = State(initialValue: WeeklySummaryViewModel(week: week))
+    }
+
+    private var week: WeekSummary { viewModel.week }
 
     var body: some View {
         ScrollView {
@@ -17,10 +25,12 @@ struct WeeklySummaryView: View {
                 checkInSection
                 aiReflectionSection
 
-                NavigationLink(value: HistoryDestination.weeklyStory(week.id)) {
-                    JedaButton("Lihat Refleksi Lengkap", systemImage: "arrow.right", kind: .primary) {}
+                if !viewModel.isLoadingAI {
+                    NavigationLink(value: HistoryDestination.weeklyStory(week.id)) {
+                        JedaButton("Lihat Refleksi Lengkap", systemImage: "arrow.right", kind: .primary) {}
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
 
                 moodBreakdownSection
                 topicChartSection
@@ -63,6 +73,21 @@ struct WeeklySummaryView: View {
                 .accessibilityLabel("Bagikan ringkasan minggu")
             }
         }
+        .task {
+            await viewModel.loadIfNeeded(
+                reflectionStore: reflectionStore,
+                aiService: aiService
+            )
+        }
+        .onChange(of: reflectionStore.entriesFingerprint) { _, _ in
+            guard week.isCurrentWeek else { return }
+            Task {
+                await viewModel.reloadIfStale(
+                    reflectionStore: reflectionStore,
+                    aiService: aiService
+                )
+            }
+        }
     }
 
     private var shareText: String {
@@ -77,6 +102,7 @@ struct WeeklySummaryView: View {
                 Text(week.moodLabel)
                     .font(JedaTypography.display)
                     .foregroundStyle(JedaColor.textPrimary)
+                    .redacted(reason: viewModel.isLoadingAI ? .placeholder : [])
             }
             .frame(maxWidth: .infinity)
         }
@@ -111,18 +137,35 @@ struct WeeklySummaryView: View {
     }
 
     private var aiReflectionSection: some View {
-        JedaSection("AI Reflection", subtitle: "Ringkasan") {
-            JedaGlassSurface(tint: JedaColor.sage.opacity(0.12)) {
-                VStack(alignment: .leading, spacing: JedaSpacing.md) {
-                    Text(week.aiReflectionSummary)
-                        .font(JedaTypography.body)
-                        .foregroundStyle(JedaColor.textPrimary)
-                        .fixedSize(horizontal: false, vertical: true)
+        JedaSection("AI Reflection", subtitle: "Diringkas dengan bantuan AI") {
+            if viewModel.isLoadingAI {
+                JedaStateCard(kind: .loading)
+            } else if viewModel.aiLoadFailed {
+                JedaStateCard(
+                    kind: .error,
+                    message: viewModel.aiErrorMessage,
+                    actionTitle: "Coba lagi"
+                ) {
+                    Task {
+                        await viewModel.retry(
+                            reflectionStore: reflectionStore,
+                            aiService: aiService
+                        )
+                    }
+                }
+            } else {
+                JedaGlassSurface(tint: JedaColor.sage.opacity(0.12)) {
+                    VStack(alignment: .leading, spacing: JedaSpacing.md) {
+                        Text(week.aiReflectionSummary)
+                            .font(JedaTypography.body)
+                            .foregroundStyle(JedaColor.textPrimary)
+                            .fixedSize(horizontal: false, vertical: true)
 
-                    Text(week.aiReflectionLong)
-                        .font(.system(.title3, design: .rounded, weight: .medium))
-                        .foregroundStyle(JedaColor.textSecondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                        Text(week.aiReflectionLong)
+                            .font(.system(.title3, design: .rounded, weight: .medium))
+                            .foregroundStyle(JedaColor.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
         }
@@ -146,12 +189,16 @@ struct WeeklySummaryView: View {
 
     private var memorableMomentsSection: some View {
         JedaSection("Memorable Moments") {
-            VStack(spacing: JedaSpacing.md) {
-                ForEach(week.memorableMoments) { entry in
-                    NavigationLink(value: HistoryDestination.entryDetail(entryID: entry.id, weekID: week.id)) {
-                        JedaEntryRowCard(entry: entry)
+            if viewModel.isLoadingAI {
+                JedaStateCard(kind: .loading)
+            } else {
+                VStack(spacing: JedaSpacing.md) {
+                    ForEach(week.memorableMoments) { entry in
+                        NavigationLink(value: HistoryDestination.entryDetail(entryID: entry.id, weekID: week.id)) {
+                            JedaEntryRowCard(entry: entry)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
         }
@@ -159,16 +206,22 @@ struct WeeklySummaryView: View {
 
     private var improvementsSection: some View {
         JedaSection("Things You Improved") {
-            JedaGlassSurface(tint: JedaColor.clay.opacity(0.10)) {
-                VStack(alignment: .leading, spacing: JedaSpacing.sm) {
-                    ForEach(week.improvements, id: \.self) { item in
-                        Label {
-                            Text(item)
-                                .font(JedaTypography.body)
-                                .foregroundStyle(JedaColor.textPrimary)
-                        } icon: {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(JedaColor.sage)
+            if viewModel.isLoadingAI {
+                JedaStateCard(kind: .loading)
+            } else if week.improvements.isEmpty {
+                EmptyView()
+            } else {
+                JedaGlassSurface(tint: JedaColor.clay.opacity(0.10)) {
+                    VStack(alignment: .leading, spacing: JedaSpacing.sm) {
+                        ForEach(week.improvements, id: \.self) { item in
+                            Label {
+                                Text(item)
+                                    .font(JedaTypography.body)
+                                    .foregroundStyle(JedaColor.textPrimary)
+                            } icon: {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundStyle(JedaColor.sage)
+                            }
                         }
                     }
                 }
@@ -178,7 +231,11 @@ struct WeeklySummaryView: View {
 
     @ViewBuilder
     private var quoteSection: some View {
-        if let quote = week.quoteOfWeek {
+        if viewModel.isLoadingAI {
+            JedaSection("Quote of the Week") {
+                JedaStateCard(kind: .loading)
+            }
+        } else if let quote = week.quoteOfWeek {
             JedaSection("Quote of the Week") {
                 JedaGlassSurface(tint: JedaColor.clay.opacity(0.12)) {
                     HStack(alignment: .top, spacing: JedaSpacing.md) {

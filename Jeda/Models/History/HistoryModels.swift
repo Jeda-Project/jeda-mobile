@@ -143,6 +143,10 @@ enum HistoryFormatting {
             calendar.date(byAdding: .day, value: offset, to: week.startDate)
         }
     }
+
+    static func uniqueCheckInDayCount(for dates: [Date]) -> Int {
+        Set(dates.map { calendar.startOfDay(for: $0) }).count
+    }
 }
 
 extension JedaMood {
