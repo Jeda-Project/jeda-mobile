@@ -46,10 +46,6 @@ struct HistoryOverviewView: View {
                 .foregroundStyle(Color.black)
 
             Spacer()
-
-            Image(systemName: "calendar")
-                .foregroundStyle(JedaColor.sage)
-                .accessibilityLabel("Kalender history")
         }
     }
 

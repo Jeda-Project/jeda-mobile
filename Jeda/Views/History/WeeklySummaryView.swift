@@ -25,12 +25,12 @@ struct WeeklySummaryView: View {
                 checkInSection
                 aiReflectionSection
 
-                if !viewModel.isLoadingAI {
-                    NavigationLink(value: HistoryDestination.weeklyStory(week.id)) {
-                        JedaButton("Lihat Refleksi Lengkap", systemImage: "arrow.right", kind: .primary) {}
-                    }
-                    .buttonStyle(.plain)
-                }
+//                if !viewModel.isLoadingAI {
+//                    NavigationLink(value: HistoryDestination.weeklyStory(week.id)) {
+//                        JedaButton("Lihat Refleksi Lengkap", systemImage: "arrow.right", kind: .primary) {}
+//                    }
+//                    .buttonStyle(.plain)
+//                }
 
                 moodBreakdownSection
                 topicChartSection
@@ -41,10 +41,10 @@ struct WeeklySummaryView: View {
                 wordCloudSection
                 rhythmSection
 
-                NavigationLink(value: HistoryDestination.dailyEntries(week.id)) {
-                    JedaButton("Lihat Semua Entry dalam Minggu Ini", systemImage: "list.bullet", kind: .secondary) {}
-                }
-                .buttonStyle(.plain)
+//                NavigationLink(value: HistoryDestination.dailyEntries(week.id)) {
+//                    JedaButton("Lihat Semua Entry dalam Minggu Ini", systemImage: "list.bullet", kind: .secondary) {}
+//                }
+//                .buttonStyle(.plain)
             }
             .padding(.horizontal, JedaSpacing.lg)
             .padding(.vertical, JedaSpacing.xl)
