@@ -160,7 +160,7 @@ private struct JedaOnboardingIndicator: View {
         HStack(spacing: JedaSpacing.xs) {
             ForEach(0..<pageCount, id: \.self) { index in
                 Capsule(style: .continuous)
-                    .fill(index == selectedPage ? JedaColor.clay : JedaColor.separator)
+                    .fill(index == selectedPage ? JedaColor.sage : JedaColor.separator)
                     .frame(width: index == selectedPage ? 24 : 8, height: 8)
             }
         }
