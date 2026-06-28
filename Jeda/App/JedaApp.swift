@@ -20,10 +20,19 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct JedaApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    // TODO: Remove this QA flag after onboarding review; set false to respect saved first-run state.
+    private static let alwaysShowOnboardingForReview = true
+
+    private let onboardingProgressStore = UserDefaultsOnboardingProgressStore()
     
     var body: some Scene {
         WindowGroup {
-            JedaRootTabView()
+            JedaLaunchGateView(
+                hasCompletedOnboarding: Self.alwaysShowOnboardingForReview
+                ? false
+                : onboardingProgressStore.hasCompletedOnboarding
+            )
+                .environment(\.onboardingProgressStore, onboardingProgressStore)
         }
     }
 }
