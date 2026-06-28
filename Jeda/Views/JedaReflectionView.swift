@@ -159,7 +159,7 @@ struct JedaReflectionDetailView: View {
                 HStack(spacing: JedaSpacing.xs) {
                     Image(systemName: "doc.text")
                         .font(.system(size: 10, weight: .semibold))
-                    Text("Catatan Harianmu")
+                    Text("Kontemplasi Harianmu")
                         .font(JedaTypography.caption)
                 }
                 .foregroundStyle(JedaColor.textSecondary)

@@ -79,7 +79,7 @@ struct EmotionClassificationDemoView: View {
     }
 
     private var headerSection: some View {
-        Text(isShowingResult ? "Hasil Analisis" : "Catatan Harian")
+        Text(isShowingResult ? "Hasil Analisis" : "Kontemplasi Harian")
             .font(.largeTitle.weight(.bold))
             .foregroundStyle(Color.black)
             .animation(.easeInOut(duration: 0.2), value: isShowingResult)

@@ -23,7 +23,7 @@ struct JedaApp: App {
     @StateObject private var reflectionStore = ReflectionStore()
 
     // TODO: Remove this QA flag after onboarding review; set false to respect saved first-run state.
-    private static let alwaysShowOnboardingForReview = true
+    private static let alwaysShowOnboardingForReview = false
 
     private let onboardingProgressStore = UserDefaultsOnboardingProgressStore()
     private let aiService: (any AICompleting)? = try? AIService.makeDefault()

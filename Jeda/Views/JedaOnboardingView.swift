@@ -14,17 +14,27 @@ struct JedaOnboardingView: View {
     @State private var selectedPage = 0
 
     var body: some View {
-        VStack(spacing: JedaSpacing.lg) {
-            TabView(selection: $selectedPage) {
-                ForEach(Array(pages.enumerated()), id: \.element.id) { index, page in
-                    JedaOnboardingPageView(page: page)
-                        .padding(.horizontal, JedaSpacing.lg)
-                        .tag(index)
+        ZStack {
+            JedaScreenBackground()
+
+            Circle()
+                .fill(pages[selectedPage].tint.opacity(0.3))
+                .blur(radius: 120)
+                .frame(width: 300, height: 300)
+                .offset(y: -100)
+                .animation(.easeInOut(duration: 0.6), value: selectedPage)
+
+            VStack(spacing: JedaSpacing.lg) {
+                TabView(selection: $selectedPage) {
+                    ForEach(Array(pages.enumerated()), id: \.element.id) { index, page in
+                        JedaOnboardingPageView(page: page)
+                            .padding(.horizontal, JedaSpacing.lg)
+                            .tag(index)
+                    }
                 }
-            }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .animation(.snappy, value: selectedPage)
-            .accessibilityElement(children: .contain)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .animation(.snappy, value: selectedPage)
+                .accessibilityElement(children: .contain)
 
             VStack(spacing: JedaSpacing.md) {
                 JedaOnboardingIndicator(
@@ -32,16 +42,13 @@ struct JedaOnboardingView: View {
                     selectedPage: selectedPage
                 )
 
-                Button {
+                JedaButton(
+                    selectedPage == pages.index(before: pages.endIndex) ? "Mulai" : "Lanjut",
+                    kind: .primary
+                ) {
                     goForward()
-                } label: {
-                    Text(selectedPage == pages.index(before: pages.endIndex) ? "Mulai" : "Lanjut")
-                        .font(JedaTypography.headline)
-                        .frame(maxWidth: .infinity, minHeight: 44)
                 }
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .tint(JedaColor.clay)
+                .frame(maxWidth: .infinity)
                 .accessibilityLabel(
                     selectedPage == pages.index(before: pages.endIndex)
                     ? "Mulai menggunakan Jeda"
@@ -52,8 +59,6 @@ struct JedaOnboardingView: View {
             .padding(.bottom, JedaSpacing.lg)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            JedaScreenBackground()
         }
     }
 
@@ -107,18 +112,24 @@ private struct JedaOnboardingPageView: View {
         VStack(spacing: JedaSpacing.xl) {
             Spacer(minLength: JedaSpacing.lg)
 
-            Image(systemName: page.symbolName)
-                .font(.system(size: 96, weight: .semibold, design: .rounded))
-                .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(page.tint)
-                .frame(width: 168, height: 168)
-                .background {
-                    Circle()
-                        .fill(page.tint.opacity(0.14))
-                }
-                .accessibilityHidden(true)
+            ZStack {
+                RoundedRectangle(cornerRadius: 36, style: .continuous)
+                    .fill(page.tint.opacity(0.12))
+                    .frame(width: 180, height: 180)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 36, style: .continuous)
+                            .strokeBorder(page.tint.opacity(0.2), lineWidth: 1)
+                    }
 
-            VStack(spacing: JedaSpacing.sm) {
+                Image(systemName: page.symbolName)
+                    .font(.system(size: 80, weight: .semibold, design: .rounded))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(page.tint)
+                    .accessibilityHidden(true)
+            }
+            .shadow(color: page.tint.opacity(0.1), radius: 20, x: 0, y: 10)
+
+            VStack(spacing: JedaSpacing.md) {
                 Text(page.title)
                     .font(JedaTypography.display)
                     .foregroundStyle(JedaColor.textPrimary)
@@ -129,7 +140,7 @@ private struct JedaOnboardingPageView: View {
                     .font(JedaTypography.body)
                     .foregroundStyle(JedaColor.textSecondary)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(4)
+                    .lineSpacing(6)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: 520)
