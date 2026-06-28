@@ -51,14 +51,11 @@ struct JedaRootTabView: View {
             }
             .tag(JedaTab.reflection)
 
-            JedaPlaceholderTabView(
-                title: JedaTab.history.title,
-                kind: .empty
-            )
-            .tabItem {
-                Label(JedaTab.history.title, systemImage: JedaTab.history.systemImageName)
-            }
-            .tag(JedaTab.history)
+            HistoryRootView(weeks: HistorySampleData.weeks)
+                .tabItem {
+                    Label(JedaTab.history.title, systemImage: JedaTab.history.systemImageName)
+                }
+                .tag(JedaTab.history)
         }
         .tint(JedaColor.sage)
     }
