@@ -84,10 +84,27 @@ struct EmotionClassificationDemoView: View {
     }
 
     private var headerSection: some View {
-        Text(isShowingResult ? "Hasil Analisis" : "Kontemplasi Harian")
-            .font(.largeTitle.weight(.bold))
-            .foregroundStyle(Color.black)
-            .animation(.easeInOut(duration: 0.2), value: isShowingResult)
+        VStack(alignment: .leading, spacing: JedaSpacing.md) {
+            if isShowingResult {
+                Button {
+                    resetForm()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Color.black)
+                        .frame(width: 40, height: 40)
+                        .background(JedaColor.elevatedBackground, in: Circle())
+                }
+                .buttonStyle(.plain)
+                .transition(.scale.combined(with: .opacity))
+            }
+            
+            Text(isShowingResult ? "Hasil Analisis" : "Kontemplasi Harian")
+                .font(.largeTitle.weight(.bold))
+                .foregroundStyle(Color.black)
+        }
+        .animation(.easeInOut(duration: 0.2), value: isShowingResult)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var summarySection: some View {

@@ -133,10 +133,12 @@ private struct ReflectionRowView: View {
 
 struct JedaReflectionDetailView: View {
     let entry: ReflectionEntry
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: JedaSpacing.lg) {
+                headerSection
                 summarySection
                 resultSection
                 reflectionSection
@@ -146,9 +148,29 @@ struct JedaReflectionDetailView: View {
             .padding(.bottom, JedaSpacing.xl)
         }
         .background { JedaScreenBackground() }
-        .navigationTitle("Hasil Analisis")
-        .navigationBarTitleDisplayMode(.large)
         .jedaHideTabBar()
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: JedaSpacing.md) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Color.black)
+                    .frame(width: 40, height: 40)
+                    .background(JedaColor.elevatedBackground, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Kembali")
+            
+            Text("Hasil Analisis")
+                .font(.largeTitle.weight(.bold))
+                .foregroundStyle(Color.black)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
 
@@ -172,7 +194,7 @@ struct JedaReflectionDetailView: View {
                             .fill(JedaColor.sage.opacity(0.15))
                             .frame(width: 40, height: 40)
                         Image(systemName: entry.mood.symbol)
-                            .font(.system(size: 18, weight: .medium))
+                            .font(.system(size: 16, weight: .medium))
                             .foregroundStyle(JedaColor.sage)
                     }
 
@@ -344,6 +366,7 @@ struct JedaDeeperReflectionView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: JedaSpacing.lg) {
+                headerSection
                 excerptSection
                 aiQuestionSection
                 conversationSection
@@ -354,10 +377,10 @@ struct JedaDeeperReflectionView: View {
             .padding(.bottom, JedaSpacing.xl)
         }
         .background(JedaColor.background.ignoresSafeArea())
-        .navigationTitle("Refleksi")
-        .navigationBarTitleDisplayMode(.large)
         .jedaHideTabBar()
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $showConsentSheet) {
+
             ReflectionAIConsentSheet(
                 onGrant: {
                     consentStore.setStatus(.granted)
@@ -372,57 +395,74 @@ struct JedaDeeperReflectionView: View {
         }
     }
 
-    private var excerptSection: some View {
-        VStack(alignment: .leading, spacing: JedaSpacing.xs) {
-            Label("Dari jurnal Anda kemarin:", systemImage: "book.closed")
-                .font(JedaTypography.caption)
-                .foregroundStyle(JedaColor.textSecondary)
-                .accessibilityHidden(true)
-
-            Text(journalExcerpt)
-                .font(.system(.body, design: .serif))
-                .foregroundStyle(JedaColor.textPrimary)
-                .italic()
-                .lineSpacing(4)
+    private var headerSection: some View {
+        VStack(alignment: .leading, spacing: JedaSpacing.md) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Color.black)
+                    .frame(width: 40, height: 40)
+                    .background(JedaColor.elevatedBackground, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Kembali")
+            
+            Text("Refleksi")
+                .font(.largeTitle.weight(.bold))
+                .foregroundStyle(Color.black)
         }
-        .padding(JedaSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(JedaColor.elevatedBackground)
-        .clipShape(RoundedRectangle(cornerRadius: JedaRadius.card, style: .continuous))
+    }
+
+    private var excerptSection: some View {
+        JedaGlassSurface(tint: nil) {
+            VStack(alignment: .leading, spacing: JedaSpacing.xs) {
+                Label("Dari Jurnal Kamu Hari Ini:", systemImage: "book.closed")
+                    .font(JedaTypography.caption)
+                    .foregroundStyle(JedaColor.textSecondary)
+                
+                Text(journalExcerpt)
+                    .font(.system(.body, design: .serif))
+                    .foregroundStyle(JedaColor.textPrimary)
+                    .italic()
+                    .lineSpacing(4)
+            }
+        }
     }
 
     private var aiQuestionSection: some View {
-        HStack(alignment: .top, spacing: JedaSpacing.md) {
-            ZStack {
-                Circle()
-                    .fill(JedaColor.sage.opacity(0.15))
-                    .frame(width: 44, height: 44)
-                Image(systemName: "sparkles")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(JedaColor.sage)
-            }
-            .accessibilityHidden(true)
+        JedaGlassSurface(tint: nil) {
+            HStack(alignment: .top, spacing: JedaSpacing.md) {
+                ZStack {
+                    Circle()
+                        .fill(JedaColor.sage.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(JedaColor.sage)
+                }
+                .accessibilityHidden(true)
 
-            VStack(alignment: .leading, spacing: JedaSpacing.xs) {
-                Text("Jeda · on-device")
-                    .font(JedaTypography.caption)
-                    .foregroundStyle(JedaColor.textSecondary)
+                VStack(alignment: .leading, spacing: JedaSpacing.xs) {
+                    Text("Jeda · On-Device")
+                        .font(JedaTypography.caption)
+                        .foregroundStyle(JedaColor.textSecondary)
 
-                VStack(alignment: .leading, spacing: JedaSpacing.sm) {
-                    Text("Kamu menyebut \"\(highlightedKeyword)\" beberapa kali.")
-                        .font(JedaTypography.body)
-                        .foregroundStyle(JedaColor.textPrimary)
+                    VStack(alignment: .leading, spacing: JedaSpacing.sm) {
+                        Text("Kamu menyebut \"\(highlightedKeyword)\" beberapa kali.")
+                            .font(JedaTypography.body)
+                            .foregroundStyle(JedaColor.textPrimary)
 
-                    Text(reflectionQuestion)
-                        .font(.system(.title3, design: .rounded, weight: .semibold))
-                        .foregroundStyle(JedaColor.textPrimary)
-                        .fixedSize(horizontal: false, vertical: true)
+                        Text(reflectionQuestion)
+                            .font(.system(.title3, design: .rounded, weight: .semibold))
+                            .foregroundStyle(JedaColor.textPrimary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
                 }
             }
         }
-        .padding(JedaSpacing.lg)
-        .background(JedaColor.elevatedBackground)
-        .clipShape(RoundedRectangle(cornerRadius: JedaRadius.card, style: .continuous))
     }
 
     private var showsAIReply: Bool {

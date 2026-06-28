@@ -10,20 +10,34 @@ struct ReflectionAIConsentSheet: View {
     let onDeny: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: JedaSpacing.lg) {
-            Image(systemName: "cloud.fill")
-                .font(.system(size: 32, weight: .semibold))
-                .foregroundStyle(JedaColor.sage)
-                .accessibilityHidden(true)
+        VStack(spacing: 24) {
+            ZStack {
+                Circle()
+                    .fill(JedaColor.sage.opacity(0.15))
+                    .frame(width: 80, height: 80)
+                
+                Image(systemName: "icloud.and.arrow.up.fill")
+                    .font(.system(size: 36, weight: .semibold))
+                    .foregroundStyle(JedaColor.sage)
+            }
+            .padding(.top, 16)
 
-            Text("Kirim ke AI cloud?")
-                .font(.system(.title2, design: .rounded, weight: .semibold))
-                .foregroundStyle(JedaColor.textPrimary)
+            VStack(spacing: 12) {
+                Text("Kirim ke AI cloud?")
+                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .foregroundStyle(JedaColor.textPrimary)
+                    .multilineTextAlignment(.center)
 
-            Text("Refleksimu akan dikirim ke layanan AI di cloud untuk dianalisis dan dibalas. Teks ini tidak disimpan dengan namamu dan hanya digunakan untuk memberi balasan refleksi.")
-                .font(JedaTypography.body)
-                .foregroundStyle(JedaColor.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
+                Text("Refleksimu akan dikirim ke layanan AI di cloud untuk dianalisis dan dibalas. Teks ini tidak disimpan dengan namamu dan hanya digunakan untuk memberi balasan refleksi.")
+                    .font(JedaTypography.body)
+                    .foregroundStyle(JedaColor.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.horizontal, 8)
+
+            Spacer(minLength: 16)
 
             VStack(spacing: JedaSpacing.md) {
                 JedaButton("Setuju, kirim", kind: .primary) {
@@ -38,10 +52,14 @@ struct ReflectionAIConsentSheet: View {
                 .frame(maxWidth: .infinity)
                 .accessibilityLabel("Tidak mengirim refleksi ke AI cloud")
             }
-            .padding(.top, JedaSpacing.sm)
         }
-        .padding(JedaSpacing.lg)
+        .padding(.horizontal, JedaSpacing.lg)
+        .padding(.top, 16)
+        .padding(.bottom, 24)
         .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
+        .presentationCornerRadius(32)
+        .presentationBackground(JedaColor.background)
     }
 }
 
