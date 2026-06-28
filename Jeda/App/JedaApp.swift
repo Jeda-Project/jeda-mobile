@@ -22,9 +22,6 @@ struct JedaApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var reflectionStore: ReflectionStore
 
-    // TODO: Remove this QA flag after onboarding review; set false to respect saved first-run state.
-    private static let alwaysShowOnboardingForReview = false
-
     private let onboardingProgressStore = UserDefaultsOnboardingProgressStore()
     private let aiService: (any AICompleting)? = try? AIService.makeDefault()
     private let backend: BackendServices?
@@ -40,9 +37,7 @@ struct JedaApp: App {
     var body: some Scene {
         WindowGroup {
             JedaLaunchGateView(
-                hasCompletedOnboarding: Self.alwaysShowOnboardingForReview
-                ? false
-                : onboardingProgressStore.hasCompletedOnboarding
+                hasCompletedOnboarding: onboardingProgressStore.hasCompletedOnboarding
             )
                 .environment(\.onboardingProgressStore, onboardingProgressStore)
                 .environment(\.reflectionStore, reflectionStore)

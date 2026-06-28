@@ -199,7 +199,7 @@ struct WeeklySummaryView: View {
             } else if week.improvements.isEmpty {
                 EmptyView()
             } else {
-                JedaGlassSurface(tint: JedaColor.clay.opacity(0.10)) {
+                JedaGlassSurface(tint: JedaColor.sage.opacity(0.10)) {
                     VStack(alignment: .leading, spacing: JedaSpacing.sm) {
                         ForEach(week.improvements, id: \.self) { item in
                             Label {
@@ -225,7 +225,7 @@ struct WeeklySummaryView: View {
             }
         } else if let quote = week.quoteOfWeek {
             JedaSection("Quote of the Week") {
-                JedaGlassSurface(tint: JedaColor.clay.opacity(0.12)) {
+                JedaGlassSurface(tint: JedaColor.sage.opacity(0.12)) {
                     HStack(alignment: .top, spacing: JedaSpacing.md) {
                         Image(systemName: "leaf")
                             .font(.system(size: 22, weight: .semibold, design: .rounded))
