@@ -1,0 +1,132 @@
+{
+  "mcpServers": {
+    "serena-jeda-mobile": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "claude-code",
+        "--project",
+        ".",
+        "--open-web-dashboard",
+        "false"
+      ],
+      "env": {
+        "ENABLE_TOOL_SEARCH": "true"
+      },
+      "alwaysAllow": [
+        "replace_content",
+        "replace_symbol_body",
+        "insert_after_symbol",
+        "insert_before_symbol",
+        "get_symbols_overview",
+        "find_symbol",
+        "find_referencing_symbols",
+        "find_implementations",
+        "find_declaration",
+        "get_diagnostics_for_file",
+        "rename_symbol",
+        "safe_delete_symbol",
+        "write_memory",
+        "read_memory",
+        "list_memories",
+        "delete_memory",
+        "rename_memory",
+        "edit_memory",
+        "open_dashboard",
+        "activate_project",
+        "get_current_config",
+        "onboarding",
+        "initial_instructions"
+      ]
+    },
+    "serena-jeda-backend": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "claude-code",
+        "--project",
+        "/Users/adhibuchori/Documents/software-projects/mobile/jeda-project/jeda-backend",
+        "--open-web-dashboard",
+        "false"
+      ],
+      "env": {
+        "ENABLE_TOOL_SEARCH": "true"
+      },
+      "alwaysAllow": [
+        "replace_content",
+        "replace_symbol_body",
+        "insert_after_symbol",
+        "insert_before_symbol",
+        "get_symbols_overview",
+        "find_symbol",
+        "find_referencing_symbols",
+        "find_implementations",
+        "find_declaration",
+        "get_diagnostics_for_file",
+        "rename_symbol",
+        "safe_delete_symbol",
+        "write_memory",
+        "read_memory",
+        "list_memories",
+        "delete_memory",
+        "rename_memory",
+        "edit_memory",
+        "open_dashboard",
+        "activate_project",
+        "get_current_config",
+        "onboarding",
+        "initial_instructions"
+      ]
+    },
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN_JEDA}"
+      },
+      "alwaysAllow": [
+        "add_comment_to_pending_review",
+        "add_issue_comment",
+        "create_branch",
+        "create_or_update_file",
+        "create_pull_request",
+        "delete_file",
+        "get_commit",
+        "get_file_contents",
+        "get_me",
+        "issue_read",
+        "issue_write",
+        "list_branches",
+        "list_commits",
+        "list_issues",
+        "list_pull_requests",
+        "merge_pull_request",
+        "pull_request_read",
+        "pull_request_review_write",
+        "push_files",
+        "search_code",
+        "search_issues",
+        "search_repositories",
+        "search_users",
+        "update_pull_request"
+      ]
+    },
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "alwaysAllow": ["resolve-library-id", "query-docs"]
+    }
+  }
+}

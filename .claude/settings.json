@@ -1,0 +1,77 @@
+{
+  "env": {
+    "GH_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)",
+      "Bash(rtk:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(swift:*)",
+      "Bash(swiftlint:*)",
+      "Bash(xcrun:*)",
+      "Bash(bash .claude/hooks/*.sh:*)",
+      "Bash(gh:*)",
+      "Read(**)",
+      "Write(Jeda/**)",
+      "Write(.claude/session-logs/**)"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(git push origin main:*)",
+      "Write(.env*)",
+      "Write(Jeda.xcodeproj/project.pbxproj)",
+      "Write(Jeda/Resources/GoogleService-Info.plist)",
+      "Write(SSOT.md)",
+      "Write(AGENTS.md)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/safety-check.sh" }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/generated-guard.sh" },
+          { "type": "command", "command": "bash .claude/hooks/env-guard.sh" },
+          { "type": "command", "command": "bash .claude/hooks/token-guard.sh" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/swift-lint.sh" }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/notify.sh" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/stop-check.sh" }
+        ]
+      }
+    ]
+  }
+}
