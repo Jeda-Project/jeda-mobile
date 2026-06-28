@@ -141,7 +141,7 @@ struct JedaTopicBarChartCard: View {
                         x: .value("Jumlah", item.count),
                         y: .value("Topik", item.topic)
                     )
-                    .cornerRadius(10)
+                    .cornerRadius(JedaRadius.chip)
                     .foregroundStyle(
                         LinearGradient(
                             colors: [

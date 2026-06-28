@@ -22,9 +22,9 @@ enum JedaColor {
 }
 
 enum JedaRadius {
-    static let chip: CGFloat = 18
-    static let control: CGFloat = 22
-    static let card: CGFloat = 28
+    static let chip: CGFloat = 16
+    static let control: CGFloat = 16
+    static let card: CGFloat = 16
 }
 
 enum JedaSpacing {
