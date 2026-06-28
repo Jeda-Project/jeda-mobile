@@ -16,23 +16,29 @@ enum JedaOnDeviceReflection {
         }
     }
 
+    static func keyword(from text: String) -> String {
+        extractKeyword(from: text) ?? "sesuatu"
+    }
+
     private static func extractKeyword(from text: String) -> String? {
         let stopWords: Set<String> = [
-            "aku", "saya", "kamu", "dia", "kami", "mereka", "ini", "itu",
             "dan", "atau", "tapi", "tetapi", "karena", "kalau", "jika",
-            "yang", "di", "ke", "dari", "dengan", "untuk", "pada", "sudah",
+            "yang", "di", "ke", "dari", "dengan", "untuk", "pada",
             "sedang", "akan", "tidak", "tak", "bukan", "juga", "lagi",
             "sangat", "banget", "sekali", "masih", "sudah", "sih", "deh",
-            "nih", "yah", "ya", "ah", "oh", "ada", "bisa", "mau", "mau",
+            "nih", "yah", "ya", "ah", "oh", "ada", "bisa", "mau",
             "baru", "punya", "harus", "boleh", "perlu", "lalu", "terus"
         ]
 
         let words = text
             .lowercased()
             .components(separatedBy: .whitespacesAndNewlines.union(.punctuationCharacters))
-            .filter { $0.count >= 4 && !stopWords.contains($0) }
+            .filter { $0.count >= 2 && !stopWords.contains($0) }
 
-        return words.max(by: { $0.count < $1.count })
+        let counts = Dictionary(words.map { ($0, 1) }, uniquingKeysWith: +)
+        return counts.max { lhs, rhs in
+            lhs.value == rhs.value ? lhs.key.count < rhs.key.count : lhs.value < rhs.value
+        }?.key
     }
 
     private static func emotionQuestion(for emotion: Emotion, keyword: String) -> String {

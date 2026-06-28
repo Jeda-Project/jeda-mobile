@@ -11,6 +11,8 @@ struct HistoryOverviewView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: JedaSpacing.xl) {
+                headerSection
+
                 if let currentWeek = weeks.first {
                     NavigationLink(value: HistoryDestination.weeklySummary(currentWeek.id)) {
                         JedaThisWeekCard(week: currentWeek)
@@ -33,14 +35,20 @@ struct HistoryOverviewView: View {
             .padding(.vertical, JedaSpacing.xl)
         }
         .background { JedaScreenBackground() }
-        .navigationTitle("History")
-        .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Image(systemName: "calendar")
-                    .foregroundStyle(JedaColor.sage)
-                    .accessibilityLabel("Kalender history")
-            }
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private var headerSection: some View {
+        HStack {
+            Text("History")
+                .font(.largeTitle.weight(.bold))
+                .foregroundStyle(Color.black)
+
+            Spacer()
+
+            Image(systemName: "calendar")
+                .foregroundStyle(JedaColor.sage)
+                .accessibilityLabel("Kalender history")
         }
     }
 

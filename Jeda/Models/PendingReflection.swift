@@ -1,31 +1,28 @@
 /**
- * Scope: ReflectionEntry.swift
- * Purpose: Data model representing a single saved reflection session.
+ * Scope: PendingReflection.swift
+ * Purpose: Data model representing a reflection prompt awaiting deeper input.
  */
 
 import Foundation
 
-struct ReflectionEntry: Identifiable, Hashable, Sendable {
+struct PendingReflection: Identifiable, Hashable, Sendable {
     let id: UUID
     let date: Date
     let journalExcerpt: String
     let reflectionQuestion: String
-    let reflectionText: String
-    let aiReplyText: String?
+    let highlightedPhrase: String
 
     init(
         id: UUID = UUID(),
         date: Date = Date(),
         journalExcerpt: String,
         reflectionQuestion: String,
-        reflectionText: String,
-        aiReplyText: String? = nil
+        highlightedPhrase: String
     ) {
         self.id = id
         self.date = date
         self.journalExcerpt = journalExcerpt
         self.reflectionQuestion = reflectionQuestion
-        self.reflectionText = reflectionText
-        self.aiReplyText = aiReplyText
+        self.highlightedPhrase = highlightedPhrase
     }
 }

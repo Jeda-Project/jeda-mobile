@@ -17,17 +17,20 @@ struct JedaButton: View {
     let title: String
     let systemImage: String?
     let kind: JedaButtonKind
+    let isLoading: Bool
     let action: () -> Void
 
     init(
         _ title: String,
         systemImage: String? = nil,
         kind: JedaButtonKind = .primary,
+        isLoading: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.systemImage = systemImage
         self.kind = kind
+        self.isLoading = isLoading
         self.action = action
     }
 
@@ -36,6 +39,7 @@ struct JedaButton: View {
             .buttonBorderShape(.capsule)
             .controlSize(.large)
             .font(JedaTypography.headline)
+            .allowsHitTesting(!isLoading)
     }
 
     @ViewBuilder
@@ -57,9 +61,18 @@ struct JedaButton: View {
         Button(action: action) {
             Label {
                 Text(title)
+                    .opacity(isLoading ? 0 : 1)
             } icon: {
                 if let systemImage {
                     Image(systemName: systemImage)
+                        .opacity(isLoading ? 0 : 1)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .background {
+                if isLoading {
+                    ProgressView()
+                        .tint(Color.white)
                 }
             }
         }

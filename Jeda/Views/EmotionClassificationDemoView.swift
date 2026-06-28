@@ -17,6 +17,7 @@ struct EmotionClassificationDemoView: View {
     @State private var reflectionQuestion: String?
     @State private var showDeeperReflection = false
     @State private var isShowingResult = false
+    @State private var isSaving = false
 
     private var selectedMood: JedaMood {
         JedaMood.mood(forCheckInStep: moodStep)
@@ -54,13 +55,20 @@ struct EmotionClassificationDemoView: View {
             }
             .background { JedaScreenBackground() }
             .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $showDeeperReflection) {
+            .navigationDestination(isPresented: $showDeeperReflection) {
                 JedaDeeperReflectionView(
                     journalExcerpt: String(journalText.prefix(120)),
                     reflectionQuestion: reflectionQuestion ?? "Apa yang paling kamu rasakan saat ini?",
-                    onSave: { entry in reflectionStore.add(entry) }
+                    detectedEmotion: result?.label,
+                    onSave: { entry in
+                        reflectionStore.add(entry)
+                        reflectionStore.clearPending()
+                    }
                 )
             }
+        }
+        .onChange(of: reflectionStore.completedSaveCount) {
+            resetForm()
         }
     }
 
@@ -168,14 +176,7 @@ struct EmotionClassificationDemoView: View {
     private var resetButton: some View {
         HStack(spacing: JedaSpacing.sm) {
             Button {
-                withAnimation(.easeInOut(duration: 0.35)) {
-                    isShowingResult = false
-                    result = nil
-                    reflectionQuestion = nil
-                    errorMessage = nil
-                    journalText = ""
-                    moodStep = 2
-                }
+                resetForm()
             } label: {
                 Label("Kembali", systemImage: "arrow.counterclockwise")
                     .font(JedaTypography.headline)
@@ -193,16 +194,27 @@ struct EmotionClassificationDemoView: View {
                     }
             }
             .buttonStyle(.plain)
+            .allowsHitTesting(!isSaving)
 
             Button {
+                Task { await saveEntry() }
             } label: {
                 Text("Simpan")
                     .frame(maxWidth: .infinity)
+                    .opacity(isSaving ? 0.001 : 1)
+                    .background(alignment: .center) {
+                        if isSaving {
+                            ProgressView()
+                                .tint(Color.white)
+                                .scaleEffect(0.7)
+                        }
+                    }
             }
             .jedaProminentButtonStyle(tint: JedaColor.sage)
             .buttonBorderShape(.capsule)
             .controlSize(.large)
             .font(JedaTypography.headline)
+            .allowsHitTesting(!isSaving)
         }
     }
 
@@ -295,13 +307,41 @@ struct EmotionClassificationDemoView: View {
         do {
             let classified = try await emotionService.classify(journalText)
             result = classified
-            reflectionQuestion = JedaOnDeviceReflection.generate(from: journalText, emotion: classified.label)
+            let question = JedaOnDeviceReflection.generate(from: journalText, emotion: classified.label)
+            reflectionQuestion = question
+            reflectionStore.setPending(
+                PendingReflection(
+                    journalExcerpt: String(journalText.prefix(120)),
+                    reflectionQuestion: question,
+                    highlightedPhrase: JedaOnDeviceReflection.keyword(from: journalText)
+                )
+            )
             withAnimation(.easeInOut(duration: 0.35)) {
                 isShowingResult = true
             }
         } catch {
             result = nil
             errorMessage = error.localizedDescription
+        }
+    }
+
+    private func saveEntry() async {
+        isSaving = true
+        defer { isSaving = false }
+
+        try? await Task.sleep(for: .milliseconds(600))
+
+        resetForm()
+    }
+
+    private func resetForm() {
+        withAnimation(.easeInOut(duration: 0.35)) {
+            isShowingResult = false
+            result = nil
+            reflectionQuestion = nil
+            errorMessage = nil
+            journalText = ""
+            moodStep = 2
         }
     }
 }
