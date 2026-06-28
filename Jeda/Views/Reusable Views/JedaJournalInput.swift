@@ -42,12 +42,7 @@ struct JedaJournalInput: View {
                     .accessibilityLabel(title)
 
                 HStack {
-                    Text("Simpan draft lokal")
-                        .font(JedaTypography.caption)
-                        .foregroundStyle(JedaColor.textSecondary)
-
                     Spacer()
-
                     Text("\(text.count) karakter")
                         .font(JedaTypography.caption)
                         .foregroundStyle(JedaColor.textSecondary)

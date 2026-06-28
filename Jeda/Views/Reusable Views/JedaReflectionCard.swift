@@ -41,7 +41,7 @@ struct JedaReflectionCard: View {
                     .foregroundStyle(JedaColor.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                JedaButton("Cerita lebih dalam", systemImage: "arrow.up.message", kind: .secondary, action: action)
+                JedaButton("Cerita Lebih Dalam", systemImage: "sparkles", kind: .primary, action: action)
             }
         }
     }

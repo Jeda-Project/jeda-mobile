@@ -47,17 +47,24 @@ enum JedaStateKind {
 
 struct JedaStateCard: View {
     let kind: JedaStateKind
+    let message: String?
     let actionTitle: String?
     let action: (() -> Void)?
 
     init(
         kind: JedaStateKind,
+        message: String? = nil,
         actionTitle: String? = nil,
         action: (() -> Void)? = nil
     ) {
         self.kind = kind
+        self.message = message
         self.actionTitle = actionTitle
         self.action = action
+    }
+
+    private var displayMessage: String {
+        message ?? kind.message
     }
 
     var body: some View {
@@ -77,7 +84,7 @@ struct JedaStateCard: View {
                         .font(JedaTypography.headline)
                         .foregroundStyle(JedaColor.textPrimary)
 
-                    Text(kind.message)
+                    Text(displayMessage)
                         .font(JedaTypography.body)
                         .foregroundStyle(JedaColor.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)

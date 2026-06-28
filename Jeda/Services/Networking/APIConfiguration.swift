@@ -22,8 +22,27 @@ struct APIConfiguration: Sendable {
 }
 
 extension APIConfiguration {
-    /// Ganti dengan base URL production/staging sesuai environment.
-    static let jeda = APIConfiguration(
-        baseURL: URL(string: "https://api.jeda.example.com/v1")!
-    )
+    /// Jeda backend dengan Bearer token statis (single-user MVP).
+    static func backend(baseURL: URL, token: String, timeoutInterval: TimeInterval = 30) -> APIConfiguration {
+        APIConfiguration(
+            baseURL: baseURL,
+            defaultHeaders: [
+                "Content-Type": "application/json",
+                "Authorization": "Bearer \(token)",
+            ],
+            timeoutInterval: timeoutInterval
+        )
+    }
+
+    /// OpenAI chat completions API.
+    static func openAI(apiKey: String, timeoutInterval: TimeInterval = 60) -> APIConfiguration {
+        APIConfiguration(
+            baseURL: JedaAIConstants.baseURL,
+            defaultHeaders: [
+                "Content-Type": "application/json",
+                "Authorization": "Bearer \(apiKey)",
+            ],
+            timeoutInterval: timeoutInterval
+        )
+    }
 }

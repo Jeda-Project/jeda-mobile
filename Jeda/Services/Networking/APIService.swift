@@ -7,8 +7,6 @@ import Foundation
 
 /// Client HTTP generik. Inject `URLSession` untuk unit test.
 final class APIService {
-    static let shared = APIService(configuration: .jeda)
-
     private let configuration: APIConfiguration
     private let session: URLSession
     private let decoder: JSONDecoder

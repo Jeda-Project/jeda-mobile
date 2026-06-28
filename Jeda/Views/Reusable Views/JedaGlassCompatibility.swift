@@ -109,6 +109,7 @@ private struct JedaNativeGlassEffectModifier<S: InsettableShape>: ViewModifier {
         let base = Glass.regular.tint(tint)
         let effect = isInteractive ? base.interactive() : base
         content.glassEffect(effect, in: shape)
+            .shadow(color: .clear, radius: 0)
     }
 }
 

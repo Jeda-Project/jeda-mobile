@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum JedaMood: Int, CaseIterable, Identifiable {
+enum JedaMood: Int, CaseIterable, Identifiable, Codable {
     case heavy = 1
     case low
     case neutral
@@ -19,9 +19,9 @@ enum JedaMood: Int, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .heavy: "Berat"
-        case .low: "Turun"
+        case .low: "Lelah"
         case .neutral: "Netral"
-        case .okay: "Oke"
+        case .okay: "Lega"
         case .light: "Ringan"
         }
     }
@@ -29,11 +29,19 @@ enum JedaMood: Int, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .heavy: "cloud.rain"
-        case .low: "cloud"
-        case .neutral: "circle"
-        case .okay: "sun.min"
-        case .light: "sun.max"
+        case .low: "flame"
+        case .neutral: "heart.fill"
+        case .okay: "sun.max.fill"
+        case .light: "sparkles"
         }
+    }
+
+    var checkInStepIndex: Int {
+        rawValue - 1
+    }
+
+    static func mood(forCheckInStep step: Int) -> JedaMood {
+        JedaMood(rawValue: step + 1) ?? .neutral
     }
 
     var tint: Color {
