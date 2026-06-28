@@ -59,7 +59,23 @@ struct EmotionClassificationDemoView: View {
                 .animation(.easeInOut(duration: 0.35), value: isShowingResult)
             }
             .background { JedaScreenBackground() }
-            .toolbar(.hidden, for: .navigationBar)
+            .toolbar(isShowingResult ? .visible : .hidden, for: .navigationBar)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                if isShowingResult {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            resetForm()
+                        } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                                .foregroundStyle(JedaColor.textPrimary)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Kembali")
+                    }
+                }
+            }
             .navigationDestination(isPresented: $showDeeperReflection) {
                 if let result {
                     JedaDeeperReflectionView(
@@ -85,19 +101,6 @@ struct EmotionClassificationDemoView: View {
 
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: JedaSpacing.md) {
-            if isShowingResult {
-                Button {
-                    resetForm()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color.black)
-                        .frame(width: 40, height: 40)
-                        .background(JedaColor.elevatedBackground, in: Circle())
-                }
-                .buttonStyle(.plain)
-                .transition(.scale.combined(with: .opacity))
-            }
             
             Text(isShowingResult ? "Hasil Analisis" : "Kontemplasi Harian")
                 .font(.largeTitle.weight(.bold))

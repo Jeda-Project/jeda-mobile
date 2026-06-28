@@ -20,13 +20,15 @@ struct HistoryOverviewView: View {
                     .buttonStyle(.plain)
                 }
 
-                JedaSection("Minggu Sebelumnya") {
-                    VStack(spacing: JedaSpacing.md) {
-                        ForEach(previousWeeks) { week in
-                            NavigationLink(value: HistoryDestination.weeklySummary(week.id)) {
-                                JedaWeekRowCard(week: week)
+                if !previousWeeks.isEmpty {
+                    JedaSection("Minggu Sebelumnya") {
+                        VStack(spacing: JedaSpacing.md) {
+                            ForEach(previousWeeks) { week in
+                                NavigationLink(value: HistoryDestination.weeklySummary(week.id)) {
+                                    JedaWeekRowCard(week: week)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -60,7 +62,7 @@ struct HistoryOverviewView: View {
     }
 
     private var previousWeeks: [WeekSummary] {
-        Array(resolvedWeeks.dropFirst())
+        resolvedWeeks.dropFirst().filter { $0.checkInCount > 0 }
     }
 }
 

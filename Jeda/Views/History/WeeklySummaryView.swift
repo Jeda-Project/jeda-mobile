@@ -25,13 +25,6 @@ struct WeeklySummaryView: View {
                 checkInSection
                 aiReflectionSection
 
-                if !viewModel.isLoadingAI {
-                    NavigationLink(value: HistoryDestination.weeklyStory(week.id)) {
-                        JedaButton("Lihat Refleksi Lengkap", systemImage: "arrow.right", kind: .primary) {}
-                    }
-                    .buttonStyle(.plain)
-                }
-
                 moodBreakdownSection
                 topicChartSection
                 memorableMomentsSection
@@ -40,11 +33,6 @@ struct WeeklySummaryView: View {
                 statsSection
                 wordCloudSection
                 rhythmSection
-
-                NavigationLink(value: HistoryDestination.dailyEntries(week.id)) {
-                    JedaButton("Lihat Semua Entry dalam Minggu Ini", systemImage: "list.bullet", kind: .secondary) {}
-                }
-                .buttonStyle(.plain)
             }
             .padding(.horizontal, JedaSpacing.lg)
             .padding(.vertical, JedaSpacing.xl)

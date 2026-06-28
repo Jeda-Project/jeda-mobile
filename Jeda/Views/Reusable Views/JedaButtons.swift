@@ -95,3 +95,25 @@ struct JedaIconButton: View {
         .accessibilityLabel(accessibilityLabel)
     }
 }
+
+struct JedaSolidBackButton: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 0) {
+                ZStack {
+                    Circle()
+                        .fill(JedaColor.elevatedBackground)
+                        .frame(width: 44, height: 44)
+                    
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundStyle(JedaColor.textPrimary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Kembali")
+    }
+}

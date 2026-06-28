@@ -149,23 +149,24 @@ struct JedaReflectionDetailView: View {
         }
         .background { JedaScreenBackground() }
         .jedaHideTabBar()
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundStyle(JedaColor.textPrimary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Kembali")
+            }
+        }
     }
 
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: JedaSpacing.md) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(Color.black)
-                    .frame(width: 40, height: 40)
-                    .background(JedaColor.elevatedBackground, in: Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Kembali")
-            
             Text("Hasil Analisis")
                 .font(.largeTitle.weight(.bold))
                 .foregroundStyle(Color.black)
@@ -378,7 +379,20 @@ struct JedaDeeperReflectionView: View {
         }
         .background(JedaColor.background.ignoresSafeArea())
         .jedaHideTabBar()
-        .toolbar(.hidden, for: .navigationBar)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .foregroundStyle(JedaColor.textPrimary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Kembali")
+            }
+        }
         .sheet(isPresented: $showConsentSheet) {
 
             ReflectionAIConsentSheet(
@@ -397,18 +411,6 @@ struct JedaDeeperReflectionView: View {
 
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: JedaSpacing.md) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(Color.black)
-                    .frame(width: 40, height: 40)
-                    .background(JedaColor.elevatedBackground, in: Circle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Kembali")
-            
             Text("Refleksi")
                 .font(.largeTitle.weight(.bold))
                 .foregroundStyle(Color.black)
