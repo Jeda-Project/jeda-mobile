@@ -3,7 +3,6 @@
  * Purpose: Minimal stub data for SwiftUI Previews in the History feature.
  */
 
-#if DEBUG
 import Foundation
 
 enum PreviewStubs {
@@ -78,4 +77,3 @@ enum PreviewStubs {
 
     static let weeks: [WeekSummary] = [week]
 }
-#endif
