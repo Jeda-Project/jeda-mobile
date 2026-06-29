@@ -28,6 +28,7 @@ jobs:
           git rm -rf --cached --ignore-unmatch \
             .claude \
             .serena \
+            skills/jeda-ios \
             AGENTS.md \
             CLAUDE.md \
             SSOT.md \
