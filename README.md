@@ -64,7 +64,12 @@ Jeda follows a **Clean Architecture + MVVM hybrid** pattern with strict layer ow
 ```
 ┌─────────────────────────────────────┐
 │              Views/                 │  SwiftUI only. No business logic.
-│         (SwiftUI Screens)           │  Reads from @Environment, emits events.
+│         (SwiftUI Screens)           │  Reads from @Environment / @StateObject.
+└────────────────┬────────────────────┘
+                 │ @StateObject / @ObservedObject
+┌────────────────▼────────────────────┐
+│           ViewModels/                │  Presentation state & orchestration.
+│      (ObservableObject classes)      │  No SwiftUI import beyond Combine/Observation.
 └────────────────┬────────────────────┘
                  │ @Environment injection
 ┌────────────────▼────────────────────┐
