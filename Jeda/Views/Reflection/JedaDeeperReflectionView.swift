@@ -108,7 +108,7 @@ struct JedaDeeperReflectionView: View {
                 Text(message)
                     .font(JedaTypography.body)
                     .foregroundStyle(JedaColor.textSecondary)
-                JedaButton("Coba lagi", kind: .secondary, tint: JedaColor.terracotta, isLoading: viewModel.isRetrying) {
+                JedaButton("Coba lagi", kind: .secondary, isLoading: viewModel.isRetrying) {
                     viewModel.retryReflection(text: reflectionText, emotion: emotion)
                 }
                 .disabled(viewModel.isRetrying)
