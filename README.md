@@ -11,6 +11,7 @@ Emotion classification runs entirely **on-device** using a fine-tuned IndoBERT m
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
+- [AI Models](#ai-models)
 - [Project Structure](#project-structure)
 - [Design System](#design-system)
 - [Getting Started](#getting-started)
@@ -49,6 +50,7 @@ Emotion classification runs entirely **on-device** using a fine-tuned IndoBERT m
 | Dependency Manager | Swift Package Manager | Native |
 | ML Framework | Core ML | On-device |
 | ML Model | IndoBERT-int8 | Fine-tuned for emotion classification |
+| AI Provider | OpenRouter | `nvidia/nemotron-3-ultra-550b-a55b:free`, `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free` |
 | Analytics | Firebase Analytics | 12.15.0+ |
 | Networking | URLSession + async/await | Native |
 | Architecture | Clean Architecture + MVVM hybrid | — |
@@ -124,6 +126,22 @@ struct SomeView: View {
     @Environment(\.emotionService) private var emotionService
 }
 ```
+
+---
+
+## AI Models
+
+Jeda uses two separate model systems, each scoped to a different privacy guarantee:
+
+| System | Model | Runs | Purpose |
+|--------|-------|------|---------|
+| Emotion Classification | IndoBERT-int8 (fine-tuned) | On-device (Core ML) | Classifies the dominant emotion (happy, sadness, anger, fear, love) from journal text. No text leaves the device. |
+| Deeper Reflection | `nvidia/nemotron-3-ultra-550b-a55b:free` | Cloud (OpenRouter) | Generates the AI-assisted deeper reflection reply, only after explicit user consent. |
+| Weekly Summary | `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free` | Cloud (OpenRouter) | Generates the AI weekly summary narrative from aggregated mood/topic data. |
+
+- Cloud models are accessed through `AIService` (`Jeda/Services/AI/`) via the OpenRouter API (`JedaAIConstants.baseURL`).
+- Cloud AI features are **opt-in**: the user must accept the AI consent gate (`ReflectionAIConsentSheet`) before any text is sent off-device.
+- Emotion classification is always local and unconditional — it is not covered by the AI consent gate.
 
 ---
 
