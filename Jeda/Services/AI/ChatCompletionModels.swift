@@ -1,30 +1,28 @@
-//
-//  ChatCompletionModels.swift
-//  Jeda
-//
-//  OpenAI-compatible chat completion payloads.
-//
+/**
+ * Scope: ChatCompletionModels.swift
+ * Purpose: Codable models for OpenAI-compatible chat completion request and response payloads.
+ */
 
 import Foundation
 
-struct ChatMessage: Codable, Sendable, Equatable {
+struct ChatMessage: Codable, Equatable {
     let role: Role
     let content: String
 
-    enum Role: String, Codable, Sendable {
+    enum Role: String, Codable {
         case system
         case user
         case assistant
     }
 }
 
-struct ChatCompletionResponseFormat: Encodable, Sendable {
+struct ChatCompletionResponseFormat: Encodable {
     let type: String
 
     static let jsonObject = ChatCompletionResponseFormat(type: "json_object")
 }
 
-struct ChatCompletionRequest: Encodable, Sendable {
+struct ChatCompletionRequest: Encodable {
     let model: String
     let messages: [ChatMessage]
     var temperature: Double?
@@ -40,7 +38,7 @@ struct ChatCompletionRequest: Encodable, Sendable {
     }
 }
 
-struct ChatCompletionResponse: Decodable, Sendable {
+struct ChatCompletionResponse: Decodable {
     let choices: [ChatCompletionChoice]
 
     var firstContent: String? {
@@ -48,12 +46,12 @@ struct ChatCompletionResponse: Decodable, Sendable {
     }
 }
 
-struct ChatCompletionChoice: Decodable, Sendable {
+struct ChatCompletionChoice: Decodable {
     let message: ChatMessage
 }
 
-struct ChatCompletionErrorResponse: Decodable, Sendable {
-    struct Detail: Decodable, Sendable {
+struct ChatCompletionErrorResponse: Decodable {
+    struct Detail: Decodable {
         let message: String?
     }
 

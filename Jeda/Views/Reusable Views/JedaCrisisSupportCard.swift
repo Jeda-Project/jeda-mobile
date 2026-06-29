@@ -8,7 +8,8 @@ import SwiftUI
 struct JedaCrisisSupportCard: View {
     var resource: CrisisSupportResource = .sejiwa
 
-    @Environment(\.openURL) private var openURL
+    @Environment(\.openURL)
+    private var openURL
 
     var body: some View {
         JedaGlassSurface(tint: JedaColor.terracotta.opacity(0.14)) {

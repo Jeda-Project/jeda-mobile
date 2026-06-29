@@ -1,9 +1,7 @@
-//
-//  JedaButtons.swift
-//  Jeda
-//
-//  Created by Codex on 27/06/26.
-//
+/**
+ * Scope: JedaButtons.swift
+ * Purpose: Reusable button styles and components used across the Jeda design system.
+ */
 
 import SwiftUI
 
@@ -17,6 +15,7 @@ struct JedaButton: View {
     let title: String
     let systemImage: String?
     let kind: JedaButtonKind
+    let tint: Color?
     let isLoading: Bool
     let action: () -> Void
 
@@ -24,12 +23,14 @@ struct JedaButton: View {
         _ title: String,
         systemImage: String? = nil,
         kind: JedaButtonKind = .primary,
+        tint: Color? = nil,
         isLoading: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.systemImage = systemImage
         self.kind = kind
+        self.tint = tint
         self.isLoading = isLoading
         self.action = action
     }
@@ -42,18 +43,17 @@ struct JedaButton: View {
             .allowsHitTesting(!isLoading)
     }
 
-    @ViewBuilder
-    private var styledButton: some View {
+    @ViewBuilder private var styledButton: some View {
         switch kind {
         case .primary:
             button
-                .jedaProminentButtonStyle(tint: JedaColor.sage)
+                .jedaProminentButtonStyle(tint: tint ?? JedaColor.sage)
         case .secondary:
             button
-                .jedaGlassButtonStyle(tint: JedaColor.sage)
+                .jedaGlassButtonStyle(tint: tint ?? JedaColor.sage)
         case .warning:
             button
-                .jedaProminentButtonStyle(tint: JedaColor.terracotta)
+                .jedaProminentButtonStyle(tint: tint ?? JedaColor.terracotta)
         }
     }
 
@@ -71,7 +71,7 @@ struct JedaButton: View {
             .background(alignment: .center) {
                 if isLoading {
                     ProgressView()
-                        .tint(kind == .secondary ? JedaColor.sage : Color.white)
+                        .tint(kind == .secondary ? (tint ?? JedaColor.sage) : JedaColor.onAccent)
                         .scaleEffect(0.7)
                 }
             }
@@ -106,7 +106,7 @@ struct JedaSolidBackButton: View {
                     Circle()
                         .fill(JedaColor.elevatedBackground)
                         .frame(width: 44, height: 44)
-                    
+
                     Image(systemName: "chevron.left")
                         .font(.system(size: 18, weight: .semibold, design: .rounded))
                         .foregroundStyle(JedaColor.textPrimary)

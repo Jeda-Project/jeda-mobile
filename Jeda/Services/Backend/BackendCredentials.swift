@@ -5,12 +5,12 @@
 
 import Foundation
 
-struct BackendCredentials: Sendable {
+struct BackendCredentials {
     let baseURL: URL
     let token: String
 }
 
-enum BackendCredentialsError: LocalizedError, Sendable {
+enum BackendCredentialsError: LocalizedError {
     case missingBaseURL
     case invalidBaseURL(String)
     case missingToken
@@ -19,7 +19,7 @@ enum BackendCredentialsError: LocalizedError, Sendable {
         switch self {
         case .missingBaseURL:
             "Base URL backend belum dikonfigurasi. Tambahkan JEDA_API_BASE_URL di Secrets.plist."
-        case .invalidBaseURL(let value):
+        case let .invalidBaseURL(value):
             "Base URL backend tidak valid: \(value)"
         case .missingToken:
             "Token backend belum dikonfigurasi. Tambahkan JEDA_API_TOKEN di Secrets.plist."

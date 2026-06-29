@@ -10,7 +10,7 @@ Jeda adalah aplikasi iOS untuk journaling kesehatan mental dengan klasifikasi em
 
 ```bash
 # ✅ Benar
-rtk xcodebuild build -project Jeda.xcodeproj -scheme Jeda -destination 'platform=iOS Simulator,name=iPhone 16'
+rtk xcodebuild build -project Jeda.xcodeproj -scheme Jeda -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 rtk swift test
 
 # ❌ Dilarang
@@ -64,13 +64,13 @@ App/            → Entry point & root view setup saja.
 rtk xcodebuild build \
   -project Jeda.xcodeproj \
   -scheme Jeda \
-  -destination 'platform=iOS Simulator,name=iPhone 16'
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 
 # Jalankan tests
 rtk xcodebuild test \
   -project Jeda.xcodeproj \
   -scheme Jeda \
-  -destination 'platform=iOS Simulator,name=iPhone 16'
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
 
 # SwiftLint (jika tersedia)
 rtk swiftlint lint --quiet
@@ -118,6 +118,7 @@ Baca bagian yang relevan sebelum memulai task:
 | Testing | `rules/common/testing.md` |
 | Komentar / style | `rules/common/comments.md` |
 | Dependency injection | `anti-patterns/environment-injection.md` |
+| swiftformat + SwiftLint conflict | `anti-patterns/swiftformat-swiftlint-conflict.md` |
 
 ## Code Comments
 
@@ -144,3 +145,30 @@ Tidak ada inline `//` comment. File `*View.swift` zero comment.
 - ❌ Jangan tulis ke `Jeda.xcodeproj/project.pbxproj` secara manual
 - ❌ Jangan simpan secrets di UserDefaults — gunakan Keychain
 - ❌ Jangan gunakan hardcoded string API URL — gunakan `APIConfiguration`
+
+## Formatting & Linting
+
+Dua tool dengan tanggung jawab terpisah — **tidak boleh overlap**:
+
+| Tool | Tanggung Jawab | Jangan dipakai untuk |
+|------|---------------|---------------------|
+| **SwiftFormat** | Indentation, spacing, brace, import sorting, trailing comma | Logic/quality rules |
+| **SwiftLint** | Code quality, force unwrap, complexity, custom rules | Formatting (tidak pakai `--fix`) |
+
+### Workflow sebelum commit
+```bash
+# 1. Format dulu (SwiftFormat)
+swiftformat .
+
+# 2. Lint saja — tanpa --fix (SwiftFormat sudah handle formatting)
+rtk swiftlint lint --quiet
+```
+
+### Xcode Build Phase (tambahkan manual di Xcode)
+Di Xcode → Target Jeda → Build Phases → `+` → New Run Script Phase, isi:
+```bash
+if which swiftformat > /dev/null; then
+    swiftformat --config "${SRCROOT}/.swiftformat" "${SRCROOT}/Jeda"
+fi
+```
+Centang: **Based on dependency analysis** = OFF (run every build)

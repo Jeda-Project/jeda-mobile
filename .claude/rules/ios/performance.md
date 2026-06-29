@@ -3,23 +3,23 @@
 ## Core ML Performance
 
 ```swift
-// ✅ Model dimuat sekali via lazy singleton actor
+// ✅ Model loaded once via lazy singleton actor
 actor EmotionClassificationService {
     private var model: JedaEmotionIndoBERT_int8?
 
     private func getModel() throws -> JedaEmotionIndoBERT_int8 {
         if let existing = model { return existing }
         let config = MLModelConfiguration()
-        config.computeUnits = .cpuAndNeuralEngine  // manfaatkan Neural Engine
+        config.computeUnits = .cpuAndNeuralEngine  // leverage Neural Engine
         let loaded = try JedaEmotionIndoBERT_int8(contentsOf: modelURL, configuration: config)
         model = loaded
         return loaded
     }
 }
 
-// ❌ Model dimuat setiap inference — sangat lambat
+// ❌ Model loaded on every inference — very slow
 func classify(text: String) async throws -> EmotionClassificationResult {
-    let model = try JedaEmotionIndoBERT_int8(contentsOf: modelURL)  // load ulang setiap kali!
+    let model = try JedaEmotionIndoBERT_int8(contentsOf: modelURL)  // reloads every time!
     // ...
 }
 ```
@@ -27,64 +27,64 @@ func classify(text: String) async throws -> EmotionClassificationResult {
 ## SwiftUI Re-render Optimization
 
 ```swift
-// ✅ Pecah View besar — hanya sub-view yang berubah yang re-render
+// ✅ Split large Views — only sub-views that change will re-render
 struct JournalDetailView: View {
-    let entry: JournalEntry  // let, bukan @State untuk data dari parent
+    let entry: JournalEntry  // let, not @State for data from parent
 
     var body: some View {
         VStack {
-            EntryHeader(entry: entry)        // re-render hanya jika entry berubah
+            EntryHeader(entry: entry)        // re-renders only if entry changes
             EmotionResultView(entry: entry)  // independent re-render
         }
     }
 }
 
-// ❌ @ObservedObject yang di-observe terlalu luas
+// ❌ @ObservedObject observed too broadly
 struct SomeView: View {
-    @ObservedObject var viewModel: BigViewModel  // seluruh view re-render saat APAPUN berubah di VM
+    @ObservedObject var viewModel: BigViewModel  // entire view re-renders when ANYTHING changes in VM
 }
 ```
 
 ## Lazy Loading
 
 ```swift
-// ✅ LazyVStack / LazyHStack untuk konten panjang
+// ✅ LazyVStack / LazyHStack for long content
 ScrollView {
     LazyVStack {
         ForEach(entries) { EntryCard(entry: $0) }
     }
 }
 
-// ✅ List punya built-in lazy loading
+// ✅ List has built-in lazy loading
 List(entries) { EntryRow(entry: $0) }
 ```
 
 ## Image Loading
 
-Untuk gambar yang di-load dari URL (future feature):
-- Cache images di memory atau disk
-- Gunakan `.resizable()` + `.scaledToFill()` dengan `.clipped()` agar tidak memuat image lebih besar dari dibutuhkan
-- Tampilkan placeholder saat loading
+For images loaded from URLs (future feature):
+- Cache images in memory or on disk
+- Use `.resizable()` + `.scaledToFill()` with `.clipped()` to avoid loading images larger than needed
+- Show a placeholder while loading
 
 ## Memory Management
 
 ```swift
-// ✅ [weak self] untuk closure yang captured setelah delay
+// ✅ [weak self] for closures captured after a delay
 Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
     self?.updateUI()
 }
 
-// ✅ Task di-cancel saat View hilang (otomatis dengan .task modifier)
-// ❌ Task.detached yang tidak bisa di-cancel
+// ✅ Task is cancelled when the View disappears (automatic with .task modifier)
+// ❌ Task.detached cannot be cancelled
 Task.detached {
-    // tidak ada cara cancel task ini dari View
+    // no way to cancel this task from the View
 }
 ```
 
 ## Network Efficiency
 
 ```swift
-// ✅ Debounce untuk pencarian yang trigger saat user mengetik
+// ✅ Debounce for searches triggered while the user types
 .onChange(of: searchText) { _, newValue in
     searchTask?.cancel()
     searchTask = Task {
@@ -93,8 +93,8 @@ Task.detached {
     }
 }
 
-// ✅ Cancel in-flight request saat View hilang
+// ✅ Cancel in-flight request when the View disappears
 .task {
-    await loadData()  // otomatis di-cancel saat View dismiss
+    await loadData()  // automatically cancelled when View is dismissed
 }
 ```

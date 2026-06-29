@@ -17,7 +17,7 @@ enum HistoryWeekCatalog {
         pastWeekCount: Int = 4,
         referenceDate: Date = Date()
     ) -> [WeekSummary] {
-        (0...pastWeekCount).compactMap { offset in
+        (0 ... pastWeekCount).compactMap { offset in
             weekTemplate(weeksAgo: offset, referenceDate: referenceDate, allEntries: entries)
         }
     }
@@ -34,22 +34,38 @@ enum HistoryWeekCatalog {
         guard
             let anchor = calendar.date(byAdding: .weekOfYear, value: -weeksAgo, to: referenceDate),
             let interval = calendar.dateInterval(of: .weekOfYear, for: anchor)
-        else {
-            return nil
-        }
-
+        else { return nil }
         let start = interval.start
-        guard let end = calendar.date(byAdding: .day, value: 6, to: start) else {
-            return nil
-        }
-
+        guard let end = calendar.date(byAdding: .day, value: 6, to: start) else { return nil }
         let weekEntries = entries(from: start, to: end, in: allEntries)
         let weekNumber = calendar.component(.weekOfYear, from: start)
         let year = calendar.component(.yearForWeekOfYear, from: start)
-        let id = weekID(year: year, weekOfYear: weekNumber)
         let dominant = dominantMood(in: weekEntries) ?? .neutral
         let checkIns = HistoryFormatting.uniqueCheckInDayCount(for: weekEntries.map(\.date))
+        return buildWeekSummary(
+            id: weekID(year: year, weekOfYear: weekNumber),
+            weekNumber: weekNumber,
+            start: start,
+            end: end,
+            dominant: dominant,
+            checkIns: checkIns
+        )
+    }
 
+    private static func buildWeekSummary(
+        id: UUID,
+        weekNumber: Int,
+        start: Date,
+        end: Date,
+        dominant: JedaMood,
+        checkIns: Int
+    ) -> WeekSummary {
+        let phrase = checkIns > 0
+            ? "\(checkIns) Kontemplasi"
+            : WeekSummary.placeholderNarrative(for: dominant).summaryPhrase
+        let summary = checkIns > 0
+            ? "Kamu sudah kontemplasi \(checkIns) kali minggu ini."
+            : "Belum ada kontemplasi minggu ini. Mulai dari satu catatan singkat."
         return WeekSummary(
             id: id,
             weekNumber: weekNumber,
@@ -59,15 +75,11 @@ enum HistoryWeekCatalog {
             moodLabel: dominant.optimisticLabel,
             checkInCount: checkIns,
             totalDays: 7,
-            summaryPhrase: checkIns > 0
-                ? "\(checkIns) check-in minggu ini"
-                : WeekSummary.placeholderNarrative(for: dominant).summaryPhrase,
+            summaryPhrase: phrase,
             topTopics: [],
             moodTrendPoints: [],
-            aiReflectionSummary: checkIns > 0
-                ? "Kamu sudah check-in \(checkIns) kali minggu ini."
-                : "Belum ada check-in minggu ini. Mulai dari satu catatan singkat.",
-            aiReflectionLong: "Setiap check-in membantu kamu melihat pola dengan lebih jujur.",
+            aiReflectionSummary: summary,
+            aiReflectionLong: "Setiap kontemplasi membantu kamu melihat pola dengan lebih jujur.",
             storyPages: [],
             moodBreakdown: [],
             topicChartItems: [],

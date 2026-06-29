@@ -1,28 +1,28 @@
-# /commit — Conventional Commit dengan Quality Gate
+# /commit — Conventional Commit with Quality Gate
 
-Draft commit message yang benar setelah quality gate lulus. TIDAK mengeksekusi commit.
+Draft a correct commit message after the quality gate passes. Does NOT execute the commit.
 
-## Langkah
+## Steps
 
 1. **Quality gate**:
-   - Build berhasil? (`rtk xcodebuild build ...`)
+   - Build succeeded? (`rtk xcodebuild build ...`)
    - SwiftLint clean? (`rtk swiftlint lint --quiet`)
 
 2. **Inspect staged diff**: `git diff --cached`
 
-3. **Draft commit message** dengan format:
+3. **Draft commit message** with format:
 ```
-type(scope): subject — maks 50 karakter
+type(scope): subject — max 50 characters
 
-Body opsional (WHY, bukan WHAT)
+Optional body (WHY, not WHAT)
 ```
 
    **Types:** `feat`, `fix`, `refactor`, `chore`, `docs`, `style`, `perf`, `test`
    **Scopes:** `views`, `services`, `models`, `ml`, `networking`, `a11y`, `config`
 
-4. **Tampilkan untuk review** — JANGAN eksekusi `git commit` tanpa konfirmasi user.
+4. **Display for review** — DO NOT execute `git commit` without user confirmation.
 
-## Contoh Output
+## Example Output
 
 ```
 Proposed commit:
@@ -33,5 +33,5 @@ Classifier now returns nil for predictions below 0.6 confidence
 to prevent misleading low-confidence results being shown to users.
 
 ---
-Run: git commit -m "..." untuk mengeksekusi
+Run: git commit -m "..." to execute
 ```

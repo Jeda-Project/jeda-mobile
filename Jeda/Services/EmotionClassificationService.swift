@@ -1,9 +1,7 @@
-//
-//  EmotionClassificationService.swift
-//  Jeda
-//
-//  On-device emotion classification using fine-tuned IndoBERT-lite (Core ML).
-//
+/**
+ * Scope: EmotionClassificationService.swift
+ * Purpose: Actor-based service that runs on-device IndoBERT emotion classification via Core ML.
+ */
 
 import CoreML
 import Foundation
@@ -23,7 +21,7 @@ actor EmotionClassificationService: EmotionAnalyzing {
 
     static let maxSequenceLength = 128
 
-    private let model: MLModel
+    nonisolated(unsafe) private let model: MLModel
     private let tokenizer: IndoBertTokenizer
 
     init(bundle: Bundle = .main) throws {
@@ -33,25 +31,24 @@ actor EmotionClassificationService: EmotionAnalyzing {
 
         let configuration = MLModelConfiguration()
         configuration.computeUnits = .all
-        self.model = try MLModel(contentsOf: modelURL, configuration: configuration)
-        self.tokenizer = try IndoBertTokenizer(bundle: bundle)
+        model = try MLModel(contentsOf: modelURL, configuration: configuration)
+        tokenizer = try IndoBertTokenizer(bundle: bundle)
     }
 
-    private static func modelURL(in bundle: Bundle) -> URL? {
+    nonisolated private static func modelURL(in bundle: Bundle) -> URL? {
         if let compiled = bundle.url(forResource: "JedaEmotionIndoBERT-int8", withExtension: "mlmodelc") {
             return compiled
         }
         return bundle.url(forResource: "JedaEmotionIndoBERT-int8", withExtension: "mlpackage")
     }
 
-    /// Classifies journal text into one of five EmoT emotions.
     func classify(_ text: String) async throws -> EmotionClassificationResult {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             throw EmotionClassificationError.emptyInput
         }
 
-        let encoding = tokenizer.encode(trimmed, maxLength: Self.maxSequenceLength)
+        let encoding = await tokenizer.encode(trimmed, maxLength: Self.maxSequenceLength)
         let logits = try predictLogits(encoding: encoding)
         guard let result = EmotionClassificationResult.from(logits: logits) else {
             throw EmotionClassificationError.invalidModelOutput
@@ -65,7 +62,7 @@ actor EmotionClassificationService: EmotionAnalyzing {
 
         let input = try MLDictionaryFeatureProvider(dictionary: [
             "input_ids": MLFeatureValue(multiArray: inputIdsArray),
-            "attention_mask": MLFeatureValue(multiArray: attentionMaskArray),
+            "attention_mask": MLFeatureValue(multiArray: attentionMaskArray)
         ])
 
         let output: MLFeatureProvider
@@ -96,7 +93,7 @@ actor EmotionClassificationService: EmotionAnalyzing {
         let count = multiArray.count
         var result = [Float](repeating: 0, count: count)
         let pointer = multiArray.dataPointer.bindMemory(to: Float.self, capacity: count)
-        for index in 0..<count {
+        for index in 0 ..< count {
             result[index] = pointer[index]
         }
         return result

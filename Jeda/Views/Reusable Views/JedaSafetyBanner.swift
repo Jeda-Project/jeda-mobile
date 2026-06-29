@@ -1,9 +1,7 @@
-//
-//  JedaSafetyBanner.swift
-//  Jeda
-//
-//  Created by Codex on 27/06/26.
-//
+/**
+ * Scope: JedaSafetyBanner.swift
+ * Purpose: Banner component surfacing crisis support resources when safety signals are detected.
+ */
 
 import SwiftUI
 

@@ -1,11 +1,10 @@
-//
-//  APIService.swift
-//  Jeda
-//
+/**
+ * Scope: APIService.swift
+ * Purpose: Actor-based networking layer that executes typed API requests and decodes responses.
+ */
 
 import Foundation
 
-/// Client HTTP generik. Inject `URLSession` untuk unit test.
 final class APIService {
     private let configuration: APIConfiguration
     private let session: URLSession
@@ -29,7 +28,7 @@ final class APIService {
     func request<T: Decodable>(
         _ endpoint: some APIEndpoint,
         responseType: T.Type,
-        acceptableStatusCodes: Set<Int> = Set(200...299)
+        acceptableStatusCodes: Set<Int> = Set(200 ... 299)
     ) async throws -> T {
         let request = try APIRequestBuilder(configuration: configuration, endpoint: endpoint).build()
         let data = try await perform(request, acceptableStatusCodes: acceptableStatusCodes)
@@ -44,7 +43,7 @@ final class APIService {
     /// Untuk DELETE / PUT tanpa response body (204 No Content).
     func requestVoid(
         _ endpoint: some APIEndpoint,
-        acceptableStatusCodes: Set<Int> = Set(200...299)
+        acceptableStatusCodes: Set<Int> = Set(200 ... 299)
     ) async throws {
         let request = try APIRequestBuilder(configuration: configuration, endpoint: endpoint).build()
         _ = try await perform(request, acceptableStatusCodes: acceptableStatusCodes)
@@ -55,7 +54,7 @@ final class APIService {
     func request<T: Decodable>(
         builder: APIRequestBuilder,
         responseType: T.Type,
-        acceptableStatusCodes: Set<Int> = Set(200...299)
+        acceptableStatusCodes: Set<Int> = Set(200 ... 299)
     ) async throws -> T {
         let request = try builder.build()
         let data = try await perform(request, acceptableStatusCodes: acceptableStatusCodes)
@@ -69,14 +68,14 @@ final class APIService {
 
     func requestVoid(
         builder: APIRequestBuilder,
-        acceptableStatusCodes: Set<Int> = Set(200...299)
+        acceptableStatusCodes: Set<Int> = Set(200 ... 299)
     ) async throws {
         let request = try builder.build()
         _ = try await perform(request, acceptableStatusCodes: acceptableStatusCodes)
     }
 
     /// Raw request jika perlu custom handling.
-    func data(for request: URLRequest, acceptableStatusCodes: Set<Int> = Set(200...299)) async throws -> Data {
+    func data(for request: URLRequest, acceptableStatusCodes: Set<Int> = Set(200 ... 299)) async throws -> Data {
         try await perform(request, acceptableStatusCodes: acceptableStatusCodes)
     }
 

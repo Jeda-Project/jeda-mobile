@@ -15,10 +15,11 @@ struct ReflectionAIConsentSheet: View {
                 Circle()
                     .fill(JedaColor.sage.opacity(0.15))
                     .frame(width: 80, height: 80)
-                
+
                 Image(systemName: "icloud.and.arrow.up.fill")
                     .font(.system(size: 36, weight: .semibold))
                     .foregroundStyle(JedaColor.sage)
+                    .accessibilityHidden(true)
             }
             .padding(.top, 32)
 
@@ -28,12 +29,15 @@ struct ReflectionAIConsentSheet: View {
                     .foregroundStyle(JedaColor.textPrimary)
                     .multilineTextAlignment(.center)
 
-                Text("Refleksimu akan dikirim ke layanan AI di cloud untuk dianalisis dan dibalas. Teks ini tidak disimpan dengan namamu dan hanya digunakan untuk memberi balasan refleksi.")
-                    .font(JedaTypography.body)
-                    .foregroundStyle(JedaColor.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
-                    .fixedSize(horizontal: false, vertical: true)
+                Text(
+                    "Refleksimu akan dikirim ke layanan AI di cloud untuk dianalisis dan dibalas. "
+                        + "Teks ini tidak disimpan dengan namamu dan hanya digunakan untuk memberi balasan refleksi."
+                )
+                .font(JedaTypography.body)
+                .foregroundStyle(JedaColor.textSecondary)
+                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.horizontal, 8)
 

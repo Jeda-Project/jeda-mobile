@@ -1,13 +1,10 @@
-//
-//  APIEndpoint.swift
-//  Jeda
-//
-//  Best practice: definisikan setiap domain API sebagai enum yang conform ke `APIEndpoint`.
-//
+/**
+ * Scope: APIEndpoint.swift
+ * Purpose: Protocol defining the interface for all typed API endpoint descriptors.
+ */
 
 import Foundation
 
-/// Kontrak untuk semua endpoint. Setiap feature/domain punya enum sendiri.
 protocol APIEndpoint: Sendable {
     var path: String { get }
     var method: HTTPMethod { get }
@@ -17,14 +14,22 @@ protocol APIEndpoint: Sendable {
 }
 
 extension APIEndpoint {
-    var headers: [String: String] { [:] }
-    var queryItems: [URLQueryItem]? { nil }
-    var body: Data? { nil }
+    var headers: [String: String] {
+        [:]
+    }
+
+    var queryItems: [URLQueryItem]? {
+        nil
+    }
+
+    var body: Data? {
+        nil
+    }
 }
 
 extension APIEndpoint {
     /// Encode body dari model `Encodable` — dipakai di enum endpoint.
-    func encodeBody<T: Encodable>(_ value: T, encoder: JSONEncoder = JSONEncoder()) throws -> Data {
+    func encodeBody(_ value: some Encodable, encoder: JSONEncoder = JSONEncoder()) throws -> Data {
         do {
             return try encoder.encode(value)
         } catch {

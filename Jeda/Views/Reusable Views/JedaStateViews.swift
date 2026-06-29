@@ -1,9 +1,7 @@
-//
-//  JedaStateViews.swift
-//  Jeda
-//
-//  Created by Codex on 27/06/26.
-//
+/**
+ * Scope: JedaStateViews.swift
+ * Purpose: Reusable loading, empty, and error state views used throughout the app.
+ */
 
 import SwiftUI
 
@@ -15,7 +13,7 @@ enum JedaStateKind {
     var title: String {
         switch self {
         case .loading: "Membaca pola"
-        case .empty: "Belum ada check-in"
+        case .empty: "Belum ada kontemplasi"
         case .error: "Refleksi gagal dibuat"
         }
     }
@@ -23,7 +21,7 @@ enum JedaStateKind {
     var message: String {
         switch self {
         case .loading: "Jeda sedang menyusun respons singkat dari entry terbaru."
-        case .empty: "Mulai dari satu check-in singkat. Tidak perlu rapi."
+        case .empty: "Mulai dari satu kontemplasi singkat. Tidak perlu rapi."
         case .error: "Data tetap aman. Coba lagi saat koneksi stabil."
         }
     }
@@ -91,7 +89,13 @@ struct JedaStateCard: View {
                 }
 
                 if let actionTitle, let action {
-                    JedaButton(actionTitle, systemImage: "arrow.clockwise", kind: .secondary, action: action)
+                    JedaButton(
+                        actionTitle,
+                        systemImage: "arrow.clockwise",
+                        kind: .secondary,
+                        tint: kind.tint,
+                        action: action
+                    )
                 }
             }
             .redacted(reason: kind == .loading ? .placeholder : [])

@@ -1,14 +1,13 @@
-//
-//  JedaLaunchGateView.swift
-//  Jeda
-//
-//  Created by Codex on 28/06/26.
-//
+/**
+ * Scope: JedaLaunchGateView.swift
+ * Purpose: Launch gate view that controls initial navigation based on onboarding state.
+ */
 
 import SwiftUI
 
 struct JedaLaunchGateView: View {
-    @Environment(\.onboardingProgressStore) private var onboardingProgressStore
+    @Environment(\.onboardingProgressStore)
+    private var onboardingProgressStore
     @State private var hasCompletedOnboarding: Bool
 
     init(hasCompletedOnboarding: Bool? = nil) {

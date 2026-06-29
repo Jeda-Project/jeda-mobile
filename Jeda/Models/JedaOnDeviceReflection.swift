@@ -7,13 +7,18 @@ import Foundation
 
 enum JedaOnDeviceReflection {
     static func generate(from text: String, emotion: Emotion) -> String {
-        let keyword = extractKeyword(from: text)
+        emotionQuestion(for: emotion, keyword: keyword(from: text))
+    }
 
-        if let keyword {
-            return emotionQuestion(for: emotion, keyword: keyword)
-        } else {
-            return fallbackQuestion(for: emotion)
+    static func generate(from text: String, mood: JedaMood) -> String {
+        let emotion: Emotion = switch mood {
+        case .heavy: .sadness
+        case .low: .fear
+        case .neutral: .love
+        case .okay: .happy
+        case .light: .happy
         }
+        return generate(from: text, emotion: emotion)
     }
 
     static func keyword(from text: String) -> String {
@@ -21,7 +26,7 @@ enum JedaOnDeviceReflection {
     }
 
     private static func extractKeyword(from text: String) -> String? {
-        let stopWords: Set<String> = [
+        let stopWords: Set = [
             "dan", "atau", "tapi", "tetapi", "karena", "kalau", "jika",
             "yang", "di", "ke", "dari", "dengan", "untuk", "pada",
             "sedang", "akan", "tidak", "tak", "bukan", "juga", "lagi",
@@ -54,21 +59,6 @@ enum JedaOnDeviceReflection {
             return "Kamu menyebut \(q) — bagian mana dari itu yang paling membuatmu ragu?"
         case .happy:
             return "Kamu menyebut \(q) — apa yang membuatnya terasa menyenangkan bagimu?"
-        }
-    }
-
-    private static func fallbackQuestion(for emotion: Emotion) -> String {
-        switch emotion {
-        case .sadness:
-            return "Ada bagian dari harimu yang terasa lebih berat dari biasanya — apa yang muncul pertama kali saat kamu mengingatnya?"
-        case .anger:
-            return "Apa satu hal dari hari ini yang paling ingin kamu ubah kalau bisa?"
-        case .love:
-            return "Apa yang membuatmu merasa terhubung hari ini?"
-        case .fear:
-            return "Kalau ketidakpastian itu hilang besok, apa yang pertama kali ingin kamu lakukan?"
-        case .happy:
-            return "Momen mana dari hari ini yang ingin kamu ingat lebih lama?"
         }
     }
 }

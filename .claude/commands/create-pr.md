@@ -1,10 +1,10 @@
-# /create-pr — Buat GitHub Pull Request
+# /create-pr — Create GitHub Pull Request
 
-Auto-generate PR dari branch saat ini ke main.
+Auto-generate a PR from the current branch to main.
 
-## Langkah
+## Steps
 
-1. **Cek branch dan commits**:
+1. **Check branch and commits**:
 ```bash
 git status
 git log main..HEAD --oneline
@@ -12,10 +12,10 @@ git diff main...HEAD --stat
 ```
 
 2. **Generate PR content**:
-   - Title: conventional format, maks 70 karakter
-   - Body: summary, changes, testing notes, screenshots jika UI change
+   - Title: conventional format, max 70 characters
+   - Body: summary, changes, testing notes, screenshots if UI change
 
-3. **Buat PR via GitHub CLI**:
+3. **Create PR via GitHub CLI**:
 ```bash
 gh pr create \
   --title "<title>" \
@@ -23,25 +23,25 @@ gh pr create \
   --base main
 ```
 
-## Template PR Body
+## PR Body Template
 
 ```markdown
 ## Summary
-- <bullet point perubahan utama>
+- <bullet point of main changes>
 
 ## Changes
-- **Views:** <perubahan UI>
-- **Services:** <perubahan logic>
-- **Models:** <perubahan types>
+- **Views:** <UI changes>
+- **Services:** <logic changes>
+- **Models:** <type changes>
 
 ## Testing
-- [ ] Build berhasil di iPhone 16 Simulator
+- [ ] Build succeeded on iPhone 17 Pro Simulator
 - [ ] SwiftLint clean
-- [ ] Manual testing: <skenario yang di-test>
-- [ ] Tidak ada regresi pada fitur yang ada
+- [ ] Manual testing: <scenarios tested>
+- [ ] No regression on existing features
 
-## Screenshots (jika UI change)
-<lampirkan screenshot>
+## Screenshots (if UI change)
+<attach screenshot>
 
 🤖 Generated with Claude Code
 ```

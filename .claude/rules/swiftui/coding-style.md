@@ -1,24 +1,24 @@
 # SwiftUI Coding Style
 
-## View Body — Tetap Ringan
+## View Body — Keep It Lightweight
 
-View `body` hanya boleh berisi layout dan display logic. Tidak ada computation berat:
+The View `body` should only contain layout and display logic. No heavy computation:
 
 ```swift
-// ✅ Computed property untuk logic sederhana
+// ✅ Computed property for simple logic
 var emotionColor: Color {
     JedaColor.forEmotion(dominantEmotion).color
 }
 
-// ❌ Logic berat di body — re-evaluate setiap render
+// ❌ Heavy logic in body — re-evaluated on every render
 var body: some View {
     Text(entries.filter { $0.emotion == .happy }.map { $0.text }.joined(separator: ", "))
 }
 ```
 
-## Pecah View yang Panjang
+## Split Long Views
 
-Maks ~150 baris per View file. Pecah menjadi private sub-views atau extracted components:
+Max ~150 lines per View file. Break into private sub-views or extracted components:
 
 ```swift
 struct JournalDetailView: View {
@@ -32,7 +32,7 @@ struct JournalDetailView: View {
         }
     }
 
-    // ✅ Private sub-view — tetap dalam file yang sama jika kecil
+    // ✅ Private sub-view — keep in the same file if small
     private var headerSection: some View {
         HStack { ... }
     }
@@ -41,37 +41,37 @@ struct JournalDetailView: View {
 
 ## State Management Hierarchy
 
-Gunakan jenis state yang paling sederhana yang memenuhi kebutuhan:
+Use the simplest state type that meets the need:
 
 ```swift
-@State          // State lokal dalam satu View (UI-only)
-@Binding        // State yang di-pass dari parent
-@StateObject    // ViewModel yang owned oleh View ini
-@ObservedObject // ViewModel yang di-inject dari luar
-@Environment    // Dependency dari environment (services, theme)
-@EnvironmentObject // Shared object dari ancestor (gunakan sparingly)
+@State          // Local state within a single View (UI-only)
+@Binding        // State passed down from a parent
+@StateObject    // ViewModel owned by this View
+@ObservedObject // ViewModel injected from outside
+@Environment    // Dependency from the environment (services, theme)
+@EnvironmentObject // Shared object from an ancestor (use sparingly)
 ```
 
-> JANGAN gunakan `@EnvironmentObject` untuk services — gunakan `@Environment` dengan custom key.
+> DO NOT use `@EnvironmentObject` for services — use `@Environment` with a custom key.
 
-## className vs style
+## Modifiers vs Style
 
 ```swift
-// ✅ Modifier untuk nilai statis
+// ✅ Modifier for static values
 Text("Halo")
     .font(.body)
     .foregroundStyle(JedaColor.textPrimary.color)
 
-// ✅ Jika perlu computed berdasarkan state — gunakan conditional modifier
+// ✅ If computed from state — use a conditional modifier
 Text("Halo")
     .foregroundStyle(isSelected ? JedaColor.sageGreen.color : JedaColor.textPrimary.color)
 
-// ❌ Jangan buat custom modifier hanya untuk satu penggunaan
+// ❌ Do not create a custom modifier for a single use
 ```
 
 ## Preview
 
-Setiap View WAJIB punya `#Preview`:
+Every View MUST have a `#Preview`:
 
 ```swift
 #Preview("Default") {
@@ -83,4 +83,4 @@ Setiap View WAJIB punya `#Preview`:
 }
 ```
 
-Gunakan mock data atau mock service untuk Preview agar bisa berjalan tanpa network/ML.
+Use mock data or a mock service in Previews so they can run without network or ML.

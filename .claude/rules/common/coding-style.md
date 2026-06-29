@@ -2,50 +2,50 @@
 
 ## Immutability
 
-SELALU gunakan value types (`struct`, `enum`) untuk domain model. Hindari mutasi jika bisa diganti dengan copy-on-write:
+ALWAYS use value types (`struct`, `enum`) for domain models. Avoid mutation where copy-on-write can be used instead:
 
 ```swift
-// ✅ Benar — immutable update
+// ✅ Correct — immutable update
 var updated = entry
 updated.mood = .happy
 
-// ❌ Salah — mutasi di tempat tanpa kontrol
-entry.mood = .happy  // langsung mutasi di referensi shared
+// ❌ Wrong — mutation in place without control
+entry.mood = .happy  // direct mutation on a shared reference
 ```
 
-Rationale: `struct` di Swift adalah value type — aman untuk concurrency dan mudah di-test.
+Rationale: `struct` in Swift is a value type — safe for concurrency and easy to test.
 
 ## Core Principles
 
 ### KISS
-- Pilih solusi paling sederhana yang benar-benar bekerja
-- Hindari premature abstraction — tiga View yang mirip tidak perlu langsung di-extract
-- Optimalkan untuk keterbacaan, bukan kepintaran
+- Choose the simplest solution that actually works
+- Avoid premature abstraction — three similar Views do not immediately need to be extracted
+- Optimize for readability, not cleverness
 
 ### DRY
-- Extract logika yang benar-benar berulang ke `ViewModifier`, extension, atau utility
-- Jangan copy-paste styling — buat `JedaButtonStyle` atau custom `ViewModifier`
-- Abstraksi hanya ketika repetisi nyata, bukan spekulatif
+- Extract logic that is genuinely repeated into `ViewModifier`, extension, or utility
+- Do not copy-paste styling — create `JedaButtonStyle` or a custom `ViewModifier`
+- Abstract only when repetition is real, not speculative
 
 ### YAGNI
-- Jangan buat protocol/abstraction sebelum ada dua implementasi
-- Mulai simple dengan `struct`, naik ke `class`/`actor` hanya jika dibutuhkan
-- Jangan siapkan "hook untuk future feature" yang belum pasti ada
+- Do not create protocols/abstractions before there are two implementations
+- Start simple with `struct`, move to `class`/`actor` only when needed
+- Do not add "hooks for future features" that are not confirmed
 
 ## File Organization
 
-BANYAK FILE KECIL > SEDIKIT FILE BESAR:
+MANY SMALL FILES > FEW LARGE FILES:
 
-- Satu file = satu type utama (satu View, satu Service, satu Model)
-- Maks ~150 baris per file — jika lebih, pertimbangkan untuk dipecah
-- Organisasi by feature, bukan by type:
+- One file = one primary type (one View, one Service, one Model)
+- Max ~150 lines per file — if more, consider splitting
+- Organize by feature, not by type:
   ```
   // ✅ By feature
   Journal/JournalEntry.swift
   Journal/JournalService.swift
   Journal/JournalListView.swift
 
-  // ❌ By type (sulit navigate)
+  // ❌ By type (hard to navigate)
   Models/JournalEntry.swift
   Services/JournalService.swift
   Views/JournalListView.swift
@@ -53,24 +53,24 @@ BANYAK FILE KECIL > SEDIKIT FILE BESAR:
 
 ## Error Handling
 
-SELALU tangani error secara eksplisit:
+ALWAYS handle errors explicitly:
 
-- `throws` function: handle atau propagate, jangan `try?` kecuali failure truly acceptable
-- User-facing error messages dalam **Bahasa Indonesia** (sesuai target pengguna Jeda)
-- Log error ke console di debug, ke analytics di production
-- Jangan swallow error dengan `catch {}`
+- `throws` functions: handle or propagate, do not use `try?` unless failure is truly acceptable
+- User-facing error messages in **Indonesian** (matching Jeda's target users)
+- Log errors to console in debug, to analytics in production
+- Do not swallow errors with `catch {}`
 
 ## Input Validation
 
-Validasi di boundary sistem:
-- Validasi input user sebelum dikirim ke Service
-- Jangan percaya data dari network response — decode dengan `Codable` + error handling
-- Teks jurnal yang kosong harus di-handle sebelum dikirim ke ML inference
+Validate at system boundaries:
+- Validate user input before sending to a Service
+- Do not trust data from network responses — decode with `Codable` + error handling
+- Empty journal text must be handled before sending to ML inference
 
-## Code Smells yang Harus Dihindari
+## Code Smells to Avoid
 
 ### Deep Nesting
-Gunakan early return / guard:
+Use early return / guard:
 ```swift
 // ❌ Deep nesting
 func process() {
@@ -102,4 +102,4 @@ func process() {
 ```
 
 ### Long Functions
-Pecah fungsi panjang menjadi private helpers dengan nama yang jelas.
+Break long functions into private helpers with clear names.

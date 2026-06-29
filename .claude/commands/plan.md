@@ -1,28 +1,28 @@
 # /plan — Feature Planning
 
-Buat rencana implementasi terstruktur untuk fitur yang diminta.
+Create a structured implementation plan for the requested feature.
 
-## Langkah
+## Steps
 
-1. **Baca konteks** sebelum mulai:
+1. **Read context** before starting:
    - `AGENTS.md` — Golden Rules
-   - `SSOT.md` — Arsitektur saat ini
-   - `PRODUCT.md` — Konteks produk
-   - File-file yang relevan dengan fitur
+   - `SSOT.md` — Current architecture
+   - `PRODUCT.md` — Product context
+   - Files relevant to the feature
 
-2. **Gunakan agent `planner`** untuk menghasilkan plan dengan struktur:
-   - Scope (apa yang masuk dan tidak masuk)
-   - Unknowns (pertanyaan yang perlu dijawab)
+2. **Use the `planner` agent** to produce a plan with the following structure:
+   - Scope (what is and is not included)
+   - Unknowns (questions that need to be answered)
    - Task breakdown per layer (Models → Services → Views)
    - Risk assessment
 
-3. **JANGAN mulai coding** sampai user mengkonfirmasi plan.
+3. **DO NOT start coding** until the user confirms the plan.
 
-4. Tanyakan: "Plan ini sudah sesuai? Ada yang perlu diubah sebelum mulai implementasi?"
+4. Ask: "Does this plan look right? Anything to change before we start implementation?"
 
-## Contoh Penggunaan
+## Example Usage
 ```
-/plan Journal entry list dengan pagination
-/plan Notifikasi pengingat journaling harian
-/plan Integrasi backend API untuk sync data
+/plan Journal entry list with pagination
+/plan Daily journaling reminder notification
+/plan Backend API integration for data sync
 ```

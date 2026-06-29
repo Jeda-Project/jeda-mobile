@@ -1,11 +1,11 @@
-//
-//  APIConfiguration.swift
-//  Jeda
-//
+/**
+ * Scope: APIConfiguration.swift
+ * Purpose: Defines base URL and environment configuration for all API requests.
+ */
 
 import Foundation
 
-struct APIConfiguration: Sendable {
+struct APIConfiguration {
     let baseURL: URL
     var defaultHeaders: [String: String]
     var timeoutInterval: TimeInterval
@@ -28,19 +28,20 @@ extension APIConfiguration {
             baseURL: baseURL,
             defaultHeaders: [
                 "Content-Type": "application/json",
-                "Authorization": "Bearer \(token)",
+                "Authorization": "Bearer \(token)"
             ],
             timeoutInterval: timeoutInterval
         )
     }
 
-    /// OpenAI chat completions API.
-    static func openAI(apiKey: String, timeoutInterval: TimeInterval = 60) -> APIConfiguration {
+    static func openRouter(apiKey: String, timeoutInterval: TimeInterval = 60) -> APIConfiguration {
         APIConfiguration(
             baseURL: JedaAIConstants.baseURL,
             defaultHeaders: [
                 "Content-Type": "application/json",
                 "Authorization": "Bearer \(apiKey)",
+                "HTTP-Referer": "https://jeda.app",
+                "X-Title": "Jeda"
             ],
             timeoutInterval: timeoutInterval
         )

@@ -1,9 +1,7 @@
-//
-//  JedaGlassSurface.swift
-//  Jeda
-//
-//  Created by Codex on 27/06/26.
-//
+/**
+ * Scope: JedaGlassSurface.swift
+ * Purpose: Reusable glass-surface card component used as an elevated surface in Jeda UI.
+ */
 
 import SwiftUI
 

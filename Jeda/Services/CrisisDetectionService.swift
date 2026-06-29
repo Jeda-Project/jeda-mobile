@@ -64,6 +64,6 @@ struct CrisisDetectionService: CrisisDetecting {
         "self injury",
         "kill myself",
         "end my life",
-        "want to die",
+        "want to die"
     ]
 }

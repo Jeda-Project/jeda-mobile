@@ -1,9 +1,7 @@
-//
-//  JedaTheme.swift
-//  Jeda
-//
-//  Created by Codex on 27/06/26.
-//
+/**
+ * Scope: JedaTheme.swift
+ * Purpose: Design system tokens including JedaColor palette, typography, and spacing constants.
+ */
 
 import SwiftUI
 import UIKit
@@ -13,12 +11,14 @@ enum JedaColor {
     static let dustyBlue = Color(red: 0.56, green: 0.64, blue: 0.68)
     static let clay = Color(red: 0.77, green: 0.60, blue: 0.49)
     static let terracotta = Color(red: 0.72, green: 0.40, blue: 0.31)
+    static let sageDark = Color(red: 0.40, green: 0.50, blue: 0.44)
 
     static let background = Color(uiColor: .jedaBackground)
     static let elevatedBackground = Color(uiColor: .jedaElevatedBackground)
     static let textPrimary = Color(uiColor: .jedaTextPrimary)
     static let textSecondary = Color(uiColor: .jedaTextSecondary)
     static let separator = Color(uiColor: .jedaSeparator)
+    static let onAccent = Color.white
 }
 
 enum JedaRadius {
@@ -83,7 +83,7 @@ struct JedaScreenBackground: View {
             LinearGradient(
                 colors: [
                     JedaColor.sage.opacity(0.20),
-                    JedaColor.dustyBlue.opacity(0.10),
+                    JedaColor.sage.opacity(0.10),
                     JedaColor.clay.opacity(0.08)
                 ],
                 startPoint: .topLeading,

@@ -1,9 +1,7 @@
-//
-//  JedaRootTabView.swift
-//  Jeda
-//
-//  Created by Codex on 28/06/26.
-//
+/**
+ * Scope: JedaRootTabView.swift
+ * Purpose: Root tab bar container that hosts the main navigation destinations of the app.
+ */
 
 import SwiftUI
 
@@ -12,13 +10,15 @@ enum JedaTab: String, CaseIterable, Identifiable {
     case reflection
     case history
 
-    var id: Self { self }
+    var id: Self {
+        self
+    }
 
     var title: String {
         switch self {
-        case .checkIn: "Check-in"
+        case .checkIn: "Kontemplasi"
         case .reflection: "Refleksi"
-        case .history: "History"
+        case .history: "Histori"
         }
     }
 

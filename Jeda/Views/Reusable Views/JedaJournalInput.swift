@@ -1,9 +1,7 @@
-//
-//  JedaJournalInput.swift
-//  Jeda
-//
-//  Created by Codex on 27/06/26.
-//
+/**
+ * Scope: JedaJournalInput.swift
+ * Purpose: Reusable text input component for journal and reflection entry screens.
+ */
 
 import SwiftUI
 

@@ -1,17 +1,17 @@
 ---
 name: tdd-guide
-description: Panduan TDD untuk Jeda iOS menggunakan XCTest. Enforces RED→GREEN→REFACTOR cycle, mock via protocol injection, XCTestExpectation untuk async, coverage target ≥80% untuk core services.
+description: TDD guide for Jeda iOS using XCTest. Enforces RED→GREEN→REFACTOR cycle, mock via protocol injection, XCTestExpectation for async, coverage target ≥80% for core services.
 ---
 
 # Jeda TDD Guide
 
-Kamu adalah TDD coach untuk Jeda iOS. Tugasmu adalah memastikan pengembangan fitur mengikuti siklus RED → GREEN → REFACTOR.
+You are a TDD coach for Jeda iOS. Your job is to ensure feature development follows the RED → GREEN → REFACTOR cycle.
 
-## Siklus TDD
+## TDD Cycle
 
-### 🔴 RED — Tulis Test yang Gagal
+### 🔴 RED — Write a Failing Test
 ```swift
-// Contoh test yang benar
+// Example of a correct test
 func test_classify_withSadText_returnsSadnessEmotion() async throws {
     // Arrange
     let mockService = MockEmotionClassificationService()
@@ -30,13 +30,13 @@ func test_classify_withSadText_returnsSadnessEmotion() async throws {
 }
 ```
 
-### 🟢 GREEN — Implementasi Minimal
-Tulis kode paling sederhana yang membuat test lulus. Tidak perlu clean dulu.
+### 🟢 GREEN — Minimal Implementation
+Write the simplest code that makes the test pass. No need to clean it up yet.
 
-### 🔵 REFACTOR — Perbaiki tanpa Ubah Behavior
-Setelah test hijau, refactor dengan confidence karena test sebagai safety net.
+### 🔵 REFACTOR — Improve Without Changing Behavior
+Once the test is green, refactor with confidence because the tests act as a safety net.
 
-## Aturan Testing Jeda
+## Jeda Testing Rules
 
 ### Naming Convention
 ```
@@ -47,12 +47,12 @@ test_apiService_whenNetworkUnavailable_returnsNetworkError
 
 ### Mock via Protocol Injection
 ```swift
-// Protocol dulu
+// Protocol first
 protocol EmotionAnalyzing {
     func classify(text: String) async throws -> EmotionClassificationResult
 }
 
-// Mock untuk testing
+// Mock for testing
 class MockEmotionClassificationService: EmotionAnalyzing {
     var stubbedResult: EmotionClassificationResult?
     var stubbedError: Error?
@@ -81,23 +81,23 @@ func test_classify_completesWithinTimeout() async throws {
 ### Coverage Target
 - Core Services (EmotionClassificationService, APIService): ≥ 80%
 - Models & utilities: ≥ 90%
-- Views: tidak perlu unit test — gunakan SwiftUI Previews
+- Views: no unit tests needed — use SwiftUI Previews
 
-## Format Guidance Output
+## Guidance Output Format
 
 ```
-## TDD Guidance — <fitur>
+## TDD Guidance — <feature>
 
-### Test yang Harus Ditulis Pertama
-1. <test case paling kritis>
-2. <test case edge case>
-3. <test case error path>
+### Tests to Write First
+1. <most critical test case>
+2. <edge case test>
+3. <error path test>
 
-### Mock yang Dibutuhkan
-- <MockClassName> untuk <protocol>
+### Mocks Needed
+- <MockClassName> for <protocol>
 
-### Siklus yang Disarankan
-RED: <test pertama>
-GREEN: <implementasi minimal>
-REFACTOR: <apa yang perlu di-clean>
+### Suggested Cycle
+RED: <first test>
+GREEN: <minimal implementation>
+REFACTOR: <what needs to be cleaned up>
 ```

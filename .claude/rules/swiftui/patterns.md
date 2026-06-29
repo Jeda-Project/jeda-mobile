@@ -2,7 +2,7 @@
 
 ## Loading / Error / Empty State
 
-Gunakan `JedaStateViews` yang sudah ada untuk konsistensi:
+Use the existing `JedaStateViews` for consistency:
 
 ```swift
 struct JournalListView: View {
@@ -33,12 +33,12 @@ enum ViewState<T> {
 ## List & Lazy Loading
 
 ```swift
-// ✅ List untuk scrollable data — SwiftUI handle reuse otomatis
+// ✅ List for scrollable data — SwiftUI handles reuse automatically
 List(entries) { entry in
     EntryRow(entry: entry)
 }
 
-// ✅ LazyVStack jika butuh custom layout dalam ScrollView
+// ✅ LazyVStack if a custom layout is needed inside a ScrollView
 ScrollView {
     LazyVStack(spacing: JedaSpacing.md) {
         ForEach(entries) { entry in
@@ -48,9 +48,9 @@ ScrollView {
     .padding()
 }
 
-// ❌ VStack untuk list panjang — load semua sekaligus
+// ❌ VStack for long lists — loads everything at once
 VStack {
-    ForEach(entries) { entry in  // tidak lazy — performa buruk
+    ForEach(entries) { entry in  // not lazy — poor performance
         EntryCard(entry: entry)
     }
 }
@@ -68,7 +68,7 @@ NavigationStack {
         }
 }
 
-// ❌ NavigationView (deprecated di iOS 16+)
+// ❌ NavigationView (deprecated in iOS 16+)
 NavigationView { ... }
 ```
 
@@ -86,9 +86,9 @@ var body: some View {
 }
 ```
 
-## ViewModifier untuk Styling Berulang
+## ViewModifier for Repeated Styling
 
-Jika styling yang sama muncul di ≥3 tempat, extract ke `ViewModifier`:
+If the same styling appears in ≥3 places, extract it into a `ViewModifier`:
 
 ```swift
 struct JedaCardModifier: ViewModifier {

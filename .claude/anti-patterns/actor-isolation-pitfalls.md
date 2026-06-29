@@ -1,41 +1,41 @@
 # Anti-Pattern: Actor Isolation Pitfalls
 
-## Masalah Umum dengan Swift Actors di Jeda
+## Common Issues with Swift Actors in Jeda
 
-`EmotionClassificationService` adalah `actor`. Ini melindungi state ML model dari concurrent access, tapi ada beberapa anti-pattern umum.
+`EmotionClassificationService` is an `actor`. This protects the ML model state from concurrent access, but there are several common anti-patterns.
 
 ---
 
-## 1. `@MainActor` Terlalu Luas pada ViewModel
+## 1. `@MainActor` Too Broad on ViewModel
 
 ### ❌ Anti-Pattern
 
 ```swift
-// Seluruh class di-mark @MainActor padahal sebagian besar computation bisa di background
+// Entire class marked @MainActor even though most computation could run in background
 @MainActor
 class JournalViewModel: ObservableObject {
     @Published var result: EmotionClassificationResult?
 
     func classify(text: String) async throws {
-        // Ini berjalan di main thread — memblokir UI!
+        // This runs on the main thread — blocks the UI!
         let tokenized = tokenizer.encode(text)  // expensive
         result = try await emotionService.classify(tokens: tokenized)
     }
 }
 ```
 
-### ✅ Pattern yang Benar
+### ✅ Correct Pattern
 
 ```swift
 class JournalViewModel: ObservableObject {
     @MainActor @Published var result: EmotionClassificationResult?
 
     func classify(text: String) async throws {
-        // Computation di background (bukan main thread)
+        // Computation in background (not main thread)
         let tokenized = tokenizer.encode(text)
         let classification = try await emotionService.classify(tokens: tokenized)
 
-        // Update UI di main thread
+        // Update UI on main thread
         await MainActor.run {
             result = classification
         }
@@ -45,28 +45,28 @@ class JournalViewModel: ObservableObject {
 
 ---
 
-## 2. Akses Actor Property dari Non-Async Context
+## 2. Accessing Actor Property from Non-Async Context
 
-### ❌ Compiler Error yang Membingungkan
+### ❌ Confusing Compiler Error
 
 ```swift
 // Error: "Expression is 'async' but is not marked with 'await'"
 let service = EmotionClassificationService.shared
-let model = service.model  // ❌ Tidak bisa — model adalah actor-isolated property
+let model = service.model  // ❌ Not allowed — model is an actor-isolated property
 ```
 
-### ✅ Solusi
+### ✅ Solution
 
 ```swift
-// Akses actor property harus dengan await
+// Accessing actor properties requires await
 Task {
     let model = await EmotionClassificationService.shared.model
 }
 
-// Atau lebih baik: expose method, bukan property
+// Or better: expose a method, not a property
 extension EmotionClassificationService {
     func classify(text: String) async throws -> EmotionClassificationResult {
-        // Internal access ke model aman di dalam actor
+        // Internal access to model is safe inside the actor
         let tokens = tokenizer.encode(text)
         return try model.prediction(from: tokens)
     }
@@ -75,7 +75,7 @@ extension EmotionClassificationService {
 
 ---
 
-## 3. `nonisolated` yang Salah Tempat
+## 3. `nonisolated` in the Wrong Place
 
 ### ❌ Anti-Pattern
 
@@ -83,25 +83,25 @@ extension EmotionClassificationService {
 actor EmotionClassificationService {
     private var model: MLModel
 
-    // ❌ Tidak bisa — nonisolated func tidak bisa akses actor-isolated property
+    // ❌ Not allowed — nonisolated func cannot access actor-isolated property
     nonisolated func classify(text: String) throws -> EmotionClassificationResult {
         return try model.prediction(...)  // Compiler error!
     }
 }
 ```
 
-### ✅ Gunakan `nonisolated` Hanya untuk Stateless Methods
+### ✅ Use `nonisolated` Only for Stateless Methods
 
 ```swift
 actor EmotionClassificationService {
     private var model: MLModel
 
-    // ✅ classify harus async karena akses model
+    // ✅ classify must be async because it accesses model
     func classify(text: String) async throws -> EmotionClassificationResult {
         return try model.prediction(...)
     }
 
-    // ✅ nonisolated OK untuk pure computation tanpa actor state
+    // ✅ nonisolated is fine for pure computation with no actor state
     nonisolated func preprocessText(_ text: String) -> String {
         return text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     }
@@ -110,7 +110,7 @@ actor EmotionClassificationService {
 
 ---
 
-## 4. Akses `EmotionClassificationService.shared` dari View
+## 4. Accessing `EmotionClassificationService.shared` from a View
 
 ### ❌ Anti-Pattern
 
@@ -119,7 +119,7 @@ struct EmotionDemoView: View {
     var body: some View {
         Button("Classify") {
             Task {
-                // ❌ Tight coupling ke singleton, tidak bisa di-mock
+                // ❌ Tight coupling to singleton, cannot be mocked
                 let result = try await EmotionClassificationService.shared.classify(text: input)
             }
         }
@@ -127,7 +127,7 @@ struct EmotionDemoView: View {
 }
 ```
 
-### ✅ Gunakan Environment Injection
+### ✅ Use Environment Injection
 
 ```swift
 struct EmotionDemoView: View {

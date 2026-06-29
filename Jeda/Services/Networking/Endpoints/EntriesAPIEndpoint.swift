@@ -5,31 +5,39 @@
 
 import Foundation
 
-struct EntryDTO: Codable, Sendable {
+struct EntryDTO: Codable {
     let id: String
     let content: String
     let sentimentScore: Double?
     let reflectedPhrase: String?
     let openQuestion: String?
+    let reflectionText: String?
+    let emotion: String?
+    let mood: String?
+    let confidence: Double?
     let createdAt: String
 }
 
-struct CreateEntryRequest: Encodable, Sendable {
+struct CreateEntryRequest: Encodable {
     let id: String?
     let content: String
     let sentimentScore: Double?
     let reflectedPhrase: String?
     let openQuestion: String?
+    let reflectionText: String?
+    let emotion: String?
+    let mood: String?
+    let confidence: Double?
     let createdAt: String?
 }
 
-struct SafetyMatchDTO: Codable, Sendable {
+struct SafetyMatchDTO: Codable {
     let ruleId: String
     let category: String
     let severity: String
 }
 
-struct SafetyResourceDTO: Codable, Sendable {
+struct SafetyResourceDTO: Codable {
     let name: String
     let description: String
     let phone: String?
@@ -37,7 +45,7 @@ struct SafetyResourceDTO: Codable, Sendable {
     let available: String
 }
 
-struct SafetyDTO: Codable, Sendable {
+struct SafetyDTO: Codable {
     let flagged: Bool
     let severity: String
     let matches: [SafetyMatchDTO]
@@ -45,16 +53,16 @@ struct SafetyDTO: Codable, Sendable {
     let resources: [SafetyResourceDTO]
 }
 
-struct CreateEntryEnvelope: Decodable, Sendable {
+struct CreateEntryEnvelope: Decodable {
     let entry: EntryDTO
     let safety: SafetyDTO
 }
 
-struct EntryEnvelope: Decodable, Sendable {
+struct EntryEnvelope: Decodable {
     let entry: EntryDTO
 }
 
-struct EntriesListEnvelope: Decodable, Sendable {
+struct EntriesListEnvelope: Decodable {
     let entries: [EntryDTO]
 }
 
@@ -67,20 +75,20 @@ enum EntriesAPIEndpoint: APIEndpoint {
     var path: String {
         switch self {
         case .create, .list:
-            return "api/entries"
-        case .get(let id), .delete(let id):
-            return "api/entries/\(id)"
+            "api/entries"
+        case let .get(id), let .delete(id):
+            "api/entries/\(id)"
         }
     }
 
     var method: HTTPMethod {
         switch self {
         case .create:
-            return .post
+            .post
         case .list, .get:
-            return .get
+            .get
         case .delete:
-            return .delete
+            .delete
         }
     }
 
@@ -98,6 +106,11 @@ enum EntriesAPIEndpoint: APIEndpoint {
 
     var body: Data? {
         guard case let .create(request) = self else { return nil }
-        return try? encodeBody(request)
+        do {
+            return try encodeBody(request)
+        } catch {
+            assertionFailure("EntriesAPIEndpoint: failed to encode request body — \(error)")
+            return nil
+        }
     }
 }

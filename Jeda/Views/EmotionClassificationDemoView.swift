@@ -1,86 +1,64 @@
 /**
  * Scope: EmotionClassificationDemoView.swift
- * Purpose: Check-in screen for journal entry and on-device emotion classification.
+ * Purpose: Kontemplasi screen for journal entry and on-device emotion classification.
  */
 
 import SwiftUI
 
 struct EmotionClassificationDemoView: View {
-    @Environment(\.emotionService) private var emotionService
-    @Environment(\.reflectionStore) private var reflectionStore
-    @Environment(\.crisisDetector) private var crisisDetector
+    @Environment(\.emotionService)
+    private var emotionService
+    @EnvironmentObject private var reflectionStore: ReflectionStore
+    @Environment(\.crisisDetector)
+    private var crisisDetector
 
-    @State private var journalText = ""
-    @State private var moodStep: Int = 2
-    @State private var result: EmotionClassificationResult?
-    @State private var errorMessage: String?
-    @State private var isAnalyzing = false
-    @State private var reflectionQuestion: String?
-    @State private var showDeeperReflection = false
-    @State private var isShowingResult = false
-    @State private var isSaving = false
-    @State private var crisisDetected = false
-
-    private var selectedMood: JedaMood {
-        JedaMood.mood(forCheckInStep: moodStep)
-    }
+    @State var journalText = ""
+    @State var moodStep: Int = 2
+    @State var result: EmotionClassificationResult?
+    @State var errorMessage: String?
+    @State var isAnalyzing = false
+    @State var reflectionQuestion: String?
+    @State var showDeeperReflection = false
+    @State var isShowingResult = false
+    @State var isSaving = false
+    @State var crisisDetected = false
+    var selectedMood: JedaMood { JedaMood.mood(forCheckInStep: moodStep) }
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 0) {
-                headerSection
-                    .padding(.horizontal, JedaSpacing.lg)
-                    .padding(.top, JedaSpacing.md)
+            ScrollView {
+                VStack(alignment: .leading, spacing: JedaSpacing.lg) {
+                    headerSection
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: JedaSpacing.lg) {
-                        if isShowingResult {
-                            if crisisDetected {
-                                JedaCrisisSupportCard()
-                            }
-                            if let result {
-                                summarySection
-                                resultSection(result)
-                            }
-                            if let question = reflectionQuestion {
-                                reflectionSection(question)
-                                deeperReflectionButton
-                            }
-                            if let errorMessage {
-                                errorSection(errorMessage)
-                            }
-                            resetButton
-                        } else {
-                            moodSliderSection
-                            journalSection
-                            analyzeButton
+                    if isShowingResult {
+                        if crisisDetected { JedaCrisisSupportCard() }
+                        if let result {
+                            summarySection
+                            resultSection(result)
                         }
+                        if let question = reflectionQuestion {
+                            reflectionSection(question)
+                            deeperReflectionButton
+                        }
+                        if let errorMessage { errorSection(errorMessage) }
+                        resetButton
+                    } else {
+                        moodSliderSection
+                        journalSection
+                        analyzeButton
                     }
-                    .padding(.horizontal, JedaSpacing.lg)
-                    .padding(.top, JedaSpacing.xl)
+                }.padding(.horizontal, JedaSpacing.lg).padding(.top, JedaSpacing.md)
                     .padding(.bottom, JedaSpacing.xl + JedaSpacing.floatingTabBarClearance)
                     .animation(.easeInOut(duration: 0.35), value: isShowingResult)
-                }
-            }
-            .background { JedaScreenBackground() }
-            .toolbar(isShowingResult ? .visible : .hidden, for: .navigationBar)
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
+            }.background { JedaScreenBackground() }.toolbar {
                 if isShowingResult {
                     ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            resetForm()
-                        } label: {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 18, weight: .semibold, design: .rounded))
-                                .foregroundStyle(JedaColor.textPrimary)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Kembali")
+                        Button { resetForm() } label: {
+                            Image(systemName: "chevron.backward").fontWeight(.semibold).accessibilityHidden(true)
+                        }.tint(JedaColor.textPrimary).accessibilityLabel("Kembali")
                     }
                 }
-            }
-            .navigationDestination(isPresented: $showDeeperReflection) {
+            }.navigationDestination(isPresented: $showDeeperReflection) {
                 if let result {
                     JedaDeeperReflectionView(
                         journalExcerpt: String(journalText.prefix(120)),
@@ -96,244 +74,17 @@ struct EmotionClassificationDemoView: View {
                     )
                 }
             }
-        }
-        .jedaHideTabBar(isShowingResult)
-        .onChange(of: reflectionStore.completedSaveCount) {
-            resetForm()
-        }
+        }.jedaHideTabBar(isShowingResult).onChange(of: reflectionStore.completedSaveCount) { resetForm() }
     }
 
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: JedaSpacing.md) {
-            
-            Text(isShowingResult ? "Hasil Analisis" : "Kontemplasi Harian")
-                .font(.largeTitle.weight(.bold))
-                .foregroundStyle(Color.black)
-        }
-        .animation(.easeInOut(duration: 0.2), value: isShowingResult)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        Text(isShowingResult ? "Hasil Analisis" : "Kontemplasi Harian")
+            .font(.largeTitle.weight(.bold)).foregroundStyle(JedaColor.textPrimary)
+            .animation(.easeInOut(duration: 0.2), value: isShowingResult)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var summarySection: some View {
-        JedaGlassSurface(tint: JedaColor.sage.opacity(0.08)) {
-            VStack(alignment: .leading, spacing: JedaSpacing.md) {
-                HStack(spacing: JedaSpacing.xs) {
-                    Image(systemName: "doc.text")
-                        .font(.system(size: 10, weight: .semibold))
-                    Text("Catatan Harianmu")
-                        .font(JedaTypography.caption)
-                }
-                .foregroundStyle(JedaColor.textSecondary)
-
-                Divider()
-
-                HStack(spacing: JedaSpacing.sm) {
-                    ZStack {
-                        Circle()
-                            .fill(JedaColor.sage.opacity(0.15))
-                            .frame(width: 40, height: 40)
-                        Image(systemName: selectedMood.symbol)
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundStyle(JedaColor.sage)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Mood hari ini")
-                            .font(JedaTypography.caption)
-                            .foregroundStyle(JedaColor.textSecondary)
-                        Text(selectedMood.title)
-                            .font(JedaTypography.headline)
-                            .foregroundStyle(JedaColor.textPrimary)
-                    }
-                }
-
-                Divider()
-
-                Text(journalText)
-                    .font(JedaTypography.body)
-                    .foregroundStyle(JedaColor.textPrimary)
-                    .lineLimit(4)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
-
-    private var moodSliderSection: some View {
-        JedaMoodCheckInSlider(step: $moodStep)
-    }
-
-    private var journalSection: some View {
-        JedaJournalInput(
-            title: "Jurnal",
-            prompt: "Bagaimana perasaanmu hari ini?",
-            text: $journalText
-        )
-    }
-
-    private var analyzeButton: some View {
-        Button {
-            Task { await analyze() }
-        } label: {
-            Label("Pahami Perasaanku", systemImage: "sparkles")
-                .frame(maxWidth: .infinity)
-                .opacity(isAnalyzing ? 0.001 : 1)
-                .background(alignment: .center) {
-                    if isAnalyzing {
-                        ProgressView()
-                            .tint(Color.white)
-                            .scaleEffect(0.7)
-                    }
-                }
-        }
-        .jedaProminentButtonStyle(tint: JedaColor.sage)
-        .buttonBorderShape(.capsule)
-        .controlSize(.large)
-        .font(JedaTypography.headline)
-        .disabled(journalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-        .allowsHitTesting(!isAnalyzing)
-        .frame(maxWidth: .infinity)
-    }
-
-    private var deeperReflectionButton: some View {
-        Button {
-            showDeeperReflection = true
-        } label: {
-            Label("Cerita Lebih Dalam", systemImage: "sparkles")
-                .frame(maxWidth: .infinity)
-        }
-        .jedaProminentButtonStyle(tint: JedaColor.sage)
-        .buttonBorderShape(.capsule)
-        .controlSize(.large)
-        .font(JedaTypography.headline)
-        .frame(maxWidth: .infinity)
-    }
-
-    private var resetButton: some View {
-        HStack(spacing: JedaSpacing.sm) {
-            Button {
-                resetForm()
-            } label: {
-                Label("Kembali", systemImage: "arrow.counterclockwise")
-                    .font(JedaTypography.headline)
-                    .foregroundStyle(JedaColor.textSecondary.opacity(0.5))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .background {
-                        Capsule()
-                            .fill(JedaColor.elevatedBackground.opacity(0.16))
-                    }
-                    .jedaGlassEffect(tint: nil, in: Capsule())
-                    .overlay {
-                        Capsule()
-                            .strokeBorder(JedaColor.separator, lineWidth: 1)
-                    }
-            }
-            .buttonStyle(.plain)
-            .allowsHitTesting(!isSaving)
-
-            Button {
-                Task { await saveEntry() }
-            } label: {
-                Text("Simpan")
-                    .frame(maxWidth: .infinity)
-                    .opacity(isSaving ? 0.001 : 1)
-                    .background(alignment: .center) {
-                        if isSaving {
-                            ProgressView()
-                                .tint(Color.white)
-                                .scaleEffect(0.7)
-                        }
-                    }
-            }
-            .jedaProminentButtonStyle(tint: JedaColor.sage)
-            .buttonBorderShape(.capsule)
-            .controlSize(.large)
-            .font(JedaTypography.headline)
-            .allowsHitTesting(!isSaving)
-        }
-    }
-
-    private func resultSection(_ result: EmotionClassificationResult) -> some View {
-        JedaGlassSurface(tint: JedaColor.sage.opacity(0.10)) {
-            VStack(alignment: .leading, spacing: JedaSpacing.md) {
-                HStack(spacing: JedaSpacing.xs) {
-                    Image(systemName: "waveform.path.ecg")
-                        .font(.system(size: 10, weight: .semibold))
-                    Text("Hasil Analisis Emosi")
-                        .font(JedaTypography.caption)
-                }
-                .foregroundStyle(JedaColor.textSecondary)
-
-                Divider()
-
-                HStack(spacing: JedaSpacing.sm) {
-                    ZStack {
-                        Circle()
-                            .fill(JedaColor.sage.opacity(0.15))
-                            .frame(width: 40, height: 40)
-                        Image(systemName: result.label.systemImageName)
-                            .font(.system(size: 18, weight: .medium))
-                            .foregroundStyle(JedaColor.sage)
-                    }
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(result.label.displayName)
-                            .font(JedaTypography.headline)
-                            .foregroundStyle(JedaColor.textPrimary)
-                        Text(result.confidence.formatted(.percent.precision(.fractionLength(0))) + " keyakinan")
-                            .font(JedaTypography.caption)
-                            .foregroundStyle(JedaColor.textSecondary)
-                    }
-
-                    Spacer()
-                }
-
-                Divider()
-
-                HStack {
-                    Spacer()
-                    HStack(spacing: JedaSpacing.xs) {
-                        Image(systemName: "info.circle.fill")
-                            .font(.system(size: 10, weight: .semibold))
-                        Text("AI Bisa Salah")
-                            .font(JedaTypography.caption)
-                    }
-                    .foregroundStyle(JedaColor.textSecondary)
-                }
-            }
-        }
-    }
-
-    private func reflectionSection(_ question: String) -> some View {
-        JedaGlassSurface(tint: JedaColor.dustyBlue.opacity(0.12)) {
-            VStack(alignment: .leading, spacing: JedaSpacing.md) {
-                HStack(spacing: JedaSpacing.xs) {
-                    Image(systemName: "bubble.left.and.bubble.right")
-                        .font(.system(size: 10, weight: .semibold))
-                    Text("Refleksi")
-                        .font(JedaTypography.caption)
-                }
-                .foregroundStyle(JedaColor.textSecondary)
-
-                Divider()
-
-                Text(question)
-                    .font(JedaTypography.body)
-                    .foregroundStyle(JedaColor.textPrimary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
-
-    private func errorSection(_ message: String) -> some View {
-        JedaGlassSurface(tint: JedaColor.terracotta.opacity(0.12)) {
-            Text(message)
-                .font(JedaTypography.body)
-                .foregroundStyle(JedaColor.terracotta)
-        }
-    }
-
-    private func analyze() async {
+    func analyze() async {
         isAnalyzing = true
         errorMessage = nil
         reflectionQuestion = nil
@@ -355,31 +106,25 @@ struct EmotionClassificationDemoView: View {
                     highlightedPhrase: JedaOnDeviceReflection.keyword(from: journalText)
                 )
             )
-            withAnimation(.easeInOut(duration: 0.35)) {
-                isShowingResult = true
-            }
+            withAnimation(.easeInOut(duration: 0.35)) { isShowingResult = true }
         } catch {
             result = nil
             errorMessage = error.localizedDescription
         }
     }
 
-    private func saveEntry() async {
+    func saveEntry() async {
         guard let result else { return }
-
         isSaving = true
         defer { isSaving = false }
-
         let question = reflectionQuestion
             ?? JedaOnDeviceReflection.generate(from: journalText, emotion: result.label)
-
         let entry = ReflectionEntry(
             journalExcerpt: String(journalText.prefix(120)),
             mood: selectedMood,
             emotion: result.label,
             confidence: result.confidence,
-            reflectionQuestion: question,
-            reflectionText: ""
+            reflectionQuestion: question
         )
 
         reflectionStore.add(entry)
@@ -387,7 +132,7 @@ struct EmotionClassificationDemoView: View {
         resetForm()
     }
 
-    private func resetForm() {
+    func resetForm() {
         withAnimation(.easeInOut(duration: 0.35)) {
             isShowingResult = false
             result = nil
@@ -401,5 +146,5 @@ struct EmotionClassificationDemoView: View {
 }
 
 #Preview {
-    EmotionClassificationDemoView()
+    EmotionClassificationDemoView().environmentObject(ReflectionStore())
 }

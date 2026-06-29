@@ -1,9 +1,7 @@
-//
-//  OnboardingProgressStore.swift
-//  Jeda
-//
-//  Created by Codex on 28/06/26.
-//
+/**
+ * Scope: OnboardingProgressStore.swift
+ * Purpose: Persists and exposes onboarding completion state using UserDefaults.
+ */
 
 import Foundation
 

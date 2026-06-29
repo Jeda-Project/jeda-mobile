@@ -1,25 +1,25 @@
 # /checkpoint [desc] — Safety Commit
 
-Buat safety commit dengan timestamp untuk menyimpan progress saat ini.
+Create a safety commit with a timestamp to save current progress.
 
-## Penggunaan
+## Usage
 ```
-/checkpoint sebelum refactor emotion service
+/checkpoint before refactor emotion service
 /checkpoint UI draft mood picker
 ```
 
-## Langkah
+## Steps
 
-1. Stage semua perubahan: `git add -A`
-2. Buat commit:
+1. Stage all changes: `git add -A`
+2. Create the commit:
 ```bash
 git commit -m "chore: checkpoint — <desc> [<ISO timestamp>]"
 ```
 
-Contoh: `chore: checkpoint — sebelum refactor emotion service [2026-06-28T10:30:00]`
+Example: `chore: checkpoint — before refactor emotion service [2026-06-28T10:30:00]`
 
-## Catatan
+## Notes
 
-- Checkpoint commit tidak perlu lulus quality gate penuh
-- Gunakan sebelum refactor besar atau eksperimen
-- Bisa di-reset dengan `git reset HEAD~1` jika perlu
+- Checkpoint commits do not need to pass the full quality gate
+- Use before large refactors or experiments
+- Can be undone with `git reset HEAD~1` if needed

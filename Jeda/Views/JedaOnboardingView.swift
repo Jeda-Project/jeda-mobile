@@ -1,9 +1,7 @@
-//
-//  JedaOnboardingView.swift
-//  Jeda
-//
-//  Created by Codex on 28/06/26.
-//
+/**
+ * Scope: JedaOnboardingView.swift
+ * Purpose: Multi-step onboarding screen shown to first-time users before the main experience.
+ */
 
 import SwiftUI
 
@@ -17,48 +15,35 @@ struct JedaOnboardingView: View {
         ZStack {
             JedaScreenBackground()
 
-            Circle()
-                .fill(pages[selectedPage].tint.opacity(0.3))
-                .blur(radius: 120)
-                .frame(width: 300, height: 300)
-                .offset(y: -100)
-                .animation(.easeInOut(duration: 0.6), value: selectedPage)
+            Circle().fill(pages[selectedPage].tint.opacity(0.3)).blur(radius: 120).frame(width: 300, height: 300)
+                .offset(y: -100).animation(.easeInOut(duration: 0.6), value: selectedPage)
 
             VStack(spacing: JedaSpacing.lg) {
                 TabView(selection: $selectedPage) {
                     ForEach(Array(pages.enumerated()), id: \.element.id) { index, page in
-                        JedaOnboardingPageView(page: page)
-                            .padding(.horizontal, JedaSpacing.lg)
-                            .tag(index)
+                        JedaOnboardingPageView(page: page).padding(.horizontal, JedaSpacing.lg).tag(index)
                     }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .animation(.snappy, value: selectedPage)
-                .accessibilityElement(children: .contain)
+                }.tabViewStyle(.page(indexDisplayMode: .never)).animation(.snappy, value: selectedPage)
+                    .accessibilityElement(children: .contain)
 
-            VStack(spacing: JedaSpacing.md) {
-                JedaOnboardingIndicator(
-                    pageCount: pages.count,
-                    selectedPage: selectedPage
-                )
+                VStack(spacing: JedaSpacing.md) {
+                    JedaOnboardingIndicator(
+                        pageCount: pages.count,
+                        selectedPage: selectedPage
+                    )
 
-                JedaButton(
-                    selectedPage == pages.index(before: pages.endIndex) ? "Mulai" : "Lanjut",
-                    kind: .primary
-                ) {
-                    goForward()
-                }
-                .frame(maxWidth: .infinity)
-                .accessibilityLabel(
-                    selectedPage == pages.index(before: pages.endIndex)
-                    ? "Mulai menggunakan Jeda"
-                    : "Lanjut ke halaman onboarding berikutnya"
-                )
-            }
-            .padding(.horizontal, JedaSpacing.lg)
-            .padding(.bottom, JedaSpacing.lg)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    JedaButton(
+                        selectedPage == pages.index(before: pages.endIndex) ? "Mulai" : "Lanjut",
+                        kind: .primary
+                    ) {
+                        goForward()
+                    }.frame(maxWidth: .infinity).accessibilityLabel(
+                        selectedPage == pages.index(before: pages.endIndex)
+                            ? "Mulai menggunakan Jeda"
+                            : "Lanjut ke halaman onboarding berikutnya"
+                    )
+                }.padding(.horizontal, JedaSpacing.lg).padding(.bottom, JedaSpacing.lg)
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
@@ -82,10 +67,10 @@ private struct JedaOnboardingPage: Identifiable {
 
     static let placeholderPages: [JedaOnboardingPage] = [
         .init(
-            id: "check-in",
+            id: "kontemplasi",
             symbolName: "leaf",
             title: "Ambil jeda sebentar",
-            subtitle: "Mulai dengan check-in ringan untuk mencatat apa yang sedang kamu rasakan.",
+            subtitle: "Mulai dengan kontemplasi ringan untuk mencatat apa yang sedang kamu rasakan.",
             tint: JedaColor.sage
         ),
         .init(
@@ -101,7 +86,7 @@ private struct JedaOnboardingPage: Identifiable {
             title: "Lihat pola yang muncul",
             subtitle: "Pantau perubahan mood dan temukan ritme kecil yang mendukung hari-harimu.",
             tint: JedaColor.dustyBlue
-        ),
+        )
     ]
 }
 
@@ -113,42 +98,26 @@ private struct JedaOnboardingPageView: View {
             Spacer(minLength: JedaSpacing.lg)
 
             ZStack {
-                RoundedRectangle(cornerRadius: 36, style: .continuous)
-                    .fill(page.tint.opacity(0.12))
-                    .frame(width: 180, height: 180)
-                    .overlay {
+                RoundedRectangle(cornerRadius: 36, style: .continuous).fill(page.tint.opacity(0.12))
+                    .frame(width: 180, height: 180).overlay {
                         RoundedRectangle(cornerRadius: 36, style: .continuous)
                             .strokeBorder(page.tint.opacity(0.2), lineWidth: 1)
                     }
 
-                Image(systemName: page.symbolName)
-                    .font(.system(size: 80, weight: .semibold, design: .rounded))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(page.tint)
-                    .accessibilityHidden(true)
-            }
-            .shadow(color: page.tint.opacity(0.1), radius: 20, x: 0, y: 10)
+                Image(systemName: page.symbolName).font(.system(size: 80, weight: .semibold, design: .rounded))
+                    .symbolRenderingMode(.hierarchical).foregroundStyle(page.tint).accessibilityHidden(true)
+            }.shadow(color: page.tint.opacity(0.1), radius: 20, x: 0, y: 10)
 
             VStack(spacing: JedaSpacing.md) {
-                Text(page.title)
-                    .font(JedaTypography.display)
-                    .foregroundStyle(JedaColor.textPrimary)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
+                Text(page.title).font(JedaTypography.display).foregroundStyle(JedaColor.textPrimary)
+                    .multilineTextAlignment(.center).fixedSize(horizontal: false, vertical: true)
 
-                Text(page.subtitle)
-                    .font(JedaTypography.body)
-                    .foregroundStyle(JedaColor.textSecondary)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(6)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: 520)
+                Text(page.subtitle).font(JedaTypography.body).foregroundStyle(JedaColor.textSecondary)
+                    .multilineTextAlignment(.center).lineSpacing(6).fixedSize(horizontal: false, vertical: true)
+            }.frame(maxWidth: 520)
 
             Spacer(minLength: JedaSpacing.lg)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .accessibilityElement(children: .combine)
+        }.frame(maxWidth: .infinity, maxHeight: .infinity).accessibilityElement(children: .combine)
     }
 }
 
@@ -158,15 +127,12 @@ private struct JedaOnboardingIndicator: View {
 
     var body: some View {
         HStack(spacing: JedaSpacing.xs) {
-            ForEach(0..<pageCount, id: \.self) { index in
-                Capsule(style: .continuous)
-                    .fill(index == selectedPage ? JedaColor.sage : JedaColor.separator)
+            ForEach(0 ..< pageCount, id: \.self) { index in
+                Capsule(style: .continuous).fill(index == selectedPage ? JedaColor.sage : JedaColor.separator)
                     .frame(width: index == selectedPage ? 24 : 8, height: 8)
             }
-        }
-        .frame(minHeight: 44)
-        .accessibilityElement()
-        .accessibilityLabel("Halaman \(selectedPage + 1) dari \(pageCount)")
+        }.frame(minHeight: 44).accessibilityElement()
+            .accessibilityLabel("Halaman \(selectedPage + 1) dari \(pageCount)")
     }
 }
 
@@ -175,6 +141,5 @@ private struct JedaOnboardingIndicator: View {
 }
 
 #Preview("Large Dynamic Type") {
-    JedaOnboardingView {}
-        .dynamicTypeSize(.accessibility3)
+    JedaOnboardingView {}.dynamicTypeSize(.accessibility3)
 }

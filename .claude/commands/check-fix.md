@@ -1,29 +1,29 @@
 # /check-fix — Build Check & Auto-Fix
 
-Jalankan quality gate dan perbaiki issues yang bisa di-auto-fix.
+Run the quality gate and fix issues that can be auto-fixed.
 
-## Langkah
+## Steps
 
-1. **Build ke simulator**:
+1. **Build to simulator**:
 ```bash
 rtk xcodebuild build \
   -project Jeda.xcodeproj \
   -scheme Jeda \
-  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   -quiet
 ```
 
-2. **SwiftLint** (jika tersedia):
+2. **SwiftLint** (if available):
 ```bash
 rtk swiftlint lint --quiet
-rtk swiftlint --fix  # auto-fix yang bisa di-fix
+rtk swiftlint --fix  # auto-fix what can be fixed
 ```
 
-3. **Report hasil**:
-   - ✅ PASS — build berhasil, tidak ada lint error
-   - ❌ FAIL — tampilkan error lengkap dengan lokasi file dan baris
+3. **Report results**:
+   - ✅ PASS — build succeeded, no lint errors
+   - ❌ FAIL — display full error with file location and line number
 
-4. Jika ada error, diagnosa dengan agent `build-error-resolver` dan fix.
+4. If there are errors, diagnose with the `build-error-resolver` agent and fix.
 
 ## Output
 
@@ -31,5 +31,5 @@ rtk swiftlint --fix  # auto-fix yang bisa di-fix
 Build: ✅ PASS / ❌ FAIL
 SwiftLint: ✅ Clean / ⚠️ <N> warnings / ❌ <N> errors
 
-[Jika ada error, tampilkan detail dan fix yang diterapkan]
+[If there are errors, display details and the fixes applied]
 ```

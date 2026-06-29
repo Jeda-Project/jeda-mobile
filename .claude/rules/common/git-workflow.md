@@ -5,34 +5,34 @@
 ```
 main          → Production (TestFlight / App Store)
 develop       → Active development
-feature/*     → Fitur baru (dari develop)
-fix/*         → Bug fix (dari develop atau main untuk hotfix)
+feature/*     → New features (from develop)
+fix/*         → Bug fixes (from develop or main for hotfixes)
 ```
 
 ## Commit Format
 
 ```
-type(scope): subject — maks 50 karakter
+type(scope): subject — max 50 characters
 
-Body opsional: jelaskan WHY, bukan WHAT
+Optional body: explain WHY, not WHAT
 ```
 
 **Types:**
-| Type | Kapan |
-|------|-------|
-| `feat` | Fitur baru |
+| Type | When |
+|------|------|
+| `feat` | New feature |
 | `fix` | Bug fix |
-| `refactor` | Refactor tanpa perubahan behavior |
-| `chore` | Update dependency, config, CI |
-| `docs` | Dokumentasi saja |
-| `style` | Format, rename (tidak ada logic change) |
-| `perf` | Optimasi performance |
-| `test` | Tambah atau fix test |
+| `refactor` | Refactor without behavior change |
+| `chore` | Dependency update, config, CI |
+| `docs` | Documentation only |
+| `style` | Format, rename (no logic change) |
+| `perf` | Performance optimization |
+| `test` | Add or fix tests |
 
-**Scopes untuk Jeda:**
+**Scopes for Jeda:**
 `views`, `services`, `models`, `ml`, `networking`, `a11y`, `config`, `ci`
 
-**Contoh:**
+**Examples:**
 ```
 feat(ml): add confidence threshold filter to classifier
 fix(views): correct touch target size on MoodPicker
@@ -40,18 +40,18 @@ refactor(services): extract tokenizer into dedicated actor
 chore(ci): update Xcode version in ios-ci.yml
 ```
 
-## Aturan
+## Rules
 
-- **JANGAN** push langsung ke `main` — selalu via PR
-- **JANGAN** force push ke branch yang sudah di-PR
-- Satu commit = satu logical change
-- `git commit --amend` hanya untuk commit yang belum di-push
-- Gunakan `/checkpoint` untuk safety commit saat eksperimen
+- **DO NOT** push directly to `main` — always via PR
+- **DO NOT** force push to a branch that already has a PR open
+- One commit = one logical change
+- `git commit --amend` only for commits that have not been pushed
+- Use `/checkpoint` for safety commits during experiments
 
 ## Pull Request
 
-- Title mengikuti format commit message
-- Body menggunakan template dari `/create-pr`
-- PR harus lulus CI sebelum merge
-- Minimum 1 reviewer sebelum merge ke `main`
-- Squash merge untuk feature branches agar history bersih
+- Title follows the commit message format
+- Body uses the template from `/create-pr`
+- PR must pass CI before merging
+- Minimum 1 reviewer before merging to `main`
+- Squash merge for feature branches to keep history clean

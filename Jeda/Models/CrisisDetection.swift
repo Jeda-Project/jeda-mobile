@@ -5,14 +5,14 @@
 
 import Foundation
 
-struct CrisisDetectionResult: Sendable, Equatable {
+struct CrisisDetectionResult: Equatable {
     let isCrisis: Bool
     let matchedTerms: [String]
 
     static let none = CrisisDetectionResult(isCrisis: false, matchedTerms: [])
 }
 
-struct CrisisSupportResource: Sendable, Equatable {
+struct CrisisSupportResource: Equatable {
     let title: String
     let message: String
     let displayNumber: String
@@ -20,7 +20,8 @@ struct CrisisSupportResource: Sendable, Equatable {
 
     static let sejiwa = CrisisSupportResource(
         title: "Kamu tidak sendirian",
-        message: "Kalau perasaan ini terasa terlalu berat, ada orang yang siap mendengarkan. Hubungi hotline kesehatan jiwa Kemenkes (SEJIWA) — gratis dan rahasia.",
+        message: "Kalau perasaan ini terasa terlalu berat, ada orang yang siap mendengarkan. "
+            + "Hubungi hotline kesehatan jiwa Kemenkes (SEJIWA) — gratis dan rahasia.",
         displayNumber: "119 ext 8",
         dialNumber: "119"
     )

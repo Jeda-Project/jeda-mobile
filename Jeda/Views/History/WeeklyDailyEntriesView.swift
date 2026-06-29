@@ -1,7 +1,7 @@
-//
-//  WeeklyDailyEntriesView.swift
-//  Jeda
-//
+/**
+ * Scope: WeeklyDailyEntriesView.swift
+ * Purpose: Screen listing all daily journal entries within a selected week.
+ */
 
 import SwiftUI
 
@@ -49,7 +49,7 @@ struct WeeklyDailyEntriesView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Image(systemName: "line.3.horizontal.decrease.circle")
                     .foregroundStyle(JedaColor.sage)
-                    .accessibilityLabel("Filter entry")
+                    .accessibilityLabel("Filter entri")
             }
         }
         .onAppear {
@@ -86,8 +86,8 @@ struct WeeklyDailyEntriesView: View {
                             RoundedRectangle(cornerRadius: JedaRadius.chip, style: .continuous)
                                 .fill(
                                     selectedDayIndex == index
-                                    ? JedaColor.sage.opacity(0.16)
-                                    : Color.clear
+                                        ? JedaColor.sage.opacity(0.16)
+                                        : Color.clear
                                 )
                         }
                         .jedaGlassEffect(
@@ -99,7 +99,9 @@ struct WeeklyDailyEntriesView: View {
                         )
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Hari \(HistoryFormatting.dayAbbreviation(for: day)) \(HistoryFormatting.dayNumber(for: day))")
+                    .accessibilityLabel(
+                        "Hari \(HistoryFormatting.dayAbbreviation(for: day)) \(HistoryFormatting.dayNumber(for: day))"
+                    )
                     .accessibilityAddTraits(selectedDayIndex == index ? .isSelected : [])
                 }
             }
@@ -109,6 +111,6 @@ struct WeeklyDailyEntriesView: View {
 
 #Preview {
     NavigationStack {
-        WeeklyDailyEntriesView(week: HistorySampleData.currentWeek)
+        WeeklyDailyEntriesView(week: PreviewStubs.week)
     }
 }

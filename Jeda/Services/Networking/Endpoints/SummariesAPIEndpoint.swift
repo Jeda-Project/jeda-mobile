@@ -5,17 +5,17 @@
 
 import Foundation
 
-struct TopTopicDTO: Codable, Sendable {
+struct TopTopicDTO: Codable {
     let topic: String
     let count: Int
 }
 
-struct MoodTrendDTO: Codable, Sendable {
+struct MoodTrendDTO: Codable {
     let day: String
     let score: Double
 }
 
-struct SummaryDTO: Codable, Sendable {
+struct SummaryDTO: Codable {
     let id: String
     let weekStart: String
     let topTopics: [TopTopicDTO]
@@ -24,7 +24,7 @@ struct SummaryDTO: Codable, Sendable {
     let createdAt: String
 }
 
-struct CreateSummaryRequest: Encodable, Sendable {
+struct CreateSummaryRequest: Encodable {
     let id: String?
     let weekStart: String
     let topTopics: [TopTopicDTO]
@@ -32,11 +32,11 @@ struct CreateSummaryRequest: Encodable, Sendable {
     let reliefNote: String?
 }
 
-struct SummaryEnvelope: Decodable, Sendable {
+struct SummaryEnvelope: Decodable {
     let summary: SummaryDTO
 }
 
-struct SummariesListEnvelope: Decodable, Sendable {
+struct SummariesListEnvelope: Decodable {
     let summaries: [SummaryDTO]
 }
 
@@ -44,14 +44,16 @@ enum SummariesAPIEndpoint: APIEndpoint {
     case create(CreateSummaryRequest)
     case list(limit: Int)
 
-    var path: String { "api/summaries" }
+    var path: String {
+        "api/summaries"
+    }
 
     var method: HTTPMethod {
         switch self {
         case .create:
-            return .post
+            .post
         case .list:
-            return .get
+            .get
         }
     }
 
