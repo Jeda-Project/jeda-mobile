@@ -1,7 +1,7 @@
-//
-//  HistoryEntryDetailView.swift
-//  Jeda
-//
+/**
+ * Scope: HistoryEntryDetailView.swift
+ * Purpose: Detail screen displaying the full content of a single historical journal entry.
+ */
 
 import SwiftUI
 
@@ -12,99 +12,39 @@ struct HistoryEntryDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: JedaSpacing.xl) {
-                headerSection
-                bodySection
-                reflectionSection
-                topicsSection
-                actionsSection
+                pageTitleSection
+                EntryBodyCard(entry: entry)
+                EntryEmotionResultCard(entry: entry)
+                EntryReflectionCard(entry: entry)
 
                 if !relatedEntries.isEmpty {
                     relatedMomentsSection
                 }
 
-                insightCard
+                EntryInsightCard()
             }
             .padding(.horizontal, JedaSpacing.lg)
             .padding(.vertical, JedaSpacing.xl)
         }
         .background { JedaScreenBackground() }
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {} label: {
-                    Image(systemName: "bookmark")
-                        .foregroundStyle(JedaColor.sage)
-                }
-                .accessibilityLabel("Simpan entry")
-            }
-        }
     }
 
-    private var headerSection: some View {
-        JedaGlassSurface(tint: entry.mood.tint.opacity(0.12)) {
-            HStack(alignment: .top, spacing: JedaSpacing.md) {
-                JedaMoodBadge(mood: entry.mood, size: 56)
-
-                VStack(alignment: .leading, spacing: JedaSpacing.xs) {
-                    Text(entry.title)
-                        .font(JedaTypography.title)
-                        .foregroundStyle(JedaColor.textPrimary)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Text(entry.formattedDate)
-                        .font(JedaTypography.caption)
-                        .foregroundStyle(JedaColor.textSecondary)
-
-                    Text(entry.formattedTime)
-                        .font(JedaTypography.caption)
-                        .foregroundStyle(JedaColor.textSecondary)
-                }
-            }
-        }
-    }
-
-    private var bodySection: some View {
-        JedaSection("Entry") {
-            Text(entry.body)
-                .font(JedaTypography.body)
+    private var pageTitleSection: some View {
+        VStack(alignment: .leading, spacing: JedaSpacing.xs) {
+            Text("Hasil Analisis")
+                .font(.system(.largeTitle, design: .rounded, weight: .bold))
                 .foregroundStyle(JedaColor.textPrimary)
-                .lineSpacing(5)
                 .fixedSize(horizontal: false, vertical: true)
-        }
-    }
 
-    @ViewBuilder
-    private var reflectionSection: some View {
-        if let question = entry.reflectionQuestion {
-            JedaSection("AI Reflection") {
-                JedaReflectionCard(
-                    phrase: entry.topics.first ?? "entry",
-                    question: question
-                ) {}
-            }
-        }
-    }
-
-    private var topicsSection: some View {
-        JedaSection("Tags") {
-            FlowLayout(spacing: JedaSpacing.sm) {
-                ForEach(entry.topics, id: \.self) { topic in
-                    JedaTopicChip(title: topic)
-                }
-            }
-        }
-    }
-
-    private var actionsSection: some View {
-        HStack(spacing: JedaSpacing.md) {
-            actionButton(title: "Edit", symbol: "square.and.pencil") {}
-            actionButton(title: "Share", symbol: "square.and.arrow.up") {}
-            actionButton(title: "Hapus", symbol: "trash", isDestructive: true) {}
+            Text(HistoryFormatting.fullDateTimeString(for: entry.timestamp))
+                .font(JedaTypography.caption)
+                .foregroundStyle(JedaColor.textSecondary)
         }
     }
 
     private var relatedMomentsSection: some View {
-        JedaSection("Related Moments") {
+        JedaSection("Momen Terkait") {
             VStack(spacing: JedaSpacing.md) {
                 ForEach(relatedEntries) { related in
                     JedaEntryRowCard(entry: related)
@@ -112,44 +52,13 @@ struct HistoryEntryDetailView: View {
             }
         }
     }
-
-    private var insightCard: some View {
-        JedaGlassSurface(tint: JedaColor.sage.opacity(0.14)) {
-            HStack(alignment: .top, spacing: JedaSpacing.md) {
-                Image(systemName: "lightbulb")
-                    .font(.system(size: 20, weight: .semibold, design: .rounded))
-                    .foregroundStyle(JedaColor.sage)
-
-                Text("Kamu sering menyebut kata \"takut\" di awal minggu, lalu beralih ke \"lega\" setelah satu task kecil selesai.")
-                    .font(JedaTypography.body)
-                    .foregroundStyle(JedaColor.textPrimary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
-
-    private func actionButton(
-        title: String,
-        symbol: String,
-        isDestructive: Bool = false,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            Label(title, systemImage: symbol)
-                .font(JedaTypography.caption)
-                .frame(maxWidth: .infinity, minHeight: 44)
-        }
-        .buttonStyle(.bordered)
-        .tint(isDestructive ? JedaColor.terracotta : JedaColor.sage)
-        .accessibilityLabel(title)
-    }
 }
 
 #Preview {
     NavigationStack {
         HistoryEntryDetailView(
-            entry: HistorySampleData.currentWeek.entries[5],
-            relatedEntries: Array(HistorySampleData.currentWeek.entries.prefix(3))
+            entry: PreviewStubs.entry,
+            relatedEntries: [PreviewStubs.entry]
         )
     }
 }

@@ -1,19 +1,19 @@
 # SSOT.md — Single Source of Truth — Jeda iOS
 
-> Dokumen ini adalah referensi arsitektur utama. Tidak boleh diubah oleh Claude.
+> This document is the primary architecture reference. Must not be changed by Claude.
 
 ---
 
 ## Tech Stack
 
-| Komponen | Teknologi | Versi |
+| Component | Technology | Version |
 |---|---|---|
 | Framework | SwiftUI | iOS 17.6+ |
-| Bahasa | Swift | 5.0 |
-| Build Tool | Xcode | 16.4.1 |
+| Language | Swift | 5.0 |
+| Build Tool | Xcode | 26.4.1 |
 | Dependency Manager | Swift Package Manager (SPM) | Native |
 | ML Framework | Core ML | on-device |
-| ML Model | IndoBERT-int8 | fine-tuned emotion classification |
+| ML Model | IndoBERT-int8 | fine-tuned for emotion classification |
 | Analytics | Firebase Analytics | 12.15.0+ |
 | Networking | URLSession + async/await | Native |
 | Architecture | Clean Architecture + MVVM hybrid | — |
@@ -28,8 +28,8 @@ Jeda/Models/        → Domain types, enums, protocols (ZERO dependencies)
 Jeda/Services/      → Business logic, ML inference, HTTP networking
   └─ Networking/    → APIService, APIEndpoint protocol, APIError, builders
      └─ Endpoints/  → Feature-specific endpoint definitions
-Jeda/Views/         → SwiftUI screens dan reusable components
-  └─ Reusable Views/ → Shared UI components (JedaButton, JedaChart, dll)
+Jeda/Views/         → SwiftUI screens and reusable components
+  └─ Reusable Views/ → Shared UI components (JedaButton, JedaChart, etc.)
 Jeda/Resources/     → Assets.xcassets, Core ML model, tokenizer vocab
 skills/jeda-ios/    → Claude Code skill reference (SKILL.md, reference.md)
 .claude/            → Claude Code configuration (agents, commands, hooks)
@@ -40,28 +40,28 @@ skills/jeda-ios/    → Claude Code skill reference (SKILL.md, reference.md)
 
 ## Design Tokens
 
-### Warna (didefinisikan di `Jeda/Views/Reusable Views/JedaTheme.swift`)
+### Colors (defined in `Jeda/Views/Reusable Views/JedaTheme.swift`)
 
 ```swift
 // Calm/Muted Palette
 enum JedaColor {
-  case sageGreen    // #7A8B7F — keseimbangan, elemen primer
-  case dustyBlue    // #8FA3AD — ketenangan, info
-  case warmClay     // #C49A7C — kehangatan, accent
-  case terracotta   // #B8654F — alert hangat, energi
+  case sageGreen    // #7A8B7F — balance, primary element
+  case dustyBlue    // #8FA3AD — calm, info
+  case warmClay     // #C49A7C — warmth, accent
+  case terracotta   // #B8654F — warm alert, energy
 
   // Semantic
-  case textPrimary    // teks utama
-  case textSecondary  // teks sekunder/subtitle
-  case background     // latar utama
+  case textPrimary    // primary text
+  case textSecondary  // secondary text/subtitle
+  case background     // main background
   case surface        // card/surface
-  case border         // garis pembatas
+  case border         // dividing line
 }
 ```
 
-> **WAJIB:** Selalu gunakan `JedaColor` enum. Tidak boleh ada `Color(hex:)` atau hardcoded `.green`, `.blue`, dll di luar JedaTheme.swift.
+> **REQUIRED:** Always use the `JedaColor` enum. No `Color(hex:)` or hardcoded `.green`, `.blue`, etc. outside JedaTheme.swift.
 
-### Spacing (di `JedaTheme.swift`)
+### Spacing (in `JedaTheme.swift`)
 
 ```swift
 enum JedaSpacing {
@@ -76,48 +76,48 @@ enum JedaSpacing {
 
 ### Typography
 
-Gunakan `.font(.body)`, `.font(.headline)`, dll — **bukan** `.font(.system(size: N))`. Dynamic Type harus selalu berfungsi.
+Use `.font(.body)`, `.font(.headline)`, etc. — **not** `.font(.system(size: N))`. Dynamic Type must always work.
 
 ---
 
-## Arsitektur Keputusan
+## Architecture Decisions
 
-### ADR-001: Actor untuk Core ML Service
-`EmotionClassificationService` adalah `actor` untuk memastikan model loading dan inference terjadi secara isolated dari main thread. Ini mencegah UI freeze dan race condition pada model state.
+### ADR-001: Actor for Core ML Service
+`EmotionClassificationService` is an `actor` to ensure model loading and inference happen isolated from the main thread. This prevents UI freezes and race conditions on model state.
 
 ### ADR-002: Protocol-Oriented Services
-Semua services expose protocol (`EmotionAnalyzing`, dll). Views bergantung pada protocol melalui `@Environment`. Ini memungkinkan mock injection di preview dan unit test.
+All services expose a protocol (`EmotionAnalyzing`, etc.). Views depend on the protocol via `@Environment`. This enables mock injection in previews and unit tests.
 
 ### ADR-003: On-Device Only ML
-Model `JedaEmotionIndoBERT-int8.mlpackage` berjalan sepenuhnya on-device. Tidak ada teks pengguna yang dikirim ke server untuk inference. Ini adalah privacy guarantee yang tidak boleh dilanggar.
+The `JedaEmotionIndoBERT-int8.mlpackage` model runs entirely on-device. No user text is sent to a server for inference. This is a privacy guarantee that must not be violated.
 
-### ADR-004: SwiftUI Form untuk Input
-Gunakan SwiftUI native `Form`, `List`, `Section` untuk layout data-heavy. Hindari custom container yang fighting dengan HIG.
+### ADR-004: SwiftUI Form for Input
+Use native SwiftUI `Form`, `List`, `Section` for data-heavy layouts. Avoid custom containers that fight with HIG.
 
 ### ADR-005: Networking Ready, Not Yet Connected
-Layer networking (`APIService`, `APIEndpoint`, `APIConfiguration`) sudah dibangun untuk future backend integration. Saat ini emotion classification sepenuhnya local. Tidak perlu backend URL production sampai backend tersedia.
+The networking layer (`APIService`, `APIEndpoint`, `APIConfiguration`) is already built for future backend integration. Currently emotion classification is entirely local. No production backend URL is needed until the backend is available.
 
 ---
 
 ## Environment Variables
 
-| Variable | Lokasi | Keterangan |
+| Variable | Location | Notes |
 |---|---|---|
-| `GITHUB_PERSONAL_ACCESS_TOKEN_JEDA` | env shell | Untuk GitHub CLI (dev only) |
-| Firebase config | `GoogleService-Info.plist` | **Jangan commit key production** |
-| Backend API base URL | `APIConfiguration.swift` | Ganti per environment (dev/staging/prod) |
+| `GITHUB_PERSONAL_ACCESS_TOKEN_JEDA` | shell env | For GitHub CLI (dev only) |
+| Firebase config | `GoogleService-Info.plist` | **Do not commit the production key** |
+| Backend API base URL | `APIConfiguration.swift` | Changes per environment (dev/staging/prod) |
 
 ---
 
 ## CI/CD
 
-| Workflow | Trigger | Aksi |
+| Workflow | Trigger | Action |
 |---|---|---|
-| `ios-ci.yml` | PR/push ke develop | Build + test di simulator |
-| `ios-ci-develop.yml` | Push ke develop | Quality gate |
-| `ios-cd-main.yml` | Push ke main | Upload ke TestFlight |
+| `ios-ci.yml` | PR/push to develop | Build + test on simulator |
+| `ios-ci-develop.yml` | Push to develop | Quality gate |
+| `ios-cd-main.yml` | Push to main | Upload to TestFlight |
 
-**Build command standar:**
+**Standard build command:**
 ```bash
 xcodebuild build \
   -project Jeda.xcodeproj \
@@ -128,9 +128,9 @@ xcodebuild build \
 
 ---
 
-## File yang Tidak Boleh Diedit Manual
+## Files That Must Not Be Edited Manually
 
-- `Jeda.xcodeproj/project.pbxproj` — Dikelola Xcode
+- `Jeda.xcodeproj/project.pbxproj` — Managed by Xcode
 - `Jeda/Resources/GoogleService-Info.plist` — Firebase config, sensitive
 - `Jeda/Resources/Models/JedaEmotionIndoBERT-int8.mlpackage/` — Binary ML model
-- `SSOT.md`, `AGENTS.md` — Hanya developer yang boleh ubah
+- `SSOT.md`, `AGENTS.md` — Only developers may modify these

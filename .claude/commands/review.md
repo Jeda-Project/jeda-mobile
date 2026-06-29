@@ -1,23 +1,23 @@
 # /review — Senior iOS Code Review
 
-Lakukan code review menyeluruh pada staged changes atau file yang ditentukan.
+Perform a thorough code review on staged changes or the specified files.
 
-## Langkah
+## Steps
 
-1. **Cek staged diff**: `git diff --cached`
-2. **Build check**: pastikan project masih bisa di-build
-3. **Gunakan agent `code-reviewer`** untuk review:
+1. **Check staged diff**: `git diff --cached`
+2. **Build check**: ensure the project still builds
+3. **Use the `code-reviewer` agent** to review:
    - AGENTS.md compliance (15 Golden Rules)
-   - SoC violations (business logic di View, SwiftUI di Service)
+   - SoC violations (business logic in View, SwiftUI in Service)
    - Swift concurrency correctness
    - Memory management
    - Accessibility
    - Error handling
-4. **Gunakan agent `jeda-ui-reviewer`** jika ada perubahan di `Views/`
-5. **Gunakan agent `jeda-security-guard`** jika ada perubahan di Services atau config
+4. **Use the `jeda-ui-reviewer` agent** if there are changes in `Views/`
+5. **Use the `jeda-security-guard` agent** if there are changes in Services or config
 
 ## Output
 
-Laporan terstruktur dengan verdict: **APPROVE / WARNING / BLOCK**
+Structured report with verdict: **APPROVE / WARNING / BLOCK**
 
-Jika BLOCK, jelaskan apa yang harus diperbaiki sebelum commit.
+If BLOCK, explain what must be fixed before committing.

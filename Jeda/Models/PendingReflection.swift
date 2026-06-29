@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct PendingReflection: Identifiable, Hashable, Sendable {
+struct PendingReflection: Identifiable, Hashable, Codable {
     let id: UUID
     let date: Date
     let journalExcerpt: String

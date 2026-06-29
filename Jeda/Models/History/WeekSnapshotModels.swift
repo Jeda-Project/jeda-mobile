@@ -1,11 +1,11 @@
 /**
  * Scope: WeekSnapshotModels.swift
- * Purpose: Snapshot input and AI output types for weekly history summarization.
+ * Purpose: Pure snapshot and AI output types used as input for weekly history summarization.
  */
 
 import Foundation
 
-struct JournalEntrySnapshot: Sendable {
+struct JournalEntrySnapshot {
     let index: Int
     let id: UUID
     let date: Date
@@ -14,7 +14,7 @@ struct JournalEntrySnapshot: Sendable {
     let topics: [String]
 }
 
-struct WeekSnapshot: Sendable {
+struct WeekSnapshot {
     let weekID: UUID
     let weekNumber: Int
     let startDate: Date
@@ -35,7 +35,7 @@ struct WeekSnapshot: Sendable {
     let entryContentHash: String
 }
 
-struct WeeklyStoryPageDTO: Codable, Sendable, Equatable {
+struct WeeklyStoryPageDTO: Codable, Equatable {
     let title: String
     let symbol: String
     let body: String
@@ -71,7 +71,7 @@ struct WeeklyStoryPageDTO: Codable, Sendable, Equatable {
     }
 }
 
-struct WeeklySummaryAIContent: Codable, Sendable, Equatable {
+struct WeeklySummaryAIContent: Codable, Equatable {
     let moodLabel: String
     let summaryPhrase: String
     let aiReflectionSummary: String
@@ -82,157 +82,9 @@ struct WeeklySummaryAIContent: Codable, Sendable, Equatable {
     let memorableMomentIndices: [Int]
 }
 
-enum WeekSummaryLoadState: Equatable, Sendable {
+enum WeekSummaryLoadState: Equatable {
     case idle
     case loading
     case loaded
     case failed
-}
-
-@MainActor
-enum EnrichedWeekRegistry {
-    private static var weeks: [UUID: WeekSummary] = [:]
-    private static var entryHashes: [UUID: String] = [:]
-
-    static func store(_ week: WeekSummary, entryHash: String) {
-        weeks[week.id] = week
-        entryHashes[week.id] = entryHash
-    }
-
-    static func week(id: UUID) -> WeekSummary? {
-        weeks[id]
-    }
-
-    static func enrichedWeek(id: UUID, entryHash: String) -> WeekSummary? {
-        guard entryHashes[id] == entryHash, let week = weeks[id] else { return nil }
-        return week
-    }
-
-    static func resolve(id: UUID, entries: [ReflectionEntry] = []) -> WeekSummary? {
-        week(id: id) ?? HistoryWeekCatalog.week(withID: id, from: entries)
-    }
-}
-
-enum WeekSummaryCachePolicy: Sendable {
-    case persistent
-    case sessionOnly
-}
-
-enum WeekSummaryCache {
-    private static let prefix = "jeda.weekSummary.ai."
-
-    static func policy(for week: WeekSummary) -> WeekSummaryCachePolicy {
-        week.isCurrentWeek ? .sessionOnly : .persistent
-    }
-
-    static func load(
-        weekID: UUID,
-        policy: WeekSummaryCachePolicy,
-        entryHash: String
-    ) -> WeeklySummaryAIContent? {
-        switch policy {
-        case .sessionOnly:
-            return nil
-        case .persistent:
-            let key = persistentCacheKey(weekID: weekID)
-            guard
-                let data = UserDefaults.standard.data(forKey: key),
-                let content = try? JSONDecoder().decode(WeeklySummaryAIContent.self, from: data)
-            else {
-                return nil
-            }
-            return content
-        }
-    }
-
-    static func save(
-        weekID: UUID,
-        policy: WeekSummaryCachePolicy,
-        entryHash: String,
-        content: WeeklySummaryAIContent
-    ) {
-        guard policy == .persistent else { return }
-        let key = persistentCacheKey(weekID: weekID)
-        guard let data = try? JSONEncoder().encode(content) else { return }
-        UserDefaults.standard.set(data, forKey: key)
-    }
-
-    static func saveSummaryPhrase(
-        weekID: UUID,
-        entryHash: String,
-        phrase: String,
-        moodLabel: String,
-        policy: WeekSummaryCachePolicy
-    ) {
-        guard policy == .persistent else { return }
-        UserDefaults.standard.set(phrase, forKey: "\(prefix)phrase.\(weekID.uuidString)")
-        UserDefaults.standard.set(moodLabel, forKey: "\(prefix)moodLabel.\(weekID.uuidString)")
-    }
-
-    static func cachedSummaryPhrase(
-        weekID: UUID,
-        entryHash: String?,
-        policy: WeekSummaryCachePolicy
-    ) -> (phrase: String, moodLabel: String)? {
-        guard policy == .persistent else { return nil }
-        guard
-            let phrase = UserDefaults.standard.string(forKey: "\(prefix)phrase.\(weekID.uuidString)"),
-            let moodLabel = UserDefaults.standard.string(forKey: "\(prefix)moodLabel.\(weekID.uuidString)")
-        else {
-            return nil
-        }
-        return (phrase, moodLabel)
-    }
-
-    private static func persistentCacheKey(weekID: UUID) -> String {
-        "\(prefix)\(weekID.uuidString)"
-    }
-}
-
-extension WeekSummary {
-    static func placeholderNarrative(for mood: JedaMood) -> (moodLabel: String, summaryPhrase: String) {
-        (mood.optimisticLabel, "Memuat refleksi minggu ini…")
-    }
-
-    func merging(
-        aiContent: WeeklySummaryAIContent,
-        entries: [JournalEntry]
-    ) -> WeekSummary {
-        let memorable = aiContent.memorableMomentIndices.compactMap { index -> JournalEntry? in
-            guard entries.indices.contains(index) else { return nil }
-            return entries[index]
-        }
-        let resolvedMemorable = memorable.isEmpty ? Array(entries.prefix(3)) : memorable
-
-        let storyPages = aiContent.storyPages.map {
-            WeeklyStoryPage(id: UUID(), title: $0.title, symbol: $0.symbol, body: $0.body)
-        }
-
-        return WeekSummary(
-            id: id,
-            weekNumber: weekNumber,
-            startDate: startDate,
-            endDate: endDate,
-            overallMood: overallMood,
-            moodLabel: aiContent.moodLabel,
-            checkInCount: checkInCount,
-            totalDays: totalDays,
-            summaryPhrase: aiContent.summaryPhrase,
-            topTopics: topTopics,
-            moodTrendPoints: moodTrendPoints,
-            aiReflectionSummary: aiContent.aiReflectionSummary,
-            aiReflectionLong: aiContent.aiReflectionLong,
-            storyPages: storyPages.isEmpty ? self.storyPages : storyPages,
-            moodBreakdown: moodBreakdown,
-            topicChartItems: topicChartItems,
-            memorableMoments: resolvedMemorable,
-            improvements: aiContent.improvements,
-            quoteOfWeek: aiContent.quoteOfWeek,
-            stats: stats,
-            wordCloud: wordCloud,
-            frequentEmotions: frequentEmotions,
-            checkInRhythm: checkInRhythm,
-            entries: entries
-        )
-    }
 }

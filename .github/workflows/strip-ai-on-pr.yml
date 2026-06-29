@@ -1,0 +1,47 @@
+name: Strip AI Files on PR Merge to Main
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+concurrency:
+  group: main-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  strip-ai:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
+
+      - name: Remove AI, MCP & Dev-Only Config Files
+        run: |
+          git rm -rf --cached --ignore-unmatch \
+            .claude \
+            .serena \
+            AGENTS.md \
+            CLAUDE.md \
+            SSOT.md \
+            PRODUCT.md \
+            .mcp.json
+
+      - name: Commit and Push If Changes Exist
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then
+            echo "No AI config files to remove."
+          else
+            git commit -m "chore(deploy): strip AI/MCP config files for main [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi

@@ -1,11 +1,11 @@
 /**
  * Scope: EntryRepository.swift
- * Purpose: Syncs reflection entries with the backend while preserving mobile-only fields via a local sidecar.
+ * Purpose: Syncs reflection entries with the backend, reading emotion/mood/confidence directly from server responses.
  */
 
 import Foundation
 
-struct EntrySaveResult: Sendable {
+struct EntrySaveResult {
     let entry: ReflectionEntry
     let safety: SafetyDTO
 }
@@ -18,11 +18,9 @@ protocol EntryRepositing: Sendable {
 
 struct EntryRepository: EntryRepositing {
     private let api: APIService
-    private let enrichmentStore: any ReflectionEnrichmentPersisting
 
-    init(api: APIService, enrichmentStore: any ReflectionEnrichmentPersisting) {
+    init(api: APIService) {
         self.api = api
-        self.enrichmentStore = enrichmentStore
     }
 
     func saveReflection(_ entry: ReflectionEntry) async throws -> EntrySaveResult {
@@ -32,6 +30,10 @@ struct EntryRepository: EntryRepositing {
             sentimentScore: Self.sentimentScore(for: entry.emotion),
             reflectedPhrase: entry.aiReplyText,
             openQuestion: entry.reflectionQuestion,
+            reflectionText: entry.reflectionText?.isEmpty == false ? entry.reflectionText : nil,
+            emotion: entry.emotion.rawValue,
+            mood: Self.moodName(for: entry.mood),
+            confidence: entry.confidence,
             createdAt: BackendDateFormat.dateTimeString(from: entry.date)
         )
 
@@ -40,7 +42,6 @@ struct EntryRepository: EntryRepositing {
             responseType: CreateEntryEnvelope.self
         )
 
-        persistEnrichment(for: entry)
         let saved = reflectionEntry(from: envelope.entry)
         return EntrySaveResult(entry: saved, safety: envelope.safety)
     }
@@ -55,35 +56,49 @@ struct EntryRepository: EntryRepositing {
 
     func deleteReflection(id: UUID) async throws {
         try await api.requestVoid(EntriesAPIEndpoint.delete(id: id.uuidString))
-        enrichmentStore.remove(id: id)
-    }
-
-    private func persistEnrichment(for entry: ReflectionEntry) {
-        let enrichment = ReflectionEnrichment(
-            mood: entry.mood,
-            emotion: entry.emotion,
-            confidence: entry.confidence,
-            reflectionText: entry.reflectionText
-        )
-        enrichmentStore.store(enrichment, for: entry.id)
     }
 
     private func reflectionEntry(from dto: EntryDTO) -> ReflectionEntry {
         let id = UUID(uuidString: dto.id) ?? UUID()
         let date = BackendDateFormat.date(fromDateTime: dto.createdAt) ?? Date()
-        let enrichment = enrichmentStore.enrichment(for: id)
 
         return ReflectionEntry(
             id: id,
             date: date,
             journalExcerpt: dto.content,
-            mood: enrichment?.mood ?? Self.fallbackMood(for: dto.sentimentScore),
-            emotion: enrichment?.emotion ?? Self.fallbackEmotion(for: dto.sentimentScore),
-            confidence: enrichment?.confidence ?? 0,
+            mood: Self.mood(from: dto) ?? Self.fallbackMood(for: dto.sentimentScore),
+            emotion: Self.emotion(from: dto) ?? Self.fallbackEmotion(for: dto.sentimentScore),
+            confidence: dto.confidence ?? 0,
             reflectionQuestion: dto.openQuestion ?? "",
-            reflectionText: enrichment?.reflectionText ?? dto.reflectedPhrase ?? "",
+            reflectionText: dto.reflectionText,
             aiReplyText: dto.reflectedPhrase
         )
+    }
+
+    private static func mood(from dto: EntryDTO) -> JedaMood? {
+        guard let name = dto.mood else { return nil }
+        switch name {
+        case "heavy": return .heavy
+        case "low": return .low
+        case "neutral": return .neutral
+        case "okay": return .okay
+        case "light": return .light
+        default: return nil
+        }
+    }
+
+    private static func moodName(for mood: JedaMood) -> String {
+        switch mood {
+        case .heavy: "heavy"
+        case .low: "low"
+        case .neutral: "neutral"
+        case .okay: "okay"
+        case .light: "light"
+        }
+    }
+
+    private static func emotion(from dto: EntryDTO) -> Emotion? {
+        dto.emotion.flatMap { Emotion(rawValue: $0) }
     }
 
     private static func sentimentScore(for emotion: Emotion) -> Double {

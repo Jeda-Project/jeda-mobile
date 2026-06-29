@@ -5,11 +5,11 @@
 
 import Foundation
 
-struct SafetyScanRequest: Encodable, Sendable {
+struct SafetyScanRequest: Encodable {
     let text: String
 }
 
-struct SafetyResourcesEnvelope: Decodable, Sendable {
+struct SafetyResourcesEnvelope: Decodable {
     let resources: [SafetyResourceDTO]
 }
 
@@ -20,18 +20,18 @@ enum SafetyAPIEndpoint: APIEndpoint {
     var path: String {
         switch self {
         case .scan:
-            return "api/safety/scan"
+            "api/safety/scan"
         case .resources:
-            return "api/safety/resources"
+            "api/safety/resources"
         }
     }
 
     var method: HTTPMethod {
         switch self {
         case .scan:
-            return .post
+            .post
         case .resources:
-            return .get
+            .get
         }
     }
 

@@ -1,27 +1,27 @@
 # iOS Accessibility
 
-## Mengapa Aksesibilitas Penting untuk Jeda
+## Why Accessibility Matters for Jeda
 
-Jeda adalah aplikasi kesehatan mental. Pengguna yang membutuhkan aksesibilitas seringkali juga paling rentan secara mental. Aplikasi yang tidak aksesibel secara aktif mengeksklusi mereka.
+Jeda is a mental health app. Users who need accessibility are often also the most vulnerable. An inaccessible app actively excludes them.
 
 ## VoiceOver
 
 ### accessibilityLabel
 ```swift
-// ✅ Label deskriptif
+// ✅ Descriptive label
 Button(action: saveEntry) {
     Image(systemName: "checkmark.circle.fill")
 }
 .accessibilityLabel("Simpan jurnal")
 
-// ❌ Tidak ada label — VoiceOver hanya akan baca nama SF Symbol
+// ❌ No label — VoiceOver will only read the SF Symbol name
 Button(action: saveEntry) {
     Image(systemName: "checkmark.circle.fill")
 }
 ```
 
 ### accessibilityHint
-Gunakan untuk menjelaskan HASIL dari aksi, bukan aksi itu sendiri:
+Use to describe the RESULT of an action, not the action itself:
 ```swift
 Button("Analisis Emosi") { classify() }
     .accessibilityHint("Menganalisis teks jurnal dan menampilkan emosi dominan")
@@ -29,7 +29,7 @@ Button("Analisis Emosi") { classify() }
 
 ### Grouping
 ```swift
-// ✅ Kelompokkan elemen yang harus dibaca bersamaan
+// ✅ Group elements that should be read together
 HStack {
     Image(systemName: emotion.systemImageName)
     Text(emotion.displayName)
@@ -41,9 +41,9 @@ HStack {
 
 ### Decorative Elements
 ```swift
-// ✅ Sembunyikan elemen dekoratif dari VoiceOver
+// ✅ Hide decorative elements from VoiceOver
 Image(systemName: "leaf.fill")
-    .accessibilityHidden(true)  // hanya dekorasi, tidak ada info
+    .accessibilityHidden(true)  // decorative only, no information
 
 Divider()
     .accessibilityHidden(true)
@@ -52,11 +52,11 @@ Divider()
 ## Dynamic Type
 
 ```swift
-// ✅ Text styles yang support Dynamic Type
+// ✅ Text styles that support Dynamic Type
 Text("Catatan Hari Ini")
     .font(.headline)
 
-// ✅ Layout yang adaptif — gunakan VStack ketika teks membesar
+// ✅ Adaptive layout — use VStack when text grows larger
 @Environment(\.dynamicTypeSize) var typeSize
 
 var isAccessibilitySize: Bool {
@@ -73,18 +73,18 @@ var body: some View {
     }
 }
 
-// ❌ Hardcoded size — tidak ikut Dynamic Type
+// ❌ Hardcoded size — does not follow Dynamic Type
 Text("Catatan").font(.system(size: 17))
 ```
 
 ## Touch Targets
 
 ```swift
-// ✅ Minimum 44×44 pt — penting untuk pengguna motor impairment
+// ✅ Minimum 44×44 pt — important for users with motor impairments
 Button("Hapus") { deleteEntry() }
     .frame(minWidth: 44, minHeight: 44)
 
-// ✅ contentShape untuk expand hit area tanpa mengubah visual
+// ✅ contentShape to expand hit area without changing visual size
 Image(systemName: "trash")
     .frame(width: 24, height: 24)
     .contentShape(Rectangle().size(CGSize(width: 44, height: 44)))
@@ -94,17 +94,17 @@ Image(systemName: "trash")
 ## Color & Contrast
 
 ```swift
-// ✅ Jangan hanya andalkan warna untuk menyampaikan informasi
+// ✅ Do not rely on color alone to convey information
 HStack {
     Circle()
         .fill(emotionColor)
         .frame(width: 12, height: 12)
-    Text(emotion.displayName)  // ✅ selalu ada teks pendamping
+    Text(emotion.displayName)  // ✅ always include accompanying text
 }
 
-// ❌ Hanya warna tanpa label
+// ❌ Color alone without a label
 Circle()
-    .fill(emotionColor)  // user buta warna tidak tahu ini maksudnya apa
+    .fill(emotionColor)  // colorblind users will not know what this means
 ```
 
 ## Reduce Motion
@@ -112,7 +112,7 @@ Circle()
 ```swift
 @Environment(\.accessibilityReduceMotion) var reduceMotion
 
-// ✅ Animasi opsional berdasarkan preferensi user
+// ✅ Optional animation based on user preference
 func animateIfAllowed(_ animation: Animation, body: () -> Void) {
     if reduceMotion {
         body()

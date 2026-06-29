@@ -6,14 +6,14 @@
 |-------|--------|------|
 | Services (EmotionClassificationService, APIService) | ≥ 80% | XCTest |
 | Models & utilities | ≥ 90% | XCTest |
-| Views | Tidak perlu unit test | SwiftUI Previews |
+| Views | No unit tests needed | SwiftUI Previews |
 
 ## Test Naming Convention
 
 ```swift
 func test_<method>_<condition>_<expectedResult>()
 
-// Contoh:
+// Examples:
 func test_classify_withSadText_returnsSadnessEmotion()
 func test_classify_withEmptyText_throwsInvalidInputError()
 func test_apiService_whenNetworkUnavailable_returnsNetworkError()
@@ -39,7 +39,7 @@ func test_classify_withSadText_returnsSadnessEmotion() async throws {
 
 ## Mock via Protocol Injection
 
-**JANGAN** subclass untuk mocking — gunakan protocol:
+**DO NOT** subclass for mocking — use a protocol:
 
 ```swift
 // Protocol
@@ -50,7 +50,7 @@ protocol EmotionAnalyzing {
 // Production
 actor EmotionClassificationService: EmotionAnalyzing { ... }
 
-// Mock untuk test
+// Mock for tests
 final class MockEmotionClassificationService: EmotionAnalyzing {
     var stubbedResult: EmotionClassificationResult?
     var stubbedError: Error?
@@ -67,13 +67,13 @@ final class MockEmotionClassificationService: EmotionAnalyzing {
 ## Async Testing
 
 ```swift
-// ✅ Gunakan async throws test
+// ✅ Use async throws tests
 func test_classify_completesSuccessfully() async throws {
     let result = try await service.classify(text: "test")
     XCTAssertNotNil(result)
 }
 
-// Untuk callback-based code yang belum async
+// For callback-based code not yet converted to async
 func test_someCallback_completesWithinTimeout() {
     let expectation = expectation(description: "completes")
     // ... fulfill expectation
@@ -81,11 +81,11 @@ func test_someCallback_completesWithinTimeout() {
 }
 ```
 
-## Apa yang Perlu Di-test
+## What Needs to Be Tested
 
-- ✅ Service business logic (klasifikasi, networking, parsing)
+- ✅ Service business logic (classification, networking, parsing)
 - ✅ Model transformations (Codable, computed properties)
 - ✅ Error paths (network error, model error, invalid input)
-- ✅ Edge cases (string kosong, teks sangat panjang, karakter unicode)
-- ❌ SwiftUI View rendering (gunakan Previews)
+- ✅ Edge cases (empty string, very long text, unicode characters)
+- ❌ SwiftUI View rendering (use Previews)
 - ❌ Third-party SDK internals (Firebase, Core ML model itself)

@@ -1,30 +1,30 @@
 # /merge-pr — Merge Pull Request
 
-Merge PR yang sudah diapprove.
+Merge an approved PR.
 
 ## Pre-Merge Checklist
 
-- [ ] PR sudah punya minimal 1 approval (atau self-review tanpa CRITICAL/HIGH)
-- [ ] Semua CI checks hijau (ios-ci.yml lulus)
-- [ ] Branch up-to-date dengan `main`
-- [ ] Tidak ada review comment yang belum diselesaikan
+- [ ] PR has at least 1 approval (or self-review with no CRITICAL/HIGH issues)
+- [ ] All CI checks are green (ios-ci.yml passed)
+- [ ] Branch is up-to-date with `main`
+- [ ] No unresolved review comments
 
-## Langkah
+## Steps
 
-1. Gunakan GitHub MCP `get_pull_request` untuk konfirmasi status PR dan reviews
-2. Gunakan GitHub MCP `get_pull_request_status` untuk konfirmasi CI checks hijau
-3. Jika branch ketinggalan `main`: gunakan GitHub MCP `update_pull_request_branch`
-4. Gunakan GitHub MCP `merge_pull_request` dengan `merge_method: "squash"` (untuk feature branches)
-5. Konfirmasi merge berhasil
-6. Hapus feature branch lokal: `git branch -d <branch>`
+1. Use GitHub MCP `get_pull_request` to confirm PR status and reviews
+2. Use GitHub MCP `get_pull_request_status` to confirm CI checks are green
+3. If branch is behind `main`: use GitHub MCP `update_pull_request_branch`
+4. Use GitHub MCP `merge_pull_request` with `merge_method: "squash"` (for feature branches)
+5. Confirm the merge succeeded
+6. Delete the local feature branch: `git branch -d <branch>`
 
-## Setelah Merge
+## After Merge
 
-- Pull `main` lokal: `git checkout main && git pull origin main`
-- Jika ada perubahan pada Core ML model: pastikan `.mlpackage` di-commit dengan benar
-- Jika ada perubahan API endpoint: pastikan `APIEndpoint` protocol sudah sinkron dengan backend
+- Pull `main` locally: `git checkout main && git pull origin main`
+- If there are Core ML model changes: ensure `.mlpackage` is committed correctly
+- If there are API endpoint changes: ensure the `APIEndpoint` protocol is in sync with the backend
 
-## Catatan
+## Notes
 
-- **Jangan force-push ke `main`** — safety hook akan memblokir
-- Squash merge diutamakan agar history `main` bersih dan linear
+- **Do not force-push to `main`** — the safety hook will block it
+- Squash merge is preferred to keep `main` history clean and linear

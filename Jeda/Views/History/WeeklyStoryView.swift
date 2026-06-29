@@ -1,7 +1,7 @@
-//
-//  WeeklyStoryView.swift
-//  Jeda
-//
+/**
+ * Scope: WeeklyStoryView.swift
+ * Purpose: Narrative story view presenting a week's emotional journey in prose form.
+ */
 
 import SwiftUI
 
@@ -55,6 +55,7 @@ struct WeeklyStoryView: View {
                                 tint: JedaColor.sage.opacity(0.16),
                                 in: Circle()
                             )
+                            .accessibilityHidden(true)
 
                         Text(page.title)
                             .font(JedaTypography.title)
@@ -78,6 +79,6 @@ struct WeeklyStoryView: View {
 
 #Preview {
     NavigationStack {
-        WeeklyStoryView(week: HistorySampleData.currentWeek)
+        WeeklyStoryView(week: PreviewStubs.week)
     }
 }

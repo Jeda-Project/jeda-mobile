@@ -100,9 +100,9 @@ struct JedaMoodCheckInSlider: View {
             .fill(
                 LinearGradient(
                     colors: [
-                        Color(red: 0.72, green: 0.40, blue: 0.31).opacity(0.5),
-                        Color(red: 0.56, green: 0.64, blue: 0.68).opacity(0.5),
-                        Color(red: 0.48, green: 0.55, blue: 0.50).opacity(0.5)
+                        JedaColor.terracotta.opacity(0.5),
+                        JedaColor.dustyBlue.opacity(0.5),
+                        JedaColor.sage.opacity(0.5)
                     ],
                     startPoint: .leading,
                     endPoint: .trailing
@@ -114,11 +114,11 @@ struct JedaMoodCheckInSlider: View {
 private enum JedaMoodSliderCheckInColor {
     static func color(for step: Int) -> Color {
         let colors: [Color] = [
-            Color(red: 0.72, green: 0.40, blue: 0.31),
-            Color(red: 0.77, green: 0.60, blue: 0.49),
-            Color(red: 0.56, green: 0.64, blue: 0.68),
-            Color(red: 0.48, green: 0.55, blue: 0.50),
-            Color(red: 0.40, green: 0.50, blue: 0.44),
+            JedaColor.terracotta,
+            JedaColor.clay,
+            JedaColor.dustyBlue,
+            JedaColor.sage,
+            JedaColor.sageDark
         ]
         return colors[min(max(step, 0), colors.count - 1)]
     }

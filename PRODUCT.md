@@ -1,64 +1,64 @@
 # PRODUCT.md — Jeda iOS
 
-## Apa itu Jeda?
+## What is Jeda?
 
-**Jeda** adalah aplikasi journaling kesehatan mental untuk iOS yang membantu pengguna memahami pola emosi mereka melalui tulisan. Nama "Jeda" (Bahasa Indonesia: "pause/break") mencerminkan filosofi produk: memberi ruang sejenak untuk refleksi diri di tengah kesibukan sehari-hari.
+**Jeda** is a mental health journaling app for iOS that helps users understand their emotional patterns through writing. The name "Jeda" (Indonesian for "pause/break") reflects the product philosophy: giving a brief space for self-reflection amid the busyness of daily life.
 
-Fitur utama: pengguna menulis jurnal harian, lalu AI on-device secara otomatis mengklasifikasikan emosi dari tulisan tersebut menggunakan model IndoBERT yang telah di-fine-tune.
+Core feature: users write a daily journal entry, and on-device AI automatically classifies the emotion in that text using a fine-tuned IndoBERT model.
 
-## Target Pengguna
+## Target Users
 
-- Dewasa muda Indonesia (18–35 tahun)
-- Tertarik dengan self-improvement dan mental health awareness
-- Nyaman dengan teknologi namun menghargai privacy (on-device AI = tidak ada data dikirim ke server)
-- Bahasa utama: Indonesia
+- Young Indonesian adults (18–35 years old)
+- Interested in self-improvement and mental health awareness
+- Comfortable with technology but value privacy (on-device AI = no data sent to a server)
+- Primary language: Indonesian
 
 ## Brand Personality
 
-- **Tenang** — tidak membuat panik, tidak overwhelming
-- **Hangat** — supportif, bukan klinis atau dingin
-- **Jujur** — tidak overpromise soal "menyembuhkan" masalah mental health
-- **Cerdas** — berbasis AI nyata (bukan gimmick), dijelaskan dengan sederhana
+- **Calm** — does not induce panic, not overwhelming
+- **Warm** — supportive, not clinical or cold
+- **Honest** — does not overpromise on "curing" mental health issues
+- **Smart** — built on real AI (not a gimmick), explained simply
 
 ## Design Philosophy
 
-**Calm/Muted Palette** — bukan dark neon, bukan pastel cerah. Tone yang menenangkan:
-- Sage green (`#7A8B7F`) — keseimbangan, alam
-- Dusty blue (`#8FA3AD`) — ketenangan, kepercayaan
-- Warm clay (`#C49A7C`) — kehangatan, tanah
-- Terracotta (`#B8654F`) — energi hangat, grounded
+**Calm/Muted Palette** — not dark neon, not bright pastel. A calming tone:
+- Sage green (`#7A8B7F`) — balance, nature
+- Dusty blue (`#8FA3AD`) — calm, trust
+- Warm clay (`#C49A7C`) — warmth, groundedness
+- Terracotta (`#B8654F`) — warm energy, grounded
 
-**Prinsip UI:**
-- Whitespace yang lega — tidak cluttered
-- Typography yang mudah dibaca (Dynamic Type support penuh)
-- Animasi minimal dan purposeful — tidak ada animasi dekoratif
-- Native iOS feel — mengikuti HIG, bukan custom UI yang fighting dengan platform
+**UI Principles:**
+- Generous whitespace — never cluttered
+- Easy-to-read typography (full Dynamic Type support)
+- Minimal, purposeful animation — no decorative animation
+- Native iOS feel — follows HIG rather than custom UI that fights the platform
 
 **Anti-references:**
-- Bukan aplikasi mood tracker yang terlalu gamified (streak, badges berlebihan)
-- Bukan desain "techy" dengan warna neon/dark cyber
-- Bukan klinis seperti aplikasi medical
+- Not an overly gamified mood tracker (excessive streaks, badges)
+- Not a "techy" design with neon/dark cyber colors
+- Not clinical like a medical app
 
-## Fitur yang Ada
+## Existing Features
 
-1. **Emotion Classification Demo** — Input teks, output klasifikasi emosi (sadness, anger, love, fear, happy) dengan confidence score
-2. **Design System Showcase** — Reference view untuk semua komponen Jeda
+1. **Emotion Classification Demo** — Text input, emotion classification output (sadness, anger, love, fear, happy) with a confidence score
+2. **Design System Showcase** — Reference view for all Jeda components
 3. **Reusable Component Library:**
    - JedaButtons, JedaCharts, JedaGlassSurface
    - JedaJournalInput, JedaMoodPicker, JedaMoodSliderCard
    - JedaReflectionCard, JedaSafetyBanner, JedaStateViews, JedaWeeklyPatternCard
 
-## Fitur yang Direncanakan
+## Planned Features
 
-- Journal entry full flow (compose → save → list)
+- Full journal entry flow (compose → save → list)
 - Emotion history & trend chart
 - Weekly/monthly emotion report
-- Reflection prompts berbasis emosi terdeteksi
-- Safety net untuk konten krisis (sudah ada JedaSafetyBanner)
-- Backend API integration (infrastructure sudah tersedia di Services/Networking/)
+- Reflection prompts based on the detected emotion
+- Safety net for crisis content (JedaSafetyBanner already exists)
+- Backend API integration (infrastructure already available in Services/Networking/)
 
-## Constraint Penting
+## Important Constraints
 
-- **Privacy first:** Klasifikasi emosi terjadi sepenuhnya on-device (Core ML). Tidak ada teks jurnal yang dikirim ke server.
-- **Bahasa Indonesia:** Error messages, UI copy, dan accessibility labels dalam Bahasa Indonesia.
-- **iOS only:** Tidak ada rencana Android atau cross-platform dalam waktu dekat.
+- **Privacy first:** Emotion classification happens entirely on-device (Core ML). No journal text is sent to a server.
+- **Indonesian language:** Error messages, UI copy, and accessibility labels are in Indonesian.
+- **iOS only:** No Android or cross-platform plans in the near term.

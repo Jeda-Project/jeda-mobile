@@ -1,11 +1,11 @@
-//
-//  APIError.swift
-//  Jeda
-//
+/**
+ * Scope: APIError.swift
+ * Purpose: Defines typed networking errors surfaced by APIService to callers.
+ */
 
 import Foundation
 
-enum APIError: LocalizedError, Sendable {
+enum APIError: LocalizedError {
     case invalidURL
     case invalidResponse
     case encodingFailed
@@ -16,17 +16,17 @@ enum APIError: LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .invalidURL:
-            return "URL tidak valid"
+            "URL tidak valid"
         case .invalidResponse:
-            return "Response server tidak valid"
+            "Response server tidak valid"
         case .encodingFailed:
-            return "Gagal encode request"
+            "Gagal encode request"
         case .noData:
-            return "Tidak ada data dari server"
-        case .decodingFailed(let message):
-            return "Gagal parse response: \(message)"
-        case .httpError(let statusCode, let message):
-            return "HTTP \(statusCode): \(message)"
+            "Tidak ada data dari server"
+        case let .decodingFailed(message):
+            "Gagal parse response: \(message)"
+        case let .httpError(statusCode, message):
+            "HTTP \(statusCode): \(message)"
         }
     }
 }

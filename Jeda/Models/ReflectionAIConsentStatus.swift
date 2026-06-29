@@ -5,7 +5,7 @@
 
 import Foundation
 
-enum ReflectionAIConsentStatus: String, Sendable {
+enum ReflectionAIConsentStatus: String {
     case notDetermined
     case granted
     case denied

@@ -1,51 +1,51 @@
 # Commands Index
 
-> Invoke dengan `/command-name` di Claude Code CLI.
+> Invoke with `/command-name` in the Claude Code CLI.
 
 ---
 
 ## Planning
 
-| Command | Kapan Digunakan |
-|---------|----------------|
-| `/plan` | Sebelum fitur baru — breakdown per layer (Models → Services → Views), risk assessment |
+| Command | When to Use |
+|---------|-------------|
+| `/plan` | Before a new feature — breakdown per layer (Models → Services → Views), risk assessment |
 
 ---
 
 ## Code Review
 
-| Command | Kapan Digunakan |
-|---------|----------------|
-| `/review` | Review menyeluruh staged changes (SoC, AGENTS.md compliance, a11y, Swift best practices) |
-| `/a11y-audit [path]` | Audit aksesibilitas SwiftUI — VoiceOver, Dynamic Type, touch targets |
+| Command | When to Use |
+|---------|-------------|
+| `/review` | Thorough review of staged changes (SoC, AGENTS.md compliance, a11y, Swift best practices) |
+| `/a11y-audit [path]` | SwiftUI accessibility audit — VoiceOver, Dynamic Type, touch targets |
 
 ---
 
 ## Quality Gates
 
-| Command | Kapan Digunakan |
-|---------|----------------|
-| `/check-fix` | Build + SwiftLint; auto-fix yang bisa di-fix, report PASS/FAIL |
-| `/build-sim` | Build ke iPhone 16 Simulator, tampilkan hasil bersih |
-| `/test` | Jalankan XCTest suite, report test count + failures |
+| Command | When to Use |
+|---------|-------------|
+| `/check-fix` | Build + SwiftLint; auto-fix what can be fixed, report PASS/FAIL |
+| `/build-sim` | Build to iPhone 17 Pro Simulator, display clean output |
+| `/test` | Run XCTest suite, report test count + failures |
 
 ---
 
 ## Git & Release
 
-| Command | Kapan Digunakan |
-|---------|----------------|
+| Command | When to Use |
+|---------|-------------|
 | `/commit` | Quality gate → inspect diff → draft conventional commit message |
-| `/create-pr` | Buat PR dari branch saat ini dengan body yang terstandarisasi |
-| `/merge-pr` | Merge PR yang sudah diapprove via GitHub MCP |
-| `/resolve-pr-review` | Tangani dan respond ke review comments |
+| `/create-pr` | Create a PR from the current branch with a standardized body |
+| `/merge-pr` | Merge an approved PR via GitHub MCP |
+| `/resolve-pr-review` | Address and respond to review comments |
 
 ---
 
 ## Session Management
 
-| Command | Kapan Digunakan |
-|---------|----------------|
-| `/checkpoint [desc]` | Safety commit mid-session dengan timestamp |
-| `/checkpoint-summary [domain]` | Session summary untuk handover — simpan ke session-logs/ |
-| `/aside` | Pause task saat ini, handle quick side fix, lalu kembali |
+| Command | When to Use |
+|---------|-------------|
+| `/checkpoint [desc]` | Safety commit mid-session with timestamp |
+| `/checkpoint-summary [domain]` | Session summary for handover — save to session-logs/ |
+| `/aside` | Pause the current task, handle a quick side fix, then return |

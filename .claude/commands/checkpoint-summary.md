@@ -8,7 +8,7 @@ description: Generate a session summary of changes, decisions, and tasks for eff
 # /checkpoint-summary — Session Summary
 
 1. COLLECT: files modified (`git status`), tasks completed, decisions made, issues encountered
-2. ACTIVE SUMMARY (≤300 tokens): print untuk user
-   - Branch, apa yang dikerjakan, keputusan penting, files yang diubah, langkah selanjutnya
-3. FULL LOG: simpan ke `.claude/session-logs/[YYYY-MM-DD]-[domain].md`
-4. PROPAGATE: tawarkan untuk menambahkan anti-pattern baru yang ditemukan ke `.claude/anti-patterns/`
+2. ACTIVE SUMMARY (≤300 tokens): print for the user
+   - Branch, what was worked on, key decisions, files changed, next steps
+3. FULL LOG: save to `.claude/session-logs/[YYYY-MM-DD]-[domain].md`
+4. PROPAGATE: offer to add any new anti-patterns discovered to `.claude/anti-patterns/`

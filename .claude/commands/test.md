@@ -1,14 +1,14 @@
-# /test — Jalankan XCTest Suite
+# /test — Run XCTest Suite
 
-Jalankan semua unit tests di simulator dan tampilkan hasil.
+Run all unit tests on the simulator and display the results.
 
-## Langkah
+## Steps
 
 ```bash
 rtk xcodebuild test \
   -project Jeda.xcodeproj \
   -scheme Jeda \
-  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   -quiet \
   2>&1 | grep -E "(Test (Case|Suite)|passed|failed|error:)"
 ```
@@ -25,8 +25,8 @@ Test Suite 'All tests' started
      <failure message>
 
 Results: <N> tests, <N> passed, <N> failed
-Coverage: <N>% (target: ≥80% untuk Services)
+Coverage: <N>% (target: ≥80% for Services)
 ```
 
-Jika ada test failure, diagnosa root cause sebelum fix.
-Coverage di bawah 80% untuk core Services perlu ditambah test.
+If there are test failures, diagnose the root cause before fixing.
+Coverage below 80% for core Services requires additional tests.

@@ -1,11 +1,11 @@
-//
-//  HistoryModels.swift
-//  Jeda
-//
+/**
+ * Scope: HistoryModels.swift
+ * Purpose: Defines data models for the history feature including weekly and daily summary structures.
+ */
 
 import Foundation
 
-struct JournalEntry: Identifiable, Hashable, Sendable {
+struct JournalEntry: Identifiable, Hashable {
     let id: UUID
     let date: Date
     let mood: JedaMood
@@ -14,6 +14,8 @@ struct JournalEntry: Identifiable, Hashable, Sendable {
     let body: String
     let topics: [String]
     let reflectionQuestion: String?
+    let reflectionText: String?
+    let aiReplyText: String?
     let timestamp: Date
 
     var dayAbbreviation: String {
@@ -29,27 +31,29 @@ struct JournalEntry: Identifiable, Hashable, Sendable {
     }
 }
 
-struct WeeklyStats: Hashable, Sendable {
+struct WeeklyStats: Hashable {
     let checkIns: Int
     let wordsWritten: Int
     let aiReflections: Int
 }
 
-struct WeeklyStoryPage: Identifiable, Hashable, Sendable {
+struct WeeklyStoryPage: Identifiable, Hashable {
     let id: UUID
     let title: String
     let symbol: String
     let body: String
 }
 
-struct MoodBreakdownItem: Identifiable, Hashable, Sendable {
+struct MoodBreakdownItem: Identifiable, Hashable {
     let mood: JedaMood
     let count: Int
 
-    var id: Int { mood.rawValue }
+    var id: Int {
+        mood.rawValue
+    }
 }
 
-struct WeekSummary: Identifiable, Sendable {
+struct WeekSummary: Identifiable {
     let id: UUID
     let weekNumber: Int
     let startDate: Date
@@ -94,71 +98,4 @@ enum HistoryDestination: Hashable {
     case weeklyStory(UUID)
     case dailyEntries(UUID)
     case entryDetail(entryID: UUID, weekID: UUID)
-}
-
-enum HistoryFormatting {
-    private static let calendar: Calendar = {
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.locale = Locale(identifier: "id_ID")
-        return calendar
-    }()
-
-    static func weekRangeString(from start: Date, to end: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "id_ID")
-        formatter.dateFormat = "d"
-        let startDay = formatter.string(from: start)
-        formatter.dateFormat = "d MMMM yyyy"
-        return "\(startDay) - \(formatter.string(from: end))"
-    }
-
-    static func dayAbbreviation(for date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "id_ID")
-        formatter.dateFormat = "EEE"
-        return formatter.string(from: date).capitalized
-    }
-
-    static func dayNumber(for date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "d"
-        return formatter.string(from: date)
-    }
-
-    static func timeString(for date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter.string(from: date)
-    }
-
-    static func entryDateString(for date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "id_ID")
-        formatter.dateFormat = "EEEE, d MMMM yyyy"
-        return formatter.string(from: date)
-    }
-
-    static func weekDays(for week: WeekSummary) -> [Date] {
-        (0..<7).compactMap { offset in
-            calendar.date(byAdding: .day, value: offset, to: week.startDate)
-        }
-    }
-
-    static func uniqueCheckInDayCount(for dates: [Date]) -> Int {
-        Set(dates.map { calendar.startOfDay(for: $0) }).count
-    }
-}
-
-extension JedaMood {
-    var historyLabel: String { title }
-
-    var optimisticLabel: String {
-        switch self {
-        case .heavy: "Berat"
-        case .low: "Lelah"
-        case .neutral: "Tenang"
-        case .okay: "Lega"
-        case .light: "Ringan"
-        }
-    }
 }

@@ -1,27 +1,27 @@
 # /a11y-audit [path] — Accessibility Audit
 
-Audit aksesibilitas SwiftUI views untuk memastikan VoiceOver, Dynamic Type, dan HIG compliance.
+Audit SwiftUI views for accessibility to ensure VoiceOver, Dynamic Type, and HIG compliance.
 
-## Penggunaan
+## Usage
 ```
-/a11y-audit                          # audit semua Views/
+/a11y-audit                          # audit all Views/
 /a11y-audit Jeda/Views/JedaMoodPicker.swift
 ```
 
-## Langkah
+## Steps
 
-1. **Scan file Swift** yang ditentukan (atau semua di `Views/` jika tidak ada path)
-2. **Gunakan agent `jeda-a11y-guard`** untuk audit menyeluruh
-3. Cek secara spesifik:
-   - `.accessibilityLabel` pada semua button dan icon
-   - Tidak ada `.font(.system(size:))` — Dynamic Type violation
+1. **Scan the specified Swift file** (or all files in `Views/` if no path is given)
+2. **Use the `jeda-a11y-guard` agent** for a thorough audit
+3. Check specifically for:
+   - `.accessibilityLabel` on all buttons and icons
+   - No `.font(.system(size:))` — Dynamic Type violation
    - Touch target minimum 44×44 pt
-   - VoiceOver grouping dengan `.accessibilityElement(children:)`
-   - Animasi yang support `accessibilityReduceMotion`
+   - VoiceOver grouping with `.accessibilityElement(children:)`
+   - Animations that support `accessibilityReduceMotion`
 
 ## Output
 
-Laporan dengan prioritas:
-- 🚫 Pelanggaran kritis (block commit)
-- ⚠️ Perlu peningkatan
-- ✅ Sudah aksesibel
+Report with priorities:
+- 🚫 Critical violations (block commit)
+- ⚠️ Needs improvement
+- ✅ Already accessible

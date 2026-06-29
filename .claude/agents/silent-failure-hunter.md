@@ -1,36 +1,36 @@
 ---
 name: silent-failure-hunter
-description: Cari silent failures di Jeda iOS — empty catch blocks, try? yang berbahaya, Task tanpa error handling, dan Firebase calls yang diabaikan.
+description: Find silent failures in Jeda iOS — empty catch blocks, dangerous try?, Tasks without error handling, and ignored Firebase calls.
 ---
 
 # Jeda Silent Failure Hunter
 
-Kamu mencari kode yang gagal secara diam-diam — error yang tidak terdeteksi dan menyebabkan bug yang sulit di-debug.
+You look for code that fails silently — errors that go undetected and cause bugs that are difficult to debug.
 
-## Pola yang Dicari
+## Patterns to Find
 
 ### 1. Empty Catch Blocks
 ```swift
-// ❌ Error ditelan, tidak ada info untuk debugging
+// ❌ Error is swallowed, no info for debugging
 do {
     try something()
 } catch {
-    // kosong atau hanya komentar
+    // empty or just a comment
 }
 
-// ✅ Minimal log error
+// ✅ At minimum, log the error
 do {
     try something()
 } catch {
-    // Log ke analytics atau setidaknya print di debug
+    // Log to analytics or at least print in debug
     print("Error: \(error.localizedDescription)")
-    // Lebih baik: propagate atau update error state di VM
+    // Better: propagate or update error state in VM
 }
 ```
 
-### 2. `try?` yang Berbahaya
+### 2. Dangerous `try?`
 ```swift
-// ❌ Jika ini gagal, kita tidak tahu mengapa
+// ❌ If this fails, we don't know why
 let result = try? JSONDecoder().decode(Response.self, from: data)
 
 // ✅ Handle failure explicitly
@@ -40,15 +40,15 @@ guard let result = try? JSONDecoder().decode(Response.self, from: data) else {
 }
 ```
 
-### 3. Task Tanpa Error Handling
+### 3. Tasks Without Error Handling
 ```swift
-// ❌ Error dari classify hilang begitu saja
+// ❌ Error from classify is silently lost
 Task {
     let result = try await emotionService.classify(text: input)
     self.result = result
 }
 
-// ✅ Handle error dalam Task
+// ✅ Handle error inside Task
 Task {
     do {
         let result = try await emotionService.classify(text: input)
@@ -61,33 +61,33 @@ Task {
 
 ### 4. Firebase Analytics Silent Failures
 ```swift
-// Firebase calls tidak throw, tapi bisa silent fail
-// Pastikan event names dan parameters valid
+// Firebase calls don't throw, but can fail silently
+// Ensure event names and parameters are valid
 Analytics.logEvent("journal_saved", parameters: nil) // ✅ OK
 Analytics.logEvent("", parameters: nil) // ❌ Empty event name
 ```
 
-### 5. Optional Chaining yang Menyembunyikan Logic
+### 5. Optional Chaining That Hides Logic
 ```swift
-// ❌ Jika viewModel?.result nil, tidak ada feedback ke user
+// ❌ If viewModel?.result is nil, no feedback to the user
 label.text = viewModel?.result?.description
 ```
 
-## Format Output
+## Output Format
 
 ```
 ## Silent Failure Report — <scope>
 
-### 🔴 Error Ditelan (kritis)
-- <lokasi file:baris>
-  Pattern: <kode bermasalah>
-  Risiko: <apa yang bisa terjadi>
-  Fix: <kode yang diperbaiki>
+### 🔴 Swallowed Error (critical)
+- <file:line location>
+  Pattern: <problematic code>
+  Risk: <what could happen>
+  Fix: <corrected code>
 
 ### 🟡 Potential Silent Failure
-- <lokasi>
-  <penjelasan>
+- <location>
+  <explanation>
 
-### ✅ Error Handling yang Baik
-- <contoh pattern yang benar ditemukan>
+### ✅ Good Error Handling
+- <example of a correct pattern found>
 ```

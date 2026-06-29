@@ -3,31 +3,31 @@
 ## HIG Compliance (Human Interface Guidelines)
 
 ### Touch Targets
-- Minimum **44×44 pt** untuk semua interactive element
-- Jika visual element kecil (icon 20pt), perbesar hit area dengan padding atau `.contentShape`
+- Minimum **44×44 pt** for all interactive elements
+- If a visual element is small (20pt icon), expand the hit area with padding or `.contentShape`
 
 ```swift
-// ✅ Icon kecil dengan hit area yang cukup
+// ✅ Small icon with adequate hit area
 Button(action: deleteEntry) {
     Image(systemName: "trash")
         .font(.system(size: 20))
 }
-.frame(width: 44, height: 44)  // hit area 44pt
+.frame(width: 44, height: 44)  // 44pt hit area
 
-// ✅ Atau gunakan contentShape
+// ✅ Or use contentShape
 Image(systemName: "trash")
     .contentShape(Rectangle().size(CGSize(width: 44, height: 44)))
     .onTapGesture { deleteEntry() }
 ```
 
 ### Navigation
-- Gunakan title yang jelas dan singkat (maks 2 kata)
-- Back button harus berfungsi secara konsisten
-- Tidak ada custom navigation yang fighting dengan sistem iOS
+- Use clear, concise titles (max 2 words)
+- Back button must work consistently
+- No custom navigation that fights the iOS system
 
 ### Typography
 ```swift
-// ✅ Text styles — otomatis support Dynamic Type
+// ✅ Text styles — automatically support Dynamic Type
 .font(.largeTitle)   // 34pt default
 .font(.title)        // 28pt default
 .font(.title2)       // 22pt default
@@ -38,13 +38,13 @@ Image(systemName: "trash")
 .font(.footnote)     // 13pt regular
 .font(.caption)      // 12pt regular
 
-// ❌ Hardcoded size — tidak support Dynamic Type
+// ❌ Hardcoded size — does not support Dynamic Type
 .font(.system(size: 17))
 ```
 
 ## JedaColor Design System
 
-SELALU gunakan `JedaColor` dari `JedaTheme.swift`:
+ALWAYS use `JedaColor` from `JedaTheme.swift`:
 
 ```swift
 // ✅ Semantic colors
@@ -59,21 +59,21 @@ SELALU gunakan `JedaColor` dari `JedaTheme.swift`:
 ```
 
 **Jeda Color Palette:**
-| Token | Hex | Penggunaan |
-|-------|-----|-----------|
+| Token | Hex | Usage |
+|-------|-----|-------|
 | `sageGreen` | #7A8B7F | CTA, primary accent |
 | `dustyBlue` | #8FA3AD | Info, secondary accent |
-| `warmClay` | #C49A7C | Highlights, terciary accent |
-| `terracotta` | #B8654F | Alert hangat, energi |
-| `textPrimary` | — | Teks utama |
+| `warmClay` | #C49A7C | Highlights, tertiary accent |
+| `terracotta` | #B8654F | Warm alert, energy |
+| `textPrimary` | — | Primary text |
 | `textSecondary` | — | Subtitle, metadata |
-| `background` | — | Latar utama |
+| `background` | — | Main background |
 | `surface` | — | Card, elevated surface |
-| `border` | — | Garis pembatas |
+| `border` | — | Divider lines |
 
 ## Spacing Consistency
 
-Gunakan `JedaSpacing` constants:
+Use `JedaSpacing` constants:
 
 ```swift
 VStack(spacing: JedaSpacing.md) {  // 16pt
@@ -85,22 +85,22 @@ VStack(spacing: JedaSpacing.md) {  // 16pt
 ## SF Symbols
 
 ```swift
-// ✅ Semua ikon dari SF Symbols
+// ✅ All icons from SF Symbols
 Image(systemName: "heart.fill")
 Image(systemName: "book.fill")
 Image(systemName: "face.smiling")
 
-// ❌ Custom image asset untuk ikon yang tersedia di SF Symbols
+// ❌ Custom image asset for icons available in SF Symbols
 Image("custom-heart-icon")
 ```
 
-Gunakan `.symbolRenderingMode(.hierarchical)` atau `.symbolVariant` untuk variasi yang tepat.
+Use `.symbolRenderingMode(.hierarchical)` or `.symbolVariant` for the appropriate variant.
 
 ## Animation
 
-- Animasi harus purposeful — setiap animasi harus meningkatkan comprehension atau delight
-- Gunakan `withAnimation(.easeInOut(duration: 0.2))` untuk transisi standard
-- Dukung `@Environment(\.accessibilityReduceMotion)`:
+- Animations must be purposeful — every animation should improve comprehension or delight
+- Use `withAnimation(.easeInOut(duration: 0.2))` for standard transitions
+- Support `@Environment(\.accessibilityReduceMotion)`:
 
 ```swift
 @Environment(\.accessibilityReduceMotion) var reduceMotion

@@ -1,9 +1,7 @@
-//
-//  JedaReflectionCard.swift
-//  Jeda
-//
-//  Created by Codex on 27/06/26.
-//
+/**
+ * Scope: JedaReflectionCard.swift
+ * Purpose: Card component displaying a summary preview of a reflection entry in lists.
+ */
 
 import SwiftUI
 
@@ -24,6 +22,7 @@ struct JedaReflectionCard: View {
                             tint: JedaColor.sage.opacity(0.18),
                             in: Circle()
                         )
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: JedaSpacing.xs) {
                         Text("Refleksi ringan")

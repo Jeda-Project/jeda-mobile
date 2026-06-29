@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct ReflectionEntry: Identifiable, Hashable, Sendable, Codable {
+struct ReflectionEntry: Identifiable, Hashable, Codable {
     let id: UUID
     let date: Date
     let journalExcerpt: String
@@ -13,7 +13,7 @@ struct ReflectionEntry: Identifiable, Hashable, Sendable, Codable {
     let emotion: Emotion
     let confidence: Double
     let reflectionQuestion: String
-    let reflectionText: String
+    let reflectionText: String?
     let aiReplyText: String?
 
     init(
@@ -24,7 +24,7 @@ struct ReflectionEntry: Identifiable, Hashable, Sendable, Codable {
         emotion: Emotion,
         confidence: Double,
         reflectionQuestion: String,
-        reflectionText: String,
+        reflectionText: String? = nil,
         aiReplyText: String? = nil
     ) {
         self.id = id
@@ -36,5 +36,12 @@ struct ReflectionEntry: Identifiable, Hashable, Sendable, Codable {
         self.reflectionQuestion = reflectionQuestion
         self.reflectionText = reflectionText
         self.aiReplyText = aiReplyText
+    }
+
+    var formattedDate: String {
+        let locale = Locale(identifier: "id_ID")
+        let datePart = date.formatted(.dateTime.day().month(.wide).year().locale(locale))
+        let timePart = date.formatted(.dateTime.hour().minute().locale(locale))
+        return "\(datePart) pukul \(timePart) WIB"
     }
 }

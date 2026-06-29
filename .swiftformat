@@ -1,0 +1,66 @@
+# .swiftformat — Jeda iOS
+# Mirrors Xcode default formatting as closely as possible
+
+--swiftversion 5.9
+
+# Xcode-compatible indentation
+--indent 4
+--indentcase false
+--ifdef no-indent
+--xcodeindentation enabled
+
+# Xcode-compatible spacing
+--trimwhitespace always
+--insertlines disabled
+--removelines disabled
+--empty void
+
+# Braces — Xcode style (K&R)
+--allman false
+--elseposition same-line
+--guardelse auto
+
+# Imports
+--importgrouping testable-last
+
+# Wrapping — match Xcode re-indent behavior
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+--wrapreturntype preserve
+--wraptypealiases preserve
+
+# Self — explicit self only when required (Xcode default)
+--self remove
+--selfrequired
+
+# Semicolons
+--semicolons never
+
+# Trailing comma — disabled to match SwiftLint config
+--trailingcommas never
+
+# Unused arguments
+--stripunusedargs closure-only
+
+# Void
+--voidtype void
+
+# Exclusions
+--exclude Jeda/Resources,.build,DerivedData,"Jeda/Views/Reusable Views/JedaTheme.swift","Jeda/Views/Reusable Views/JedaMoodSliderSupport.swift"
+
+# Rules — disable rules that conflict with SwiftLint or Xcode behavior
+--disable andOperator
+--disable assertionFailures
+--disable consecutiveBlankLines
+--disable docComments
+--disable markTypes
+--disable organizeDeclarations
+--disable sortedSwitchCases
+--disable wrapSwitchCases
+--disable wrapFunctionBodies
+--disable wrapPropertyBodies
+--disable modifierOrder
+--disable blankLinesBetweenScopes
+--disable wrapMultilineStatementBraces

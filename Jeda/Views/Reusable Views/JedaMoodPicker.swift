@@ -1,9 +1,7 @@
-//
-//  JedaMoodPicker.swift
-//  Jeda
-//
-//  Created by Codex on 27/06/26.
-//
+/**
+ * Scope: JedaMoodPicker.swift
+ * Purpose: Reusable mood selection component that lets users pick from available emotion options.
+ */
 
 import SwiftUI
 
@@ -14,7 +12,9 @@ enum JedaMood: Int, CaseIterable, Identifiable, Codable {
     case okay
     case light
 
-    var id: Int { rawValue }
+    var id: Int {
+        rawValue
+    }
 
     var title: String {
         switch self {
@@ -22,7 +22,7 @@ enum JedaMood: Int, CaseIterable, Identifiable, Codable {
         case .low: "Lelah"
         case .neutral: "Netral"
         case .okay: "Lega"
-        case .light: "Ringan"
+        case .light: "Tenteram"
         }
     }
 
@@ -46,7 +46,7 @@ enum JedaMood: Int, CaseIterable, Identifiable, Codable {
 
     var tint: Color {
         switch self {
-        case .heavy: JedaColor.dustyBlue
+        case .heavy: JedaColor.terracotta
         case .low: JedaColor.sage.opacity(0.78)
         case .neutral: JedaColor.sage
         case .okay: JedaColor.clay.opacity(0.82)
@@ -69,6 +69,7 @@ struct JedaMoodPicker: View {
                             Image(systemName: mood.symbol)
                                 .font(.system(size: 18, weight: .semibold, design: .rounded))
                                 .symbolRenderingMode(.hierarchical)
+                                .accessibilityHidden(true)
 
                             Text(mood.title)
                                 .font(JedaTypography.caption)

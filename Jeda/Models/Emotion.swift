@@ -1,19 +1,20 @@
-//
-//  Emotion.swift
-//  Jeda
-//
+/**
+ * Scope: Emotion.swift
+ * Purpose: Defines the Emotion enum with all IndoNLU EmoT labels used by the on-device classifier.
+ */
 
 import Foundation
 
-/// IndoNLU EmoT labels (matches fine-tuned IndoBERT-lite checkpoint).
-enum Emotion: String, CaseIterable, Codable, Sendable, Identifiable {
+enum Emotion: String, CaseIterable, Codable, Identifiable {
     case sadness
     case anger
     case love
     case fear
     case happy
 
-    var id: String { rawValue }
+    var id: String {
+        rawValue
+    }
 
     var displayName: String {
         switch self {
@@ -34,27 +35,16 @@ enum Emotion: String, CaseIterable, Codable, Sendable, Identifiable {
         case .happy: "sun.max.fill"
         }
     }
-
-    init?(classIndex: Int) {
-        switch classIndex {
-        case 0: self = .sadness
-        case 1: self = .anger
-        case 2: self = .love
-        case 3: self = .fear
-        case 4: self = .happy
-        default: return nil
-        }
-    }
 }
 
-struct EmotionClassificationResult: Sendable, Equatable {
+struct EmotionClassificationResult: Equatable {
     let label: Emotion
     let confidence: Double
     let probabilities: [Emotion: Double]
     /// Normalized score in [-1, 1]: positive emotions minus negative emotions.
     let sentimentScore: Double
 
-    static func from(logits: [Float]) -> EmotionClassificationResult? {
+    nonisolated static func from(logits: [Float]) -> EmotionClassificationResult? {
         guard logits.count == Emotion.allCases.count else { return nil }
 
         let probabilities = softmax(logits)
@@ -63,9 +53,10 @@ struct EmotionClassificationResult: Sendable, Equatable {
             byEmotion[emotion] = Double(probabilities[index])
         }
 
-        guard let best = probabilities.enumerated().max(by: { $0.element < $1.element }),
-              let label = Emotion(classIndex: best.offset)
-        else { return nil }
+        guard let best = probabilities.enumerated().max(by: { $0.element < $1.element }) else { return nil }
+        let index = best.offset
+        guard Emotion.allCases.indices.contains(index) else { return nil }
+        let label = Emotion.allCases[index]
 
         let positive = (byEmotion[.happy] ?? 0) + (byEmotion[.love] ?? 0)
         let negative = (byEmotion[.sadness] ?? 0) + (byEmotion[.anger] ?? 0) + (byEmotion[.fear] ?? 0)
@@ -79,7 +70,7 @@ struct EmotionClassificationResult: Sendable, Equatable {
         )
     }
 
-    private static func softmax(_ logits: [Float]) -> [Float] {
+    nonisolated private static func softmax(_ logits: [Float]) -> [Float] {
         let maxLogit = logits.max() ?? 0
         let expValues = logits.map { expf($0 - maxLogit) }
         let sum = expValues.reduce(0, +)
@@ -88,7 +79,7 @@ struct EmotionClassificationResult: Sendable, Equatable {
     }
 }
 
-enum EmotionClassificationError: LocalizedError, Sendable {
+enum EmotionClassificationError: LocalizedError {
     case emptyInput
     case modelNotFound
     case tokenizerNotFound

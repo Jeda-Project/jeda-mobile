@@ -1,31 +1,31 @@
 # /aside — Quick Side Task
 
-Pause task saat ini, selesaikan pertanyaan atau fix kecil, lalu kembali.
+Pause the current task, complete a question or small fix, then return.
 
-## Langkah
+## Steps
 
-1. **Jalankan `/checkpoint` dulu** — simpan safety commit + session log agar tidak ada yang hilang saat context dicompress
-2. Selesaikan aside (tetap kecil — jika ini fitur baru, buka branch terpisah)
-3. Jalankan quality gate jika ada kode yang diubah: `rtk xcodebuild build -project Jeda.xcodeproj -scheme Jeda -destination 'platform=iOS Simulator,name=iPhone 16' -quiet`
-4. **Kembali** — nyatakan ulang task yang di-pause dari template di bawah dan lanjutkan
+1. **Run `/checkpoint` first** — create a safety commit + session log so nothing is lost when context is compressed
+2. Complete the aside (keep it small — if this is a new feature, open a separate branch)
+3. Run the quality gate if any code was changed: `rtk xcodebuild build -project Jeda.xcodeproj -scheme Jeda -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -quiet`
+4. **Return** — restate the paused task from the template below and continue
 
-## Catatan
+## Notes
 
-- Aside maksimal ~15 menit. Jika lebih besar, buat task/branch baru.
-- Jangan gabungkan perubahan aside dengan fitur yang sedang dikerjakan dalam satu commit
+- An aside should take at most ~15 minutes. If it is larger, create a new task/branch.
+- Do not mix aside changes with the feature being worked on in the same commit
 
 ## Template
 
 ```
-## Aside: <apa>
+## Aside: <what>
 
-### Task saat ini (di-pause)
+### Current task (paused)
 - File: <path>
-- Status: <di mana tadi>
+- Status: <where we left off>
 
 ### Aside task
-<deskripsi>
+<description>
 
-### Kembali ke
-<titik resume>
+### Return to
+<resume point>
 ```

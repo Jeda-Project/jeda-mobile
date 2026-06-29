@@ -27,7 +27,7 @@ struct SafetyService: SafetyScanning {
             )
             return CrisisDetectionResult(
                 isCrisis: result.flagged,
-                matchedTerms: result.matches.map { $0.category }
+                matchedTerms: result.matches.map(\.category)
             )
         } catch {
             return onDeviceDetector.detect(in: text)
@@ -49,7 +49,7 @@ struct SafetyService: SafetyScanning {
 
     static func resource(from dto: SafetyResourceDTO) -> CrisisSupportResource {
         let display = dto.phone ?? dto.url ?? ""
-        let dialNumber = (dto.phone ?? "").filter { $0.isNumber }
+        let dialNumber = (dto.phone ?? "").filter(\.isNumber)
         return CrisisSupportResource(
             title: dto.name,
             message: dto.description,

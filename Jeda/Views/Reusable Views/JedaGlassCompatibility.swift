@@ -1,15 +1,10 @@
-//
-//  JedaGlassCompatibility.swift
-//  Jeda
-//
-//  Liquid Glass (iOS 26+) with material-based fallback for earlier OS versions.
-//
+/**
+ * Scope: JedaGlassCompatibility.swift
+ * Purpose: Compatibility shims for glass-effect APIs across different iOS versions.
+ */
 
 import SwiftUI
 
-// MARK: - Glass effect container
-
-/// Wraps `GlassEffectContainer` on iOS 26+; uses `VStack` spacing on earlier versions.
 struct JedaGlassEffectContainer<Content: View>: View {
     let spacing: CGFloat
     @ViewBuilder private let content: () -> Content
@@ -30,15 +25,12 @@ struct JedaGlassEffectContainer<Content: View>: View {
     }
 }
 
-// MARK: - Glass surface modifier
-
 extension View {
-    /// Applies native Liquid Glass on iOS 26+, or frosted material + brand tint on earlier OS.
     @ViewBuilder
-    func jedaGlassEffect<S: InsettableShape>(
+    func jedaGlassEffect(
         tint: Color? = nil,
         isInteractive: Bool = false,
-        in shape: S
+        in shape: some InsettableShape
     ) -> some View {
         if #available(iOS 26.0, *) {
             modifier(
@@ -97,8 +89,6 @@ extension View {
     }
 }
 
-// MARK: - iOS 26 native glass
-
 @available(iOS 26.0, *)
 private struct JedaNativeGlassEffectModifier<S: InsettableShape>: ViewModifier {
     let tint: Color?
@@ -112,8 +102,6 @@ private struct JedaNativeGlassEffectModifier<S: InsettableShape>: ViewModifier {
             .shadow(color: .clear, radius: 0)
     }
 }
-
-// MARK: - Pre-iOS 26 material fallback
 
 private struct JedaMaterialGlassBackground<S: InsettableShape>: View {
     let shape: S

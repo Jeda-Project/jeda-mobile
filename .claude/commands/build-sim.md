@@ -1,40 +1,40 @@
-# /build-sim — Build ke Simulator
+# /build-sim — Build to Simulator
 
-Build project Jeda ke iPhone 16 Simulator dan tampilkan hasil.
+Build the Jeda project to the iPhone 17 Pro Simulator and display the result.
 
-## Langkah
+## Steps
 
 ```bash
 rtk xcodebuild build \
   -project Jeda.xcodeproj \
   -scheme Jeda \
-  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   -quiet \
   2>&1 | grep -E "(error:|warning:|BUILD (SUCCEEDED|FAILED))"
 ```
 
-Jika `xcpretty` tersedia, gunakan untuk output yang lebih bersih:
+If `xcpretty` is available, use it for cleaner output:
 ```bash
 rtk xcodebuild build \
   -project Jeda.xcodeproj \
   -scheme Jeda \
-  -destination 'platform=iOS Simulator,name=iPhone 16' \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   | xcpretty
 ```
 
 ## Output
 
 ```
-🔨 Building Jeda for iPhone 16 Simulator...
+🔨 Building Jeda for iPhone 17 Pro Simulator...
 
 ✅ BUILD SUCCEEDED
    Build time: <N>s
 
-atau
+or
 
 ❌ BUILD FAILED
    <error details>
    <file:line — error message>
 ```
 
-Jika build gagal, gunakan agent `build-error-resolver` untuk diagnosa.
+If the build fails, use the `build-error-resolver` agent for diagnosis.

@@ -2,31 +2,31 @@
 
 ## Protocol-Oriented Design
 
-Setiap Service WAJIB punya protocol:
+Every Service MUST have a protocol:
 
 ```swift
-// 1. Definisikan protocol di Models/ atau di file terpisah
+// 1. Define the protocol in Models/ or a separate file
 protocol EmotionAnalyzing {
     func classify(text: String) async throws -> EmotionClassificationResult
 }
 
-// 2. Implementasi di Services/
+// 2. Implement in Services/
 actor EmotionClassificationService: EmotionAnalyzing {
     func classify(text: String) async throws -> EmotionClassificationResult { ... }
 }
 
-// 3. Inject via protocol, bukan concrete type
+// 3. Inject via protocol, not concrete type
 struct JournalView: View {
     @Environment(\.emotionService) private var service: any EmotionAnalyzing
 }
 ```
 
-## Result Type untuk Error Propagation
+## Result Type for Error Propagation
 
-Untuk operasi yang hasilnya perlu di-pass ke layer lain tanpa throwing:
+For operations whose result needs to be passed to another layer without throwing:
 
 ```swift
-// Ketika tidak bisa pakai async throws langsung
+// When async throws cannot be used directly
 func classifyAsync(text: String, completion: @escaping (Result<EmotionClassificationResult, Error>) -> Void) {
     Task {
         do {
@@ -39,21 +39,21 @@ func classifyAsync(text: String, completion: @escaping (Result<EmotionClassifica
 }
 ```
 
-## Singleton Pattern (Hanya untuk Services)
+## Singleton Pattern (Services Only)
 
 ```swift
 actor EmotionClassificationService {
     static let shared = EmotionClassificationService()
-    private init() {}  // cegah instantiasi langsung
+    private init() {}  // prevent direct instantiation
 }
 ```
 
-> Singleton HANYA untuk Services. Jangan buat singleton untuk View atau Model.
+> Singletons are ONLY for Services. Do not create singletons for Views or Models.
 
 ## Environment Injection Pattern
 
 ```swift
-// 1. Definisikan EnvironmentKey
+// 1. Define an EnvironmentKey
 private struct EmotionServiceKey: EnvironmentKey {
     static let defaultValue: any EmotionAnalyzing = EmotionClassificationService.shared
 }
@@ -66,7 +66,7 @@ extension EnvironmentValues {
     }
 }
 
-// 3. Inject di App root
+// 3. Inject at the App root
 @main
 struct JedaApp: App {
     var body: some Scene {
@@ -77,13 +77,13 @@ struct JedaApp: App {
     }
 }
 
-// 4. Gunakan di View
+// 4. Use in a View
 struct SomeView: View {
     @Environment(\.emotionService) private var emotionService
 }
 ```
 
-## Codable untuk Network Models
+## Codable for Network Models
 
 ```swift
 struct EmotionAPIResponse: Codable {
@@ -91,7 +91,7 @@ struct EmotionAPIResponse: Codable {
     let confidence: Double
     let timestamp: Date
 
-    // Gunakan CodingKeys jika nama berbeda dari JSON
+    // Use CodingKeys if the names differ from JSON
     enum CodingKeys: String, CodingKey {
         case emotion
         case confidence
@@ -108,7 +108,7 @@ enum EmotionClassificationError: LocalizedError {
     case invalidInput(String)
     case inferenceFailed(Error)
 
-    // errorDescription dalam Bahasa Indonesia (untuk user-facing)
+    // errorDescription in Indonesian (for user-facing messages)
     var errorDescription: String? {
         switch self {
         case .modelNotFound:

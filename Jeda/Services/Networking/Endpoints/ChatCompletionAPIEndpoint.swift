@@ -1,9 +1,7 @@
-//
-//  ChatCompletionAPIEndpoint.swift
-//  Jeda
-//
-//  OpenAI chat completions API.
-//
+/**
+ * Scope: ChatCompletionAPIEndpoint.swift
+ * Purpose: Endpoint descriptor for the OpenAI-compatible chat completion API route.
+ */
 
 import Foundation
 
@@ -13,7 +11,7 @@ enum ChatCompletionAPIEndpoint: APIEndpoint {
     var path: String {
         switch self {
         case .complete:
-            return "chat/completions"
+            "chat/completions"
         }
     }
 
@@ -23,8 +21,8 @@ enum ChatCompletionAPIEndpoint: APIEndpoint {
 
     var body: Data? {
         switch self {
-        case .complete(let request):
-            return try? encodeBody(request)
+        case let .complete(request):
+            try? encodeBody(request)
         }
     }
 }

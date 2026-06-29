@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct BackendServices: Sendable {
+struct BackendServices {
     let entryRepository: any EntryRepositing
     let summaryRepository: any SummaryRepositing
     let safetyService: any SafetyScanning
@@ -22,10 +22,7 @@ struct BackendServices: Sendable {
             let api = APIService(configuration: configuration)
 
             return BackendServices(
-                entryRepository: EntryRepository(
-                    api: api,
-                    enrichmentStore: ReflectionEnrichmentStore()
-                ),
+                entryRepository: EntryRepository(api: api),
                 summaryRepository: SummaryRepository(api: api),
                 safetyService: SafetyService(api: api)
             )

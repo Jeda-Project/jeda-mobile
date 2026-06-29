@@ -1,8 +1,8 @@
 # Anti-Pattern: `.task {}` vs `.onAppear {}`
 
-## Masalah
+## Problem
 
-Menggunakan `.onAppear` untuk async work menyebabkan Task yang tidak bisa di-cancel ketika View menghilang, berpotensi menyebabkan memory leak dan update pada View yang sudah di-dismiss.
+Using `.onAppear` for async work creates a Task that cannot be cancelled when the View disappears, potentially causing memory leaks and updates on an already-dismissed View.
 
 ## ❌ Anti-Pattern
 
@@ -15,7 +15,7 @@ struct JedaJournalListView: View {
             JournalEntryRow(entry: entry)
         }
         .onAppear {
-            // ❌ Task ini tidak di-cancel saat View hilang
+            // ❌ This Task is not cancelled when the View disappears
             Task {
                 entries = try await journalService.fetchEntries()
             }
@@ -24,12 +24,12 @@ struct JedaJournalListView: View {
 }
 ```
 
-**Masalah:**
-- Task terus berjalan meski View sudah di-dismiss (misalnya, user tap Back sebelum fetch selesai)
-- Jika fetch selesai setelah View di-dismiss, update state terjadi pada View yang sudah tidak ada
-- Tidak memanfaatkan lifecycle binding SwiftUI
+**Problems:**
+- The Task keeps running even after the View is dismissed (e.g., user taps Back before the fetch completes)
+- If the fetch completes after the View is dismissed, state is updated on a View that no longer exists
+- Does not take advantage of SwiftUI lifecycle binding
 
-## ✅ Pattern yang Benar
+## ✅ Correct Pattern
 
 ```swift
 struct JedaJournalListView: View {
@@ -40,7 +40,7 @@ struct JedaJournalListView: View {
             JournalEntryRow(entry: entry)
         }
         .task {
-            // ✅ Task otomatis di-cancel saat View hilang
+            // ✅ Task is automatically cancelled when the View disappears
             do {
                 entries = try await journalService.fetchEntries()
             } catch {
@@ -51,31 +51,31 @@ struct JedaJournalListView: View {
 }
 ```
 
-## Kapan Gunakan `.onAppear`
+## When to Use `.onAppear`
 
-`.onAppear` cocok untuk:
-- Sync operations (set analytics flag, update @State local)
-- Side effects yang tidak butuh cancellation
+`.onAppear` is appropriate for:
+- Sync operations (set analytics flag, update local `@State`)
+- Side effects that do not require cancellation
 
 ```swift
 .onAppear {
-    // ✅ Sync, tidak butuh cancellation
+    // ✅ Sync, no cancellation needed
     Analytics.logEvent("journal_list_viewed", parameters: nil)
     hasSeenList = true
 }
 ```
 
-## Kapan Gunakan `.task`
+## When to Use `.task`
 
-`.task` untuk semua async work:
+`.task` for all async work:
 - Networking / API calls
 - Core ML inference
 - Disk I/O
-- Operasi async apapun yang harus di-cancel saat View hilang
+- Any async operation that should be cancelled when the View disappears
 
-## Catatan
+## Note
 
-`.task` dengan `id:` parameter akan re-run task setiap kali nilai `id` berubah — berguna untuk refresh:
+`.task` with an `id:` parameter re-runs the task every time the `id` value changes — useful for refresh:
 
 ```swift
 .task(id: refreshTrigger) {

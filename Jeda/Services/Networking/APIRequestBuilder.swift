@@ -1,12 +1,11 @@
-//
-//  APIRequestBuilder.swift
-//  Jeda
-//
+/**
+ * Scope: APIRequestBuilder.swift
+ * Purpose: Builds URLRequest instances from APIEndpoint descriptors.
+ */
 
 import Foundation
 
-/// Fluent builder untuk membuat `URLRequest`.
-struct APIRequestBuilder: Sendable {
+struct APIRequestBuilder {
     private let baseURL: URL
     private var path: String
     private var method: HTTPMethod
@@ -73,7 +72,7 @@ struct APIRequestBuilder: Sendable {
         return copy
     }
 
-    func body<T: Encodable>(_ value: T, encoder: JSONEncoder = JSONEncoder()) throws -> APIRequestBuilder {
+    func body(_ value: some Encodable, encoder: JSONEncoder = JSONEncoder()) throws -> APIRequestBuilder {
         var copy = self
         do {
             copy.body = try encoder.encode(value)
@@ -111,7 +110,7 @@ struct APIRequestBuilder: Sendable {
         request.timeoutInterval = timeoutInterval
         request.httpBody = body
 
-        headers.forEach { field, value in
+        for (field, value) in headers {
             request.setValue(value, forHTTPHeaderField: field)
         }
 

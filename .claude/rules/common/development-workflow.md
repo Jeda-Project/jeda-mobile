@@ -1,35 +1,35 @@
 # Development Workflow
 
-## Checklist Sebelum Mulai Task
+## Checklist Before Starting a Task
 
-1. Panggil `mcp__serena-jeda-mobile__initial_instructions`
-2. Baca `AGENTS.md` dan `SSOT.md`
-3. Pahami scope task — tanya jika tidak jelas
-4. Cari pattern yang sudah ada sebelum buat yang baru
-5. Gunakan Context7 untuk lookup API yang belum familiar
+1. Call `mcp__serena-jeda-mobile__initial_instructions`
+2. Read `AGENTS.md` and `SSOT.md`
+3. Understand the scope of the task — ask if anything is unclear
+4. Look for existing patterns before creating new ones
+5. Use Context7 to look up unfamiliar APIs
 
-## Checklist Sebelum Commit
+## Checklist Before Committing
 
-- [ ] Build berhasil: `rtk xcodebuild build -project Jeda.xcodeproj -scheme Jeda -destination 'platform=iOS Simulator,name=iPhone 16'`
-- [ ] SwiftLint clean: `rtk swiftlint lint --quiet` (jika tersedia)
-- [ ] Tidak ada SwiftUI import di Services layer
-- [ ] Tidak ada hardcoded warna hex
-- [ ] Semua interactive element punya accessibilityLabel
-- [ ] Tidak ada force unwrap baru di production code
-- [ ] Test yang relevan lulus
-- [ ] Commit message mengikuti conventional format
+- [ ] Build succeeded: `rtk xcodebuild build -project Jeda.xcodeproj -scheme Jeda -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
+- [ ] SwiftLint clean: `rtk swiftlint lint --quiet` (if available)
+- [ ] No SwiftUI import in the Services layer
+- [ ] No hardcoded hex colors
+- [ ] All interactive elements have an `accessibilityLabel`
+- [ ] No new force unwraps in production code
+- [ ] Relevant tests pass
+- [ ] Commit message follows the conventional format
 
-## Self-Review Gate (Rule 15 dari AGENTS.md)
+## Self-Review Gate (Rule 15 from AGENTS.md)
 
-Sebelum menyatakan task selesai, Claude WAJIB:
-1. Re-read perubahan yang dibuat
-2. Jalankan build check
-3. Verifikasi tidak ada pelanggaran Golden Rules
-4. Pastikan error handling tidak di-swallow
+Before declaring a task done, Claude MUST:
+1. Re-read the changes made
+2. Run a build check
+3. Verify no Golden Rules were violated
+4. Ensure errors are not swallowed
 
-## Penggunaan RTK
+## RTK Usage
 
-**SEMUA** perintah terminal harus dengan prefix `rtk`:
+**ALL** terminal commands must use the `rtk` prefix:
 ```bash
 rtk xcodebuild build ...
 rtk swiftlint lint ...
@@ -37,15 +37,15 @@ rtk swift test
 rtk git status
 ```
 
-## Workflow Fitur Baru
+## New Feature Workflow
 
 ```
-1. /plan <nama fitur>          → Buat plan, tunggu konfirmasi
-2. Implementasi per layer:
+1. /plan <feature name>          → Create plan, wait for confirmation
+2. Implement per layer:
    Models → Services → Views
-3. /check-fix                  → Pastikan build & lint clean
-4. /review                     → Code review
-5. /commit                     → Draft commit message
-6. git commit -m "..."         → Eksekusi commit
-7. /create-pr                  → Buat PR ke main
+3. /check-fix                    → Ensure build & lint are clean
+4. /review                       → Code review
+5. /commit                       → Draft commit message
+6. git commit -m "..."           → Execute commit
+7. /create-pr                    → Create PR to main
 ```

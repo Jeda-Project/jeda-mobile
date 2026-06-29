@@ -1,130 +1,130 @@
 # AGENTS.md — Golden Rules Jeda iOS
 
-> Dokumen ini adalah sumber kebenaran untuk semua aturan arsitektur.
-> Tidak boleh diubah oleh Claude. Hanya developer yang boleh memodifikasi.
-> Semua aturan di sini bersifat **non-negotiable**.
+> This document is the source of truth for all architecture rules.
+> Must not be changed by Claude. Only developers may modify it.
+> All rules here are **non-negotiable**.
 
 ---
 
-## Kategori 1: Layer Ownership (Rules 1–4)
+## Category 1: Layer Ownership (Rules 1–4)
 
-### Rule 1 — Views hanya boleh berisi SwiftUI
-File di `Jeda/Views/` dan `Jeda/Views/Reusable Views/`:
-- ✅ Boleh: SwiftUI views, `@State` lokal, `@Environment`, event handlers, computed display properties
-- ❌ Dilarang: `URLSession`, `CoreML`, `UserDefaults`, `FileManager`, business logic, async data fetching langsung
+### Rule 1 — Views may only contain SwiftUI
+Files in `Jeda/Views/` and `Jeda/Views/Reusable Views/`:
+- ✅ Allowed: SwiftUI views, local `@State`, `@Environment`, event handlers, computed display properties
+- ❌ Forbidden: `URLSession`, `CoreML`, `UserDefaults`, `FileManager`, business logic, direct async data fetching
 
-### Rule 2 — Services menangani semua business logic
-File di `Jeda/Services/`:
-- ✅ Boleh: `actor`, `class`, `struct`; async/await; Core ML inference; networking; persistence
-- ❌ Dilarang: `import SwiftUI`, rendering logic, hardcoded UI strings
+### Rule 2 — Services handle all business logic
+Files in `Jeda/Services/`:
+- ✅ Allowed: `actor`, `class`, `struct`; async/await; Core ML inference; networking; persistence
+- ❌ Forbidden: `import SwiftUI`, rendering logic, hardcoded UI strings
 
-### Rule 3 — Models adalah pure types
-File di `Jeda/Models/`:
-- ✅ Boleh: `struct`, `enum`, `protocol`, extensions dengan computed properties murni
-- ❌ Dilarang: `import SwiftUI`, `URLSession`, side effects, async functions
+### Rule 3 — Models are pure types
+Files in `Jeda/Models/`:
+- ✅ Allowed: `struct`, `enum`, `protocol`, extensions with pure computed properties
+- ❌ Forbidden: `import SwiftUI`, `URLSession`, side effects, async functions
 
-### Rule 4 — App layer hanya bootstrap
-File di `Jeda/App/`:
-- ✅ Boleh: `@main`, `AppDelegate`, root view setup, environment injection
-- ❌ Dilarang: business logic, UI components, service implementations
+### Rule 4 — App layer is bootstrap only
+Files in `Jeda/App/`:
+- ✅ Allowed: `@main`, `AppDelegate`, root view setup, environment injection
+- ❌ Forbidden: business logic, UI components, service implementations
 
 ---
 
-## Kategori 2: Dependency Injection (Rules 5–6)
+## Category 2: Dependency Injection (Rules 5–6)
 
-### Rule 5 — Wajib gunakan Environment untuk services
+### Rule 5 — Must use Environment for services
 ```swift
-// ✅ Benar — inject via environment
+// ✅ Correct — inject via environment
 @Environment(\.emotionService) private var emotionService
 
-// ❌ Salah — langsung singleton dari View
+// ❌ Wrong — direct singleton from a View
 let service = EmotionClassificationService.shared
 ```
 
-### Rule 6 — Services wajib protocol-oriented
-Setiap service wajib punya protocol (misal: `EmotionAnalyzing`). View bergantung pada protocol, bukan concrete type — memudahkan testing dengan mock.
+### Rule 6 — Services must be protocol-oriented
+Every service must have a protocol (e.g. `EmotionAnalyzing`). Views depend on the protocol, not the concrete type — this makes mock-based testing possible.
 
 ---
 
-## Kategori 3: Concurrency & Thread Safety (Rules 7–8)
+## Category 3: Concurrency & Thread Safety (Rules 7–8)
 
-### Rule 7 — Core ML inference wajib di background actor
-`EmotionClassificationService` adalah `actor`. Semua model loading dan inference terjadi di sana. Main thread tidak boleh pernah di-block oleh ML computation.
+### Rule 7 — Core ML inference must run on a background actor
+`EmotionClassificationService` is an `actor`. All model loading and inference happen there. The main thread must never be blocked by ML computation.
 
 ```swift
-// ✅ Benar
+// ✅ Correct
 Task {
   let result = try await emotionService.classify(text: input)
   await MainActor.run { self.result = result }
 }
 
-// ❌ Salah — sinkron di main thread
+// ❌ Wrong — synchronous on the main thread
 let result = emotionService.classifySync(text: input)
 ```
 
-### Rule 8 — Tandai Sendable dengan benar
-Semua types yang dikirim lintas actor boundary wajib conform `Sendable`. Hindari `@unchecked Sendable` kecuali ada alasan kuat yang didokumentasi.
+### Rule 8 — Mark Sendable correctly
+All types crossing actor boundaries must conform to `Sendable`. Avoid `@unchecked Sendable` unless there is a strong, documented reason.
 
 ---
 
-## Kategori 4: Styling & Design System (Rules 9–11)
+## Category 4: Styling & Design System (Rules 9–11)
 
-### Rule 9 — Tidak ada hardcoded warna
+### Rule 9 — No hardcoded colors
 ```swift
-// ✅ Benar
+// ✅ Correct
 .foregroundStyle(JedaColor.textPrimary.color)
 
-// ❌ Salah
+// ❌ Wrong
 .foregroundStyle(Color(hex: "#7A8B7F"))
 .foregroundStyle(.green)
 ```
 
-### Rule 10 — SF Symbols saja untuk ikon
-Tidak boleh ada image asset untuk ikon. Gunakan `Image(systemName:)`. Setiap `Emotion` case sudah punya `systemImageName` di `Emotion.swift`.
+### Rule 10 — SF Symbols only for icons
+No image assets are allowed for icons. Use `Image(systemName:)`. Every `Emotion` case already has a `systemImageName` in `Emotion.swift`.
 
-### Rule 11 — HIG Compliance wajib
-- Touch target minimum **44×44 pt**
-- Mendukung **Dynamic Type** — gunakan `.font(.body)` bukan `.font(.system(size: 16))`
-- Setiap interactive element wajib punya **accessibility label**
-- Mendukung **VoiceOver** order yang logis dengan `.accessibilityElement(children:)`
+### Rule 11 — HIG Compliance is required
+- Minimum touch target **44×44 pt**
+- Must support **Dynamic Type** — use `.font(.body)` instead of `.font(.system(size: 16))`
+- Every interactive element must have an **accessibility label**
+- Must support a logical **VoiceOver** order via `.accessibilityElement(children:)`
 
 ---
 
-## Kategori 5: Networking (Rules 12–13)
+## Category 5: Networking (Rules 12–13)
 
-### Rule 12 — Gunakan APIEndpoint protocol
-Tidak boleh ada raw URL string di luar `APIConfiguration` dan `Endpoints/`. Semua endpoint didefinisikan sebagai conformance `APIEndpoint`.
+### Rule 12 — Use the APIEndpoint protocol
+No raw URL strings are allowed outside `APIConfiguration` and `Endpoints/`. All endpoints must be defined as `APIEndpoint` conformances.
 
 ```swift
-// ✅ Benar
+// ✅ Correct
 struct EmotionAPIEndpoint: APIEndpoint { ... }
 
-// ❌ Salah
+// ❌ Wrong
 URLSession.shared.data(from: URL(string: "https://api.example.com/emotion")!)
 ```
 
-### Rule 13 — Error handling wajib typed
-Gunakan `APIError` enum (yang conform `LocalizedError`) untuk semua networking errors. Pesan error untuk user **wajib dalam Bahasa Indonesia**.
+### Rule 13 — Error handling must be typed
+Use the `APIError` enum (conforming to `LocalizedError`) for all networking errors. User-facing error messages **must be in Indonesian**.
 
 ---
 
-## Kategori 6: Code Quality (Rules 14–15)
+## Category 6: Code Quality (Rules 14–15)
 
-### Rule 14 — Tidak ada force unwrap di production code
+### Rule 14 — No force unwrap in production code
 ```swift
-// ✅ Benar
+// ✅ Correct
 guard let value = optional else { return }
 let value = optional ?? defaultValue
 
-// ❌ Salah (kecuali di test atau @IBOutlet)
+// ❌ Wrong (except in tests or @IBOutlet)
 let value = optional!
 ```
 
-### Rule 15 — Self-Review Gate sebelum selesai
-Sebelum menyatakan task complete, Claude WAJIB:
-1. Build project berhasil (tidak ada compiler error)
-2. Tidak ada SwiftUI import di Services layer
-3. Tidak ada hardcoded warna hex di Swift files
-4. Semua interactive elements punya accessibility label
-5. Tidak ada force unwrap baru di production code
-6. Commit message mengikuti format conventional commits
+### Rule 15 — Self-Review Gate before completion
+Before declaring a task complete, Claude MUST:
+1. Confirm the project builds successfully (no compiler errors)
+2. Confirm there is no SwiftUI import in the Services layer
+3. Confirm there are no hardcoded hex colors in Swift files
+4. Confirm all interactive elements have an accessibility label
+5. Confirm there is no new force unwrap in production code
+6. Confirm the commit message follows the conventional commits format

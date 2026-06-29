@@ -1,30 +1,30 @@
 # /resolve-pr-review — Address PR Review Comments
 
-Tangani dan respond review comment pada pull request.
+Address and respond to review comments on a pull request.
 
-## Langkah
+## Steps
 
-1. Gunakan GitHub MCP `get_pull_request_comments` untuk fetch semua review comments
-2. Kelompokkan berdasarkan severity: CRITICAL → HIGH → MEDIUM → LOW
-3. Selesaikan CRITICAL dan HIGH terlebih dahulu — ini yang memblokir merge
-4. Untuk setiap comment:
-   a. Pahami root cause (bukan hanya symptom)
-   b. Terapkan fix minimal
-   c. Jalankan gate yang relevan (build check untuk compiler error, test untuk logic)
-   d. Stage dan commit fix dengan pesan deskriptif
-5. Setelah semua fix: jalankan full build + SwiftLint
-6. Push updated branch
-7. Gunakan GitHub MCP `add_issue_comment` atau resolve thread untuk sinyal sudah ditangani
+1. Use GitHub MCP `get_pull_request_comments` to fetch all review comments
+2. Group by severity: CRITICAL → HIGH → MEDIUM → LOW
+3. Resolve CRITICAL and HIGH first — these are blocking merge
+4. For each comment:
+   a. Understand the root cause (not just the symptom)
+   b. Apply the minimal fix
+   c. Run the relevant gate (build check for compiler errors, test for logic)
+   d. Stage and commit the fix with a descriptive message
+5. After all fixes: run full build + SwiftLint
+6. Push the updated branch
+7. Use GitHub MCP `add_issue_comment` or resolve the thread to signal it has been addressed
 
-## Konvensi Response
+## Response Convention
 
-Saat membalas review thread:
-- Acknowledge temuan secara singkat
-- Jelaskan apa yang diubah dan mengapa
-- Jika tidak setuju: jelaskan rationale, jangan abaikan begitu saja
+When replying to a review thread:
+- Acknowledge the finding briefly
+- Explain what was changed and why
+- If you disagree: explain your rationale, do not just ignore it
 
-## Catatan
+## Notes
 
-- Fix root cause — jangan patch over untuk menyilencing reviewer
-- Satu commit per logical fix; jangan squash semua jadi satu "address review comments"
-- Jika comment MEDIUM/LOW butuh refactoring signifikan: buat follow-up issue daripada scope-creeping PR
+- Fix the root cause — do not patch over it just to silence the reviewer
+- One commit per logical fix; do not squash everything into one "address review comments"
+- If a MEDIUM/LOW comment requires significant refactoring: create a follow-up issue rather than scope-creeping the PR
